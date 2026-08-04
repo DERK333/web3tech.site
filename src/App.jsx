@@ -11,6 +11,7 @@ import BlogPost from '@/pages/BlogPost.jsx';
 import About from '@/pages/About';
 import Contact from '@/pages/Contact';
 import Settings from '@/pages/Settings';
+import Analytics from '@/pages/Analytics';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -50,6 +51,7 @@ function AnimatedRoutes() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/analytics" element={<Analytics />} />
           </Route>
           <Route path="*" element={<PageNotFound />} />
         </Routes>

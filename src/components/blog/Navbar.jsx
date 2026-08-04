@@ -100,6 +100,18 @@ export default function Navbar() {
                 </Link>
               )
             )}
+            {isAuthenticated && (
+              <Link
+                to="/analytics"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  location.pathname === "/analytics"
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                }`}
+              >
+                Analytics
+              </Link>
+            )}
             <button
               onClick={() => setSearchOpen(true)}
               className="ml-2 flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border/50 bg-secondary/50 text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all text-sm"
@@ -185,12 +197,25 @@ export default function Navbar() {
                   >
                     {link.label}
                   </Link>
-                )
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                    )
+                  )}
+                  {isAuthenticated && (
+                    <Link
+                      to="/analytics"
+                      onClick={() => setMobileOpen(false)}
+                      className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                        location.pathname === "/analytics"
+                          ? "text-primary bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      Analytics
+                    </Link>
+                  )}
+                  </div>
+                  </motion.div>
+                  )}
+                  </AnimatePresence>
     </nav>
     </>
   );
