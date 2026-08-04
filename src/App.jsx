@@ -17,6 +17,7 @@ import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import OAuthConsent from '@/pages/OAuthConsent';
+import Connect from '@/pages/Connect';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const pageVariants = {
@@ -54,6 +55,7 @@ function AnimatedRoutes() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/connect" element={<Connect />} />
           </Route>
           <Route path="*" element={<PageNotFound />} />
         </Routes>
