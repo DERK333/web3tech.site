@@ -10,7 +10,7 @@ export const BLOG_POSTS_8 = [
     tags: ["Ubuntu", "Linux", "Nginx", "VPS", "Hosting", "Node.js", "Python", "SSL", "HTTPS", "Server", "Web Development", "Deployment"],
     readTime: "20 min read",
     featured: true,
-    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/3e74a0d06_generated_image.png",
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=60",
     content: `## How to Host a Website and Web App on Ubuntu 25.04
 
 Whether you're a developer launching your first project, a sysadmin setting up infrastructure, or a tech enthusiast wanting full control over your hosting — this guide walks you through the entire process from a blank Ubuntu 25.04 server to a live website and web application with a real domain and HTTPS.
