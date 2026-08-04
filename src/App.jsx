@@ -16,6 +16,7 @@ import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
+import OAuthConsent from '@/pages/OAuthConsent';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const pageVariants = {
@@ -44,6 +45,7 @@ function AnimatedRoutes() {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/oauth/consent" element={<OAuthConsent />} />
           <Route element={<BlogLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/blog" element={<Blog />} />
