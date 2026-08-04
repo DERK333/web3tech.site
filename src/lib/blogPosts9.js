@@ -10,7 +10,7 @@ export const BLOG_POSTS_9 = [
     tags: ["Kaspa", "Ubuntu", "Node", "Mining", "Rust", "Blockchain", "CLI", "Server", "Linux", "DevOps", "Web3", "Crypto"],
     readTime: "25 min read",
     featured: true,
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/20e70266a_generated_image.png",
     content: `## Run a Full Kaspa Node on Ubuntu Server and Mine It — The Complete Command-Line Guide
 
 This guide takes you from a **completely blank Ubuntu Server** to a **fully synced Kaspa node running as a background service**, with a **wallet** and a **live miner hashing against your own node** — no graphical interface, no copy-paste shortcuts you don't understand, every command explained.

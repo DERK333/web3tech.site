@@ -11,7 +11,7 @@ export const BLOG_POSTS_4 = [
     tags: ["Debian", "Linux", "SSD", "Format", "GParted", "ext4", "fstab", "Disk Management"],
     readTime: "7 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/c5f0703bd_generated_image.png",
     content: `## Format an SSD for Linux Debian
 
 To format an SSD for a Linux Debian system, **ext4** is the standard and most reliable file system choice. You can do this using a graphical interface or the command line.
@@ -202,7 +202,7 @@ sudo chmod 775 /mnt/myssd
     tags: ["Ubuntu", "Root Password", "Sudo", "Account Management", "Linux", "Server", "Security"],
     readTime: "4 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/7730f0717_generated_image.png",
     content: `## Change Root Password on Ubuntu Server
 
 To change the root password on an Ubuntu server, log in with a user that has sudo privileges and run \`sudo passwd root\`. You will be prompted to enter your current user password, followed by the new password for the root account.
@@ -356,7 +356,7 @@ The difference is subtle—\`su -\` is generally preferred because it fully load
     tags: ["GitHub Pages", "AI", "Web Development", "Static Site", "HTML", "Tailwind", "Deployment", "Web3"],
     readTime: "7 min read",
     featured: true,
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/1d30e9be1_generated_image.png",
     content: `## AI-Generated Site → GitHub → GitHub Pages
 
 Clean pipeline. Let's execute.
@@ -515,7 +515,7 @@ This is lean tech infrastructure — free, fast, and fully version-controlled.`
     tags: ["Ubuntu", "X Server", "Display Manager", "Troubleshooting", "Terminal", "Linux", "System Management"],
     readTime: "3 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/3e74a0d06_generated_image.png",
     content: `## Restart X Server on Ubuntu
 
 When your GUI freezes, becomes unresponsive, or has display issues, restarting the X server often fixes the problem. Here are the most reliable methods.

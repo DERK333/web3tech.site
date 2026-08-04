@@ -10,7 +10,7 @@ export const BLOG_POSTS_7 = [
     tags: ["Docker", "Ubuntu", "Linux", "Install", "DevOps", "Containers", "Setup"],
     readTime: "6 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/9050c0441_generated_image.png",
     content: `## Install Docker on Ubuntu — The Clean Way
 
 Never install Docker from Ubuntu's default apt repository — it's often outdated. Use Docker's official repository to get the current Engine version.
@@ -133,7 +133,7 @@ Docker is now installed and ready. You can start pulling images and running cont
     tags: ["Docker", "Networking", "Linux", "Bridge", "DevOps", "Containers", "Ports"],
     readTime: "7 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/9050c0441_generated_image.png",
     content: `## Docker Networking on Linux
 
 When you run containers on Linux, Docker manages their networking through a set of virtual network drivers. Understanding how these work is critical for building multi-service apps, exposing ports correctly, and keeping containers isolated.
@@ -503,7 +503,7 @@ The blockchain data is stored in the \`kaspa_data\` volume. Remove and recreate 
     tags: ["Linux", "systemd", "Service", "Process Management", "Ubuntu", "Server", "Auto-restart", "journalctl"],
     readTime: "8 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/3e74a0d06_generated_image.png",
     content: `## Linux Process Management with systemd
 
 systemd is the init system and service manager on virtually every modern Linux distribution. If you want a process to start on boot, restart on failure, and be manageable with a single command, you need a systemd unit file.
@@ -667,7 +667,7 @@ Now \`kaspad\` starts automatically on boot, restarts on failure, and its logs a
     tags: ["Linux", "Disk Management", "Storage", "Ubuntu", "du", "df", "lsblk", "Server", "Cleanup"],
     readTime: "6 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/c5f0703bd_generated_image.png",
     content: `## Linux Disk Usage and Management
 
 Running out of disk space on a Linux server or blockchain node host is one of the most common — and avoidable — problems.
@@ -788,7 +788,7 @@ Navigate with arrow keys, press \`d\` to delete. One of the most useful tools fo
     tags: ["Docker", "Docker Compose", "Linux", "Multi-Container", "DevOps", "YAML", "Services", "Containers"],
     readTime: "8 min read",
     featured: true,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/9050c0441_generated_image.png",
     content: `## Docker Compose on Linux
 
 Docker Compose takes multi-container apps from "run three separate docker run commands" to "one file, one command, done."
@@ -997,7 +997,7 @@ docker compose logs -f
     tags: ["SunSwap", "TRON", "DEX", "DeFi", "Trading", "Liquidity Pools", "Staking", "Crypto"],
     readTime: "7 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/a91ccbf46_generated_image.png",
     content: "## What Is SunSwap?\n\nSunSwap is a decentralized exchange (DEX) protocol built on the TRON blockchain that enables users to trade TRC20 tokens instantly without intermediaries. Unlike centralized exchanges, SunSwap operates entirely through smart contracts, ensuring transparency, security, and trustless transactions.\n\n---\n\n## How SunSwap Works\n\nSunSwap uses an **Automated Market Maker (AMM)** model powered by liquidity pools. Instead of matching buyers and sellers manually, users trade against smart contract-based reserves of token pairs.\n\n### The Trading Flow\n\n1. **Connect your TRON wallet** to SunSwap\n2. **Select token pairs** you wish to swap (e.g., TRX → USDT)\n3. **Execute the transaction** — smart contracts handle the swap instantly\n4. **Receive tokens** directly in your wallet\n\nThe entire process takes seconds, with minimal latency thanks to TRON's fast block times.\n\n---\n\n## Key Features\n\n### ⚡ Speed & Low Costs\n\nTRON's infrastructure delivers sub-second finality and transaction fees typically under $0.01, making SunSwap ideal for frequent traders and small transactions.\n\n### 💧 Liquidity Pools & Yield Farming\n\nLiquidity providers deposit token pairs into smart contracts and earn a percentage of trading fees. SunSwap also offers **staking pools** where you can lock SUN tokens to earn APY rewards.\n\nThe APY is **community-governed** — users who stake and vote determine which pools receive the highest rewards. More votes = higher incentives for that pool.\n\n### 🗳️ Decentralized Governance\n\nSUN token holders participate in governance decisions. Your voting power increases based on:\n- How much SUN you stake\n- How long you lock it (longer lockups = more voting rights)\n\nThis DAO model ensures the community controls the platform's direction.\n\n### 🎯 User-Friendly Interface\n\nSunSwap balances power-user tools with intuitive design, making it accessible whether you're a beginner swapping tokens for the first time or an experienced liquidity provider optimizing yield.\n\n---\n\n## Why Use SunSwap?\n\n**Decentralization** — No KYC, no account freezes, no intermediaries. You control your tokens.\n\n**Efficiency** — TRON's throughput handles high trading volume without congestion.\n\n**Yield Opportunities** — Earn passive income by providing liquidity or staking SUN in governance pools.\n\n**Community-Driven** — Token holders vote on fees, tokenomics, and new features.\n\n---\n\n## Getting Started\n\n### Step 1 — Set Up a TRON Wallet\n\nUse TronLink, Ledger, or another TRON-compatible wallet. Fund it with TRX (gas fees).\n\n### Step 2 — Visit SunSwap.io\n\nConnect your wallet to the platform.\n\n### Step 3 — Swap Tokens\n\nSelect your token pairs, review the exchange rate and slippage, and confirm the transaction.\n\n### Step 4 — Provide Liquidity (Optional)\n\nIf you want to earn fees, deposit equal values of two tokens into a liquidity pool. You'll receive LP tokens representing your share. Withdraw anytime to reclaim your tokens plus earned fees.\n\n### Step 5 — Stake & Vote (Optional)\n\nStake SUN to earn governance rewards and vote on which pools receive the highest incentives.\n\n---\n\n## The SunSwap DAO Model\n\nSunSwap's governance is outlined in the official DAO docs:\n\n- **Voting Power** — Tied to staked SUN. Lock longer = more votes.\n- **Pool Incentives** — Community votes determine which pools get the most SUN rewards.\n- **Transparency** — All governance decisions are on-chain and verifiable.\n\nThis model ensures SunSwap evolves based on community needs rather than centralized decisions.\n\n---\n\n## The Future of SunSwap\n\nAs DeFi continues to mature, SunSwap is positioned as TRON's flagship DEX. The platform's roadmap includes:\n\n- Expanded token support\n- Cross-chain bridging\n- Enhanced staking mechanisms\n- New DeFi primitives\n\nSunSwap isn't just a trading platform — it's a movement toward financial sovereignty on the TRON network.\n\n---\n\n## Summary\n\nSunSwap combines the speed of TRON with the transparency of decentralized finance. Whether you're trading TRC20 tokens, earning yield through liquidity pools, or participating in governance, SunSwap offers a complete DeFi toolkit built for low-cost, high-speed transactions.\n\n**Resources:**\n- Website: [sunswap.io](https://sunswap.io)\n- Docs: [SunSwap DAO Documentation](https://docs.sunswap.io)\n- Wallet: [TronLink Browser Extension](https://www.tronlink.org)"
   },
 ];

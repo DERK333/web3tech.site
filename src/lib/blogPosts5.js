@@ -10,7 +10,7 @@ export const BLOG_POSTS_5 = [
     tags: ["Debian", "Linux", "apt", "Update", "Upgrade", "Package Manager", "Terminal", "System Administration"],
     readTime: "4 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/c455c1d0b_generated_image.png",
     content: `## Fully Update and Upgrade a Debian System
 
 Use the following commands in the terminal to refresh the package list and install all available updates.
@@ -119,7 +119,7 @@ This single line handles everything: refresh, upgrade, and cleanup.`
     tags: ["Debian", "Linux", "Live USB", "Persistent", "Rufus", "Bootable USB", "Installation"],
     readTime: "6 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/e06a99435_generated_image.png",
     content: `## Install Debian as a Persistent Live USB
 
 A persistent Debian Live USB runs Debian directly from the flash drive while saving your files and settings across reboots — no hard drive installation required.
@@ -250,7 +250,7 @@ Then launch it and follow the guided prompts.
     tags: ["Windows", "Audio", "Microphone", "Troubleshooting", "Sound Settings", "Configuration"],
     readTime: "5 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/8a8c61b32_generated_image.png",
     content: `## Windows Sound & Microphone Configuration
 
 Windows audio is modular, not magical. Once the correct device is selected, permissions are cleared, and defaults are enforced, sound behaves predictably. This guide covers every layer — from basic settings to the legacy control panel.
@@ -354,7 +354,7 @@ This setup scales cleanly across headsets, USB mics, DACs, and HDMI audio paths.
     tags: ["Tails", "Privacy", "Linux", "SSD", "Security", "BalenaEtcher", "Bootable", "Persistent Storage"],
     readTime: "5 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/e06a99435_generated_image.png",
     content: `## Flash Tails OS to a 512GB SSD
 
 To format a 512GB SSD for use with Tails, it is strongly recommended to use GUI tools like **BalenaEtcher** or **Rufus** to flash the official ISO.
@@ -464,7 +464,7 @@ A 512GB SSD gives you an unusually large persistent volume — most Tails users 
     tags: ["Kali Linux", "WSL2", "Windows 11", "Win-KeX", "Linux", "Security", "Installation"],
     readTime: "5 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/82e9c3ac1_generated_image.png",
     content: `## Install Kali Linux on Windows 11 Using WSL2
 
 Run a full Kali Linux graphical desktop environment directly on Windows 11 — no dual boot, no VM, no reboots. WSL2 + Win-KeX gives you the complete Kali toolkit with a native-feeling GUI.
@@ -586,7 +586,7 @@ kex --exit
     tags: ["Monero", "Mining", "XMR", "Solo Mining", "P2Pool", "Troubleshooting", "GUI"],
     readTime: "4 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/7de041495_generated_image.png",
     content: `## Fix: Monero GUI "Couldn't Start Mining" in Solo Mode
 
 This error almost always comes down to one of three things: your local node isn't fully synced, the GUI doesn't have the right permissions, or you're pointed at a remote node instead of a local one. Solo mining requires a fully synchronized local node — unlike P2Pool, which is more forgiving.
@@ -673,7 +673,7 @@ Replace \`48...your_address...\` with your full Monero wallet address.
     tags: ["Windows 11", "winget", "CMD", "Command Prompt", "Updates", "usoclient", "WSL2", "Package Manager"],
     readTime: "4 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/c455c1d0b_generated_image.png",
     content: `## Update Windows 11 & All Apps from the Command Line
 
 You can update your entire Windows 11 system and all installed applications without opening Settings or the Microsoft Store — using two built-in tools: **winget** and **usoclient**.
@@ -944,7 +944,7 @@ The companies and people who learn to use AI today will be the ones leading tomo
     tags: ["Cryptocurrency", "Token", "Smart Contracts", "Ethereum", "Tokenomics", "DeFi", "Bitcoin", "Web3", "DAO"],
     readTime: "7 min read",
     featured: true,
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/bd0d112fe_generated_image.png",
     content: `## From Zero to Token: A Realistic Roadmap
 
 Creating a cryptocurrency token and elevating its value to Bitcoin-level status is a bold and ambitious goal — and that kind of energy is exactly what the space needs. Let's break it down into two major phases: **creation** and **value-building**.

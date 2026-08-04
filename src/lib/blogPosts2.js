@@ -103,7 +103,7 @@ Using \`vncpasswd\` is the simplest and most reliable method for managing VNC cr
     tags: ["Cybersecurity", "Security Tools", "VirusTotal", "Shodan", "CyberChef", "Fiddler", "OSINT"],
     readTime: "7 min",
     source: "techderksinsights",
-    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/c77c43057_generated_92c1ff70.png",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/a4cadb991_generated_image.png",
     featured: true,
     content: `## The Hidden Toolkit: 5 Cybersecurity Resources the Pros Keep Quiet About
 
@@ -200,7 +200,7 @@ Which tool is going into your toolkit first?`
     tags: ["Software Architecture", "Computer Architecture", "Systems Design", "Hardware", "Operating Systems", "Design Patterns"],
     readTime: "5 min",
     source: "techderksinsights",
-    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/3e90fcf71_generated_6266866e.png",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/71f709ff2_generated_image.png",
     featured: false,
     content: `## Purpose of Software in Computer Architecture
 
@@ -284,7 +284,7 @@ Software gives hardware purpose, structure, and intelligence—turning physical 
     tags: ["Ubuntu", "Partitioning", "Linux", "UEFI", "GPT", "Installation", "Disk Management"],
     readTime: "6 min",
     source: "techderksinsights",
-    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/9dfb627de_generated_image.png",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/d1519b8fd_generated_image.png",
     featured: false,
     content: `## Manual Partitioning in Ubuntu 20.04 (Step-by-Step)
 
@@ -409,7 +409,7 @@ This layout gives you a clean, modern, maintainable Ubuntu 20.04 installation wi
     tags: ["Kaspa", "Stratum Bridge", "Docker", "Mining", "Environment Variables", "Configuration"],
     readTime: "5 min",
     source: "techderksinsights",
-    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/241ccc70a_generated_image.png",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/20e70266a_generated_image.png",
     featured: false,
     content: `## Kaspa Stratum Bridge — All Supported Docker Environment Variables
 
@@ -582,7 +582,7 @@ The package only exists in Docker's own repo, not Ubuntu/Debian's defaults. If t
     tags: ["Google", "Cybersecurity", "Phishing", "Authentication"],
     readTime: "6 min",
     source: "techderksinsights",
-    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/c77c43057_generated_92c1ff70.png",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/f4dc0aff9_generated_image.png",
     featured: true,
     content: `## Overview
 
@@ -873,7 +873,7 @@ Setting up TailsOS with persistent storage gives you a secure, portable, encrypt
     tags: ["IceRiver", "KS3M", "Mining", "Kaspa", "Power Supply", "Step-Up Transformer", "ASIC"],
     readTime: "5 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/3700c9d55_generated_image.png",
     content: `The IceRiver KS3M pulls ~3200W peak and requires 180–285V AC input, which means if you're in the US on standard 110–120V power, you **must** use a true 3000W+ continuous-duty copper-coil step-up transformer. Here's the complete breakdown.
 
 ## What You Need in a Step-Up Transformer
@@ -1183,7 +1183,7 @@ The most critical aspect of IT support is combining strong technical troubleshoo
     tags: ["Ubuntu", "Snap", "Linux", "Package Manager", "Desktop"],
     readTime: "3 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/c455c1d0b_generated_image.png",
     content: `You can manually update the Snap Store on Ubuntu 20.04.6 by fully stopping its background processes and then running a targeted refresh.
 
 The key is that the Snap Store often runs silently in the background, so you must terminate it before updating.
@@ -1257,7 +1257,7 @@ Then kill the listed PIDs.
     tags: ["Google", "Android", "ChromeOS", "AI", "Gemini", "Pixel", "Desktop", "Tech News"],
     readTime: "5 min read",
     featured: true,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/5a8ff4327_generated_image.png",
     content: `The tech world is buzzing, and for once, it's not about a new phone. While everyone was looking at the latest foldable leaks, Google has been quietly preparing a move that could fundamentally change how we use computers.
 
 We've spent years hearing rumors of a "unified" OS, but the latest leaks ahead of Google I/O 2026 suggest the search giant is finally ready to pull the trigger. Forget ChromeOS for a second—we're talking about Android PCs.
@@ -1307,7 +1307,7 @@ Will we get a "Pixel Desktop"? Or is the future of the PC simply the phone in yo
     tags: ["Docker", "Ethereum", "Geth", "Blockchain", "Web3", "DevOps", "Node Setup"],
     readTime: "8 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/bd0d112fe_generated_image.png",
     content: `## Overview
 
 Below is a step-by-step guide to setting up a Docker container that runs an Ethereum node (using Geth, the Go Ethereum client) and enables you to interact with the blockchain.
@@ -1657,7 +1657,7 @@ Without a doubt, yes. If you're looking for honest, clean, and expert-reviewed s
     tags: ["Chrome", "Ubuntu", "Linux", "Installation", "Browser", "APT", "Package Manager"],
     readTime: "3 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/5a8ff4327_generated_image.png",
     content: `Here's the quickest, cleanest way to install Google Chrome on Ubuntu Desktop, using either the terminal or the GUI. Both methods work on Ubuntu 22.04, 24.04, and newer.
 
 ## 🧩 Method 1 — Install Chrome via Terminal (Fastest)

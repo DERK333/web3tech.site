@@ -547,7 +547,7 @@ main().catch(console.error);
     tags: ["IPFS", "Web3", "Decentralized Storage", "Blockchain", "NFT", "P2P", "Files"],
     readTime: "7 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/1d30e9be1_generated_image.png",
     content: `## What Is IPFS?
 
 IPFS (InterPlanetary File System) is a peer-to-peer distributed file system that stores and retrieves content by its **cryptographic hash** rather than by location (like a URL).
@@ -754,7 +754,7 @@ IPFS is the foundation of most decentralized storage strategies in Web3 — unde
     tags: ["Grass", "DePIN", "Web3", "Passive Income", "Bandwidth", "GRASS Token", "Airdrop", "Solana", "Crypto"],
     readTime: "8 min read",
     featured: true,
-    image: "https://images.unsplash.com/photo-1639762681057-408e52192e55?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/1d30e9be1_generated_image.png",
     content: `## What Is Grass?
 
 Grass is a **DePIN (Decentralized Physical Infrastructure Network)** that lets you earn cryptocurrency by sharing your unused internet bandwidth with the Grass network.

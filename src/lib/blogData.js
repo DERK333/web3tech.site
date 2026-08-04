@@ -521,7 +521,7 @@ const result = await web3quorum.priv.waitForTransactionReceipt(transactionHash);
     tags: ["Crypto", "Scams", "Security", "Community", "DAO", "Onboarding", "Federal Tech"],
     readTime: "15 min",
     source: "techderksinsights",
-    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/241ccc70a_generated_image.png",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/ed0a87a96_generated_image.png",
     featured: true,
     content: `## Abstract
 
@@ -610,7 +610,7 @@ The rise of digital currency demands empathetic, community-first solutions. By e
     tags: ["Ethereum", "Docker", "Geth", "Blockchain", "Web3", "Node Setup"],
     readTime: "8 min",
     source: "techderksinsights",
-    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/d3452c52b_generated_image.png",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/bd0d112fe_generated_image.png",
     featured: false,
     content: `## Overview
 
@@ -931,7 +931,7 @@ This lists **all containers**, including stopped ones, so you can find the corre
     tags: ["Linux", "Troubleshooting", "Command Line", "Permissions", "File System", "Error Handling"],
     readTime: "5 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/8a8c61b32_generated_image.png",
     content: `## What Does "No such file or directory" Mean?
 
 The "No such file or directory" error indicates the system cannot find the file or folder at the path you provided. This is usually due to:
@@ -1120,7 +1120,7 @@ Most "No such file or directory" errors are resolved by one of these simple step
     tags: ["Ubuntu", "Linux", "Terminal", "Command Line", "Process Management", "Keyboard Shortcuts"],
     readTime: "5 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/2cf351670_generated_image.png",
     content: `## Exit a Program in Ubuntu Server
 
 On Ubuntu Server (command-line interface), you can use keyboard shortcuts to gracefully stop running programs or command-line tools to terminate unresponsive ones.
@@ -1460,7 +1460,7 @@ Once the node is synced, you'll have a fully functional Kaspa node with RPC enab
     tags: ["Ubuntu", "Terminal", "TTY", "GUI", "Keyboard Shortcuts", "Linux", "System Management"],
     readTime: "4 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/8a8c61b32_generated_image.png",
     content: `## Switch from GUI to Terminal (TTY) on Ubuntu
 
 You can easily switch from the GUI (Graphical User Interface) to a text-only terminal (known as a virtual terminal or TTY) using keyboard shortcuts.
@@ -1587,7 +1587,7 @@ Most modern Ubuntu systems use **F2 for GUI** and **F3–F6 for terminals**. Tes
     tags: ["Ubuntu", "X Server", "Display Manager", "Troubleshooting", "Terminal", "Linux", "System Management"],
     readTime: "3 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629654291663-b91ad427698f?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/3e74a0d06_generated_image.png",
     content: `## Restart X Server on Ubuntu
 
 When your GUI freezes, becomes unresponsive, or has display issues, restarting the X server often fixes the problem. Here are the most reliable methods.
@@ -1699,7 +1699,7 @@ Use the systemd method unless you have a specific reason not to. If that fails, 
     tags: ["Bitcoin", "Monero", "Ethereum", "Kaspa", "CLI", "Command Line", "Crypto", "Web3", "Terminal"],
     readTime: "8 min read",
     featured: true,
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop&q=60",
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/ec7be0a98_generated_image.png",
     content: `## 🚀 Quick Answer: Yes — You Can Send Crypto from the Command Line
 
 But the exact command depends entirely on the wallet/daemon you're using.
