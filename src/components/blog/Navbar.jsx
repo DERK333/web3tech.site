@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { label: "About", path: "/about" },
   { label: "Contact", path: "/contact" },
   { label: "Connect AI", path: "/connect" },
+  { label: "Assistant", path: "/assistant" },
   { label: "Tools", path: "https://sites.google.com/view/theweb3tech/begin", external: true },
 ];
 
