@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,10 +14,20 @@ import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import PullToRefreshIndicator from "@/components/blog/PullToRefreshIndicator";
 
 export default function Blog() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTag, setActiveTag] = useState(null);
+  const [activeTag, setActiveTag] = useState(searchParams.get("tag"));
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Keep the active tag reflected in the URL so tag links are shareable.
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams);
+    if (activeTag) next.set("tag", activeTag);
+    else next.delete("tag");
+    setSearchParams(next, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTag]);
 
   const onRefresh = useCallback(() => new Promise((res) => setTimeout(res, 800)), []);
   const { pulling, refreshing } = usePullToRefresh(onRefresh);

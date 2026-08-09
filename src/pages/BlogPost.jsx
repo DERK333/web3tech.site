@@ -94,9 +94,11 @@ export default function BlogPost() {
         <div className="flex flex-wrap gap-2 mb-4">
           <Badge className={`border ${colorClass}`}>{post.category}</Badge>
           {post.tags.slice(0, 4).map((tag) => (
-            <Badge key={tag} variant="outline" className="text-xs text-muted-foreground">
-              <Tag className="w-3 h-3 mr-1" />{tag}
-            </Badge>
+            <Link key={tag} to={`/blog?tag=${encodeURIComponent(tag)}`}>
+              <Badge variant="outline" className="text-xs text-muted-foreground hover:border-primary/40 hover:text-primary cursor-pointer transition-colors">
+                <Tag className="w-3 h-3 mr-1" />{tag}
+              </Badge>
+            </Link>
           ))}
         </div>
 
