@@ -8,6 +8,7 @@ import CommentSection from "@/components/blog/CommentSection";
 import ShareButtons from "@/components/blog/ShareButtons";
 import RelatedArticles from "@/components/blog/RelatedArticles";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const categoryColors = {
   Blockchain: "bg-blue-500/10 text-blue-400 border-blue-500/20",
@@ -146,7 +147,7 @@ export default function BlogPost() {
             prose-strong:text-foreground
             prose-li:text-muted-foreground"
         >
-          <ReactMarkdown>{post.content}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
         </motion.div>
 
         {/* Share */}
