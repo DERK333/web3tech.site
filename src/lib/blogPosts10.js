@@ -102,4 +102,164 @@ Use the **Code Snippets** plugin (or alternatives like WPCodeBox and Fluent Snip
 
 Give your agent the prompt above, point it at an unformatted post, and it returns the content with every command lifted into its own tagged, copyable block — in order — and the surrounding prose left readable. Run it once per post, or bake the instructions into the agent's system prompt so every draft comes back formatted automatically.`
   },
+  {
+    id: "write-instructions-for-ai-model-formatting",
+    slug: "write-instructions-for-ai-model-formatting",
+    title: "How to Write Instructions for an AI Model — and Where to Add Them",
+    excerpt: "System instructions shape every conversation an AI model has with you. Here's how to format them so the agent actually follows them, plus exactly where to add them in Google Gemini, Base44 agents, and Microsoft Copilot 365.",
+    date: "2026-08-09",
+    author: "Derrk Samuel",
+    category: "Software",
+    tags: ["AI", "Instructions", "Prompts", "Gemini", "Base44", "Copilot", "Productivity"],
+    readTime: "6 min read",
+    featured: false,
+    image: "https://media.base44.com/images/public/6a112c3e2737801908a7c002/7af7997f0_generated_image.png",
+    content: `## What AI Instructions Actually Are
+
+System instructions (also called a **system prompt** or **custom instructions**) are the standing rules an AI model applies to every conversation. Unlike a normal message you type once, instructions sit behind the scenes and shape tone, format, role, and boundaries — so you don't have to repeat yourself in every chat.
+
+Think of them as a job description: the clearer and more structured they are, the more reliably the model follows them.
+
+---
+
+## How to Format Instructions So the Model Understands
+
+Models follow structure better than prose. Five principles:
+
+### 1. Assign a clear role
+Tell the model what it is and who it's helping.
+
+\`\`\`text
+You are a senior technical editor for a Web3 blog. You write in plain
+language for intermediate developers.
+\`\`\`
+
+### 2. Say what to do, not what to avoid
+Positive framing is easier to follow than negation.
+
+\`\`\`text
+Prefer concrete code examples over abstract descriptions.
+\`\`\`
+
+### 3. Define the output format
+Be explicit about structure so results are consistent.
+
+\`\`\`text
+Return each terminal command in its own fenced code block tagged with
+bash, sh, or powershell. Never bundle two commands in one block.
+\`\`\`
+
+### 4. Give examples (few-shot)
+One example communicates more than five rules.
+
+\`\`\`text
+Example:
+Input:  "run apt update then install git"
+Output: two separate fenced bash blocks — first "sudo apt update",
+        then "sudo apt install git".
+\`\`\`
+
+### 5. Keep it stable and ordered
+Put the most important rules first — models weight early instructions more heavily.
+
+---
+
+## Element Cheatsheet
+
+| Section | Purpose | Example |
+|---------|---------|---------|
+| Role | Identity & expertise | "You are a senior Linux sysadmin." |
+| Audience | Tone & reading level | "Write for intermediate developers." |
+| Format | Output structure | "One command per fenced block." |
+| Rules | Hard boundaries | "Never invent package names." |
+| Examples | Show, don't tell | A worked input → output pair |
+
+---
+
+## A Template You Can Reuse
+
+\`\`\`text
+ROLE: You are a {role} for {audience}.
+
+GOAL: {what a successful response looks like}
+
+RULES:
+1. {rule one}
+2. {rule two}
+3. {rule three}
+
+FORMAT: {exact output structure}
+
+EXAMPLES:
+Input: {sample input}
+Output: {sample output}
+
+If you cannot fulfill the request, say so plainly instead of guessing.
+\`\`\`
+
+> Tip: Save this template and fill in the braces per project. A stable template across all your agents makes their behavior predictable.
+
+---
+
+## Where to Add Instructions — By Platform
+
+Each platform hides the instructions panel in a different spot. Here's how to reach it in the three most common ones.
+
+### Google Gemini (gemini.google.com)
+1. Open [gemini.google.com](https://gemini.google.com/) on your computer.
+2. At the bottom, click **Settings & help**.
+3. Go to **Personal Intelligence → Instructions for Gemini**.
+4. Click **Add +**.
+5. Enter your instructions, then click **Submit**.
+6. Toggle the instructions on or off from the same panel anytime.
+
+### Base44 Agents
+In a Base44 app, instructions live in the agent's config file:
+
+1. Open your app's builder.
+2. Navigate to **base44/agents/** and open (or create) an agent JSON config file.
+3. Set the \`instructions\` field — it is the system prompt that defines behavior, personality, and guidelines.
+4. Add \`tool_configs\` to grant the agent entity or backend-function access.
+5. Save — the agent picks up the new instructions on its next run.
+
+A minimal example:
+
+\`\`\`json
+{
+  "name": "insights_assistant",
+  "description": "Helps visitors with blog content and signups",
+  "instructions": "You are a friendly assistant for TheWeb3Tech blog... (your rules here)",
+  "model": "anthropic/claude-sonnet-4-20250514",
+  "tool_configs": []
+}
+\`\`\`
+
+### Microsoft Copilot 365
+1. Go to [microsoft365.com/chat](https://www.microsoft365.com/chat) and sign in.
+2. In the top-right, open **Settings**.
+3. Select **Custom instructions** (rolling out across tenants — if you don't see it yet, check again in a few days).
+4. Enter your standing instructions and save.
+5. For per-notebook control, open a **Copilot Notebook**, then click the expand arrow next to its name in the left pane and add instructions for that notebook only.
+
+---
+
+## Platform Quick Reference
+
+| Platform | Where instructions live | Scope |
+|----------|--------------------------|-------|
+| Google Gemini | Settings & help → Personal Intelligence → Instructions for Gemini | Every chat |
+| Base44 agents | base44/agents/<name>.jsonc → \`instructions\` field | That agent only |
+| Microsoft Copilot 365 | microsoft365.com/chat → Settings → Custom instructions | Your Copilot chats |
+
+---
+
+## Final Checks Before You Save
+
+- Read your instructions out loud — if a new teammate couldn't follow them, neither can the model.
+- Test with three different prompts and check whether the output format stays consistent.
+- Trim anything redundant; long instructions dilute the important rules.
+- Revisit monthly — platforms update their models, and what worked in June may drift by August.
+
+Good instructions are a one-time investment that pays off in every conversation afterward.`
+  },
 ];
