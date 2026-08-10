@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, CloudUpload, Check, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import BlogCard from "@/components/blog/BlogCard";
@@ -8,6 +8,8 @@ import CategoryFilter from "@/components/blog/CategoryFilter";
 import TagCloud from "@/components/blog/TagCloud";
 import NewsletterWidget from "@/components/blog/NewsletterWidget";
 import { BLOG_POSTS, CATEGORIES } from "@/lib/blogData";
+import { useAuth } from "@/lib/AuthContext";
+import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
 import MobileDrawerSelect from "@/components/ui/MobileDrawerSelect";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
@@ -31,6 +33,48 @@ export default function Blog() {
 
   const onRefresh = useCallback(() => new Promise((res) => setTimeout(res, 800)), []);
   const { pulling, refreshing } = usePullToRefresh(onRefresh);
+
+  const { user } = useAuth();
+  const [backupState, setBackupState] = useState("idle"); // idle | running | done | error
+  const [backupMsg, setBackupMsg] = useState("");
+
+  const runDriveBackup = useCallback(async (silent = false) => {
+    if (!silent) setBackupState("running");
+    try {
+      const res = await base44.functions.invoke("backupBlogToDrive", {
+        posts: BLOG_POSTS.map((p) => ({
+          slug: p.slug,
+          title: p.title,
+          excerpt: p.excerpt,
+          date: p.date,
+          author: p.author,
+          category: p.category,
+          tags: p.tags,
+          image: p.image,
+          content: p.content,
+        })),
+      });
+      setBackupMsg(`Backed up ${res.data?.posts ?? BLOG_POSTS.length} posts with full content.`);
+      setBackupState("done");
+      try {
+        localStorage.setItem("lastDriveBackup", new Date().toISOString().slice(0, 10));
+      } catch {}
+    } catch (e) {
+      setBackupMsg(e?.message || "Backup failed");
+      setBackupState("error");
+    }
+  }, []);
+
+  // Auto-trigger a full-content backup once per day for the admin.
+  useEffect(() => {
+    if (!user || user.role !== "admin") return;
+    try {
+      const last = localStorage.getItem("lastDriveBackup");
+      const today = new Date().toISOString().slice(0, 10);
+      if (last !== today) runDriveBackup(true);
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const filteredPosts = useMemo(() => {
     let posts = [...BLOG_POSTS].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -70,6 +114,36 @@ export default function Blog() {
           All articles on Web3, blockchain, cybersecurity, Linux, and software tools.
         </p>
       </motion.div>
+
+      {user?.role === "admin" && (
+        <div className="mb-6 flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => runDriveBackup(false)}
+            disabled={backupState === "running"}
+            className="gap-2"
+          >
+            {backupState === "running" ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : backupState === "done" ? (
+              <Check className="w-4 h-4 text-primary" />
+            ) : (
+              <CloudUpload className="w-4 h-4" />
+            )}
+            {backupState === "running" ? "Backing up..." : "Back up to Drive"}
+          </Button>
+          {backupMsg && (
+            <span
+              className={`text-xs ${
+                backupState === "error" ? "text-destructive" : "text-muted-foreground"
+              }`}
+            >
+              {backupMsg}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Sticky search + filters bar */}
       <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm pb-4 pt-2 -mx-4 sm:-mx-6 px-4 sm:px-6 border-b border-border/40 mb-8">
