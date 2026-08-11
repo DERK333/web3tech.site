@@ -1,0 +1,36 @@
+{
+  "name": "Share New Posts to LinkedIn",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "share_new_posts_linkedin",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "share_posts": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "shareNewPostsToLinkedin"
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Share new posts to LinkedIn",
+            "description": "Posts new articles to the builder's profile"
+          }
+        }
+      }
+    ]
+  },
+  "description": "When the app is published, shares any blog posts not yet shared to the builder's LinkedIn profile.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "app_publish",
+      "events": [
+        "published"
+      ]
+    }
+  }
+}

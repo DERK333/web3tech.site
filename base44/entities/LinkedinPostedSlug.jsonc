@@ -1,0 +1,35 @@
+{
+  "name": "LinkedinPostedSlug",
+  "type": "object",
+  "properties": {
+    "slug": {
+      "type": "string",
+      "description": "Blog post slug that has already been shared to the builder's LinkedIn profile"
+    }
+  },
+  "required": [
+    "slug"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
