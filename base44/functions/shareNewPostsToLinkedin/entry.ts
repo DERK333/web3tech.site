@@ -59,7 +59,7 @@ export default async function (req) {
       const url = `${SITE_URL}/blog/${post.slug}`;
       const text = `New on TheWeb3Tech: ${post.title}\n\n${post.excerpt}\n\n${url}`;
       try {
-        const res = await fetch('https://api.linkedin.com/v2/posts', {
+        const res = await fetch('https://api.linkedin.com/v2/ugcPosts', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -69,13 +69,13 @@ export default async function (req) {
           body: JSON.stringify({
             author: authorUrn,
             lifecycleState: 'PUBLISHED',
-            visibility: 'PUBLIC',
-            commentary: text,
-            distribution: {
-              feedDistribution: { primaryFeedDistributionActions: ['PROVIDE_AS_UPDATE'] },
-              targetEntities: [],
-              thirdPartyDistributionEntities: [],
+            specificContent: {
+              'com.linkedin.ugc.ShareContent': {
+                shareCommentary: { text },
+                shareMediaCategory: 'NONE',
+              },
             },
+            visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' },
           }),
         });
         if (res.ok) {
