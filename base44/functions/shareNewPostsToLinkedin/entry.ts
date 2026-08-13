@@ -13,7 +13,7 @@ export default async function (req) {
     try {
       user = await base44.auth.me();
     } catch {}
-    if (user && user.role !== 'admin') {
+    if (!user || user.role !== 'admin') {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
