@@ -9,7 +9,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-border/50 bg-card/50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
             <Link to="/" className="flex items-center gap-2 mb-4">
@@ -31,8 +31,25 @@ export default function Footer() {
             <div className="space-y-2">
               <Link to="/" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Home</Link>
               <Link to="/blog" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Blog</Link>
+              <Link to="/categories" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Categories</Link>
+              <Link to="/tags" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Tags</Link>
+              <Link to="/archive" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Archive</Link>
+              <Link to="/search" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Search</Link>
               <Link to="/about" className="block text-sm text-muted-foreground hover:text-primary transition-colors">About</Link>
               <Link to="/contact" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Contact</Link>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-heading font-semibold text-sm text-foreground mb-4 uppercase tracking-wider">
+              More
+            </h3>
+            <div className="space-y-2">
+              <Link to="/faq" className="block text-sm text-muted-foreground hover:text-primary transition-colors">FAQ</Link>
+              <Link to="/resources" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Resources</Link>
+              <Link to="/testimonials" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Testimonials</Link>
+              <Link to="/subscribe" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Subscribe</Link>
+              <Link to="/privacy-policy" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
               <a
                 href={RSS_URL}
                 target="_blank"

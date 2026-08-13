@@ -19,6 +19,15 @@ import ResetPassword from '@/pages/ResetPassword';
 import OAuthConsent from '@/pages/OAuthConsent';
 import Connect from '@/pages/Connect';
 import Assistant from '@/pages/Assistant';
+import FAQ from '@/pages/FAQ';
+import Categories from '@/pages/Categories';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import Resources from '@/pages/Resources';
+import SearchPage from '@/pages/Search';
+import Tags from '@/pages/Tags';
+import Archive from '@/pages/Archive';
+import Testimonials from '@/pages/Testimonials';
+import Subscribe from '@/pages/Subscribe';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const pageVariants = {
@@ -58,6 +67,15 @@ function AnimatedRoutes() {
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/connect" element={<Connect />} />
             <Route path="/assistant" element={<Assistant />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/tags" element={<Tags />} />
+            <Route path="/archive" element={<Archive />} />
+            <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/subscribe" element={<Subscribe />} />
           </Route>
           <Route path="*" element={<PageNotFound />} />
         </Routes>
