@@ -93,7 +93,9 @@ export default function Blog() {
         (p) =>
           p.title.toLowerCase().includes(q) ||
           p.excerpt.toLowerCase().includes(q) ||
-          p.tags.some((t) => t.toLowerCase().includes(q))
+          p.tags.some((t) => t.toLowerCase().includes(q)) ||
+          p.category.toLowerCase().includes(q) ||
+          (p.content || "").toLowerCase().includes(q)
       );
     }
 
