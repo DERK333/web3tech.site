@@ -54,7 +54,7 @@ export default function Navbar() {
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14 lg:h-16">
           {/* Back button on child routes (mobile) */}
           {isChildRoute && (
             <button

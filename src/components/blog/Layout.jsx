@@ -9,7 +9,7 @@ export default function BlogLayout() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       {/* pb-16 for mobile+tablet bottom nav; lg:pb-0 for desktop/ChromeOS where navbar handles nav */}
-      <main className="flex-1 pt-16 pb-16 lg:pb-0">
+      <main className="flex-1 pt-14 pb-14 lg:pt-16 lg:pb-0">
         <Outlet />
       </main>
       <Footer />

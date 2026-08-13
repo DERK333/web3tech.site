@@ -30,11 +30,11 @@ export default function MobileBottomNav() {
             <Link
               key={path}
               to={path}
-              className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 text-[10px] font-medium transition-colors select-none [-webkit-user-select:none] ${
+              className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 text-[10px] font-medium transition-colors select-none [-webkit-user-select:none] ${
                 active ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <Icon className="w-5 h-5" />
+              <Icon className="w-[18px] h-[18px]" />
               {label}
             </Link>
           );

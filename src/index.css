@@ -189,6 +189,21 @@
   font-size: 1rem;
 }
 
+/* Mobile reading comfort: slightly larger text and looser line-height on small screens */
+@media (max-width: 640px) {
+  .prose {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+  }
+  .prose :where(p) {
+    margin-top: 0.85rem;
+    margin-bottom: 0.85rem;
+  }
+  .prose :where(h2) {
+    margin-top: 1.75rem;
+  }
+}
+
 .prose :where(h2) {
   color: hsl(var(--foreground));
   font-weight: 700;

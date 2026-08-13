@@ -68,7 +68,7 @@ export default function BlogPost() {
       />
 
       {/* Hero Image */}
-      <div className="relative w-full h-64 md:h-96 overflow-hidden">
+      <div className="relative w-full h-52 sm:h-64 md:h-96 overflow-hidden">
         <img
           src={post.image}
           alt={post.title}
@@ -80,7 +80,7 @@ export default function BlogPost() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-24 relative z-10 pb-20">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-20 md:-mt-24 relative z-10 pb-20">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-6">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
@@ -136,7 +136,7 @@ export default function BlogPost() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.05, duration: 0.25 }}
-          className="prose prose-invert prose-sm md:prose-base max-w-none
+          className="prose prose-invert max-w-none
             prose-headings:font-bold prose-headings:text-foreground
             prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3 prose-h2:border-b prose-h2:border-border prose-h2:pb-2
             prose-h3:text-lg prose-h3:text-primary prose-h3:mt-6 prose-h3:mb-2
