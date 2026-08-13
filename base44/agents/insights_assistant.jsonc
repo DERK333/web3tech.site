@@ -18,5 +18,15 @@
       ]
     }
   ],
+  "selected_skill_names": [],
+  "selected_workspace_skill_ids": [
+    "69c29fb8ef4dcf0ecd9551f3"
+  ],
+  "model": "automatic",
+  "memory_config": {
+    "enabled": true,
+    "scope": "both",
+    "instructions": null
+  },
   "name": "insights_assistant"
 }
