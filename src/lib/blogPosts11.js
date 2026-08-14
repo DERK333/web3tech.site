@@ -126,6 +126,6 @@ The underlying philosophy Delinea pushes across its AI content is simple: **guar
 
 For any team shipping autonomous agents against real production systems — databases, clusters, cloud consoles — that is the model worth adopting. The alternative is the status quo the numbers describe: agents with standing access, no owner, and an audit trail that can't answer "who did this?"
 
-**Learn more:** [Delinea AI Solutions](https://delinea.com/solutions/ai-solutions) · [Runtime Authorization Whitepaper](https://delinea.com/resources/runtime-authorization-ai-agents) · [Delinea MCP Server](https://delinea.com/blog/unlocking-ai-agents-mcp)`
+**Learn more:** [Delinea AI Solutions](https://delinea.com/solutions/ai-solutions) · [Runtime Authorization Whitepaper](https://delinea.com/resources/runtime-authorization-ai-agents) · [High Stakes of Securing AI (eBook)](https://delinea.com/resources/how-to-secure-ai-security-leader-guide) · [Balancing AI Innovation and Security (blog)](https://delinea.com/blog/how-to-balance-ai-innovation-and-security) · [Delinea MCP Server (blog)](https://delinea.com/blog/unlocking-ai-agents-mcp) · [Request a demo](https://delinea.com/schedule-a-demo)`
   },
 ];
