@@ -53,8 +53,13 @@ export default async function(req) {
       return Response.json({ sites: [], error: 'No verified Search Console properties found in this account.' });
     }
 
-    // Prefer the web3tech.site domain if present, else the first available
-    const preferred = body.siteUrl || sites.find(s => s.url.includes('web3tech.site'))?.url || sites[0].url;
+    // Prefer the web3tech.site property (exact domain property first), else
+    // any property whose URL contains web3tech.site, else the first available.
+    const preferred = body.siteUrl
+      || sites.find(s => s.url === 'sc-domain:web3tech.site')?.url
+      || sites.find(s => s.url === 'https://web3tech.site')?.url
+      || sites.find(s => s.url.includes('web3tech.site'))?.url
+      || sites[0].url;
     const siteUrl = encodeURIComponent(preferred);
 
     // Date window (ISO date strings, no time)
@@ -99,6 +104,16 @@ export default async function(req) {
         position: r.position || 0,
       }));
 
+    // Re-submit our sitemap to this Search Console property on each load so
+    // Google re-fetches the current version (now including every public page)
+    // and indexes them. The PUT is idempotent.
+    const SITEMAP_URL = 'https://web3tech.site/api/sitemap';
+    let sitemapsData = sitemaps;
+    try {
+      await scFetch(`${SC_API}/sites/${siteUrl}/sitemaps/${encodeURIComponent(SITEMAP_URL)}`, accessToken, { method: 'PUT' });
+      sitemapsData = await scFetch(`${SC_API}/sites/${siteUrl}/sitemaps`, accessToken);
+    } catch { /* submission can fail for unverified/unsupported properties — ignore */ }
+
     return Response.json({
       sites,
       selectedSiteUrl: preferred,
@@ -115,7 +130,9 @@ export default async function(req) {
       topPages: rank(topPages.rows, 'page'),
       topCountries: rank(topCountries.rows, 'country'),
       topDevices: rank(topDevices.rows, 'device'),
-      sitemaps: (sitemaps.sitemap || []).map(s => ({
+      sitemapUrl: SITEMAP_URL,
+      sitemapSubmitted: (sitemapsData.sitemap || []).some(s => s.path === SITEMAP_URL),
+      sitemaps: (sitemapsData.sitemap || []).map(s => ({
         path: s.path,
         type: s.type,
         lastSubmitted: s.lastSubmitted,

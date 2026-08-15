@@ -2,12 +2,23 @@ import { POSTS } from '../../shared/blogPostsMeta.js';
 
 const SITE_URL = 'https://web3tech.site';
 
-// Core site pages (categories live as filters on /blog, not separate routes).
+// All public, indexable site routes. (App/auth-only screens like /settings,
+// /analytics, /connect, /assistant, /login, /register are excluded — they are
+// not content pages worth indexing.)
 const STATIC_PAGES = [
   { loc: '/', priority: '1.0', changefreq: 'daily' },
   { loc: '/blog', priority: '0.9', changefreq: 'daily' },
+  { loc: '/categories', priority: '0.8', changefreq: 'weekly' },
+  { loc: '/tags', priority: '0.7', changefreq: 'weekly' },
+  { loc: '/archive', priority: '0.7', changefreq: 'weekly' },
+  { loc: '/search', priority: '0.6', changefreq: 'monthly' },
+  { loc: '/resources', priority: '0.7', changefreq: 'monthly' },
+  { loc: '/testimonials', priority: '0.5', changefreq: 'monthly' },
+  { loc: '/subscribe', priority: '0.5', changefreq: 'monthly' },
+  { loc: '/faq', priority: '0.6', changefreq: 'monthly' },
   { loc: '/about', priority: '0.7', changefreq: 'monthly' },
   { loc: '/contact', priority: '0.6', changefreq: 'monthly' },
+  { loc: '/privacy-policy', priority: '0.3', changefreq: 'yearly' },
 ];
 
 function today() {
