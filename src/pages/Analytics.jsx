@@ -9,6 +9,7 @@ import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import TopBlogPosts from "@/components/analytics/TopBlogPosts";
+import SearchConsoleOverview from "@/components/analytics/SearchConsoleOverview";
 
 const RANGES = [
   { label: "7 days", value: 7 },
@@ -270,6 +271,11 @@ export default function Analytics() {
           </div>
         </>
       )}
+
+      {/* Google Search Console — search performance, top queries/pages, sitemaps */}
+      <div className="mt-6">
+        <SearchConsoleOverview />
+      </div>
     </div>
   );
 }
