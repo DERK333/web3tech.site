@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Terminal, Search, Sun, Moon, ArrowLeft, UserCircle } from "lucide-react";
+import { Menu, X, Terminal, Search, Sun, Moon, ArrowLeft, UserCircle, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchOverlay from "@/components/blog/SearchOverlay";
 import { useTheme } from "@/hooks/useTheme";
@@ -129,13 +129,20 @@ export default function Navbar() {
             >
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
-            {isAuthenticated && (
+            {isAuthenticated ? (
               <Link
                 to="/settings"
                 className={`ml-1 p-2 rounded-lg border border-border/50 bg-secondary/50 text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all ${location.pathname === "/settings" ? "text-primary border-primary/30" : ""}`}
                 title="Settings"
               >
                 <UserCircle className="w-4 h-4" />
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                className="ml-2 inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
+              >
+                <LogIn className="w-4 h-4" /> Sign In
               </Link>
             )}
           </div>
@@ -212,6 +219,15 @@ export default function Navbar() {
                       }`}
                     >
                       Analytics
+                    </Link>
+                  )}
+                  {!isAuthenticated && (
+                    <Link
+                      to="/login"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-2 mt-2 px-4 py-3 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
+                    >
+                      <LogIn className="w-4 h-4" /> Sign In
                     </Link>
                   )}
                   </div>
