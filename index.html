@@ -7,13 +7,44 @@
     <!-- SecurePrivacy consent/privacy script (load as early as possible) -->
     <script src="https://app.secureprivacy.ai/script/6a806ebff9621119124fc89f.js"></script>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DFDHJ3XT2V"></script>
+    <!-- Google Consent Mode v2: default all consent types to "denied" until the
+         SecurePrivacy CMP signals an update. This lets gtag.js load in a
+         cookie-less (serverless ping) state immediately and switch to full
+         measurement only after the visitor grants consent via the banner. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'functionality_storage': 'denied',
+        'security_storage': 'granted',
+        'wait_for_update': 500
+      });
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DFDHJ3XT2V"></script>
+    <script>
       gtag('js', new Date());
       gtag('config', 'G-DFDHJ3XT2V');
+    </script>
+
+    <!-- Allow visitors to re-open the SecurePrivacy consent banner from the UI -->
+    <script>
+      window.__spReopenConsent = function () {
+        try {
+          if (window.securePrivacy && typeof window.securePrivacy.openBanner === 'function') {
+            window.securePrivacy.openBanner();
+          } else if (typeof window.sp_openCMP === 'function') {
+            window.sp_openCMP();
+          } else {
+            window.dispatchEvent(new CustomEvent('sp-open-consent'));
+          }
+        } catch (e) { /* CMP not yet loaded */ }
+      };
     </script>
 
     <!-- Cross-platform viewport: covers phones, tablets, ChromeOS, AndroidXR, desktop -->
