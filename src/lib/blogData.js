@@ -13,6 +13,7 @@ import { BLOG_POSTS_13 } from "./blogPosts13";
 import { BLOG_POSTS_14 } from "./blogPosts14";
 import { BLOG_POSTS_15 } from "./blogPosts15";
 import { BLOG_POSTS_16 } from "./blogPosts16";
+import { BLOG_POSTS_17 } from "./blogPosts17";
 
 const BLOG_POSTS_1 = [
   {
@@ -1928,7 +1929,7 @@ The command line is the most direct, scriptable, and automation-friendly way to 
 ];
 
 // Deduplicate by slug before exporting
-const allPosts = [...BLOG_POSTS_1, ...BLOG_POSTS_2, ...BLOG_POSTS_3, ...BLOG_POSTS_4, ...BLOG_POSTS_5, ...BLOG_POSTS_6, ...BLOG_POSTS_7, ...BLOG_POSTS_8, ...BLOG_POSTS_9, ...BLOG_POSTS_10, ...BLOG_POSTS_11, ...BLOG_POSTS_12, ...BLOG_POSTS_13, ...BLOG_POSTS_14, ...BLOG_POSTS_15, ...BLOG_POSTS_16];
+const allPosts = [...BLOG_POSTS_1, ...BLOG_POSTS_2, ...BLOG_POSTS_3, ...BLOG_POSTS_4, ...BLOG_POSTS_5, ...BLOG_POSTS_6, ...BLOG_POSTS_7, ...BLOG_POSTS_8, ...BLOG_POSTS_9, ...BLOG_POSTS_10, ...BLOG_POSTS_11, ...BLOG_POSTS_12, ...BLOG_POSTS_13, ...BLOG_POSTS_14, ...BLOG_POSTS_15, ...BLOG_POSTS_16, ...BLOG_POSTS_17];
 const seenSlugs = new Set();
 export const BLOG_POSTS = allPosts.filter(p => {
   if (seenSlugs.has(p.slug)) return false;
