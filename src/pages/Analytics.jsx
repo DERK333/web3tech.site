@@ -8,6 +8,7 @@ import {
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import TopBlogPosts from "@/components/analytics/TopBlogPosts";
 
 const RANGES = [
   { label: "7 days", value: 7 },
@@ -191,6 +192,11 @@ export default function Analytics() {
             <StatCard icon={MousePointerClick} label="Page Views" value={ov.pageviews ?? 0} accent="bg-primary/10 text-primary" />
             <StatCard icon={Clock} label="Engagement" value={fmtPct(ov.engagementRate)} accent="bg-accent/10 text-accent" />
             <StatCard icon={Clock} label="Avg Session" value={fmtDur(ov.avgSessionDuration)} accent="bg-primary/10 text-primary" />
+          </div>
+
+          {/* Top blog posts by views — GA4 page paths mapped to blog posts */}
+          <div className="mb-6">
+            <TopBlogPosts topPages={data.topPages} days={days} />
           </div>
 
           {/* Daily chart */}
