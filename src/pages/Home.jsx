@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, LogIn } from "lucide-react";
 import HeroSection from "@/components/blog/HeroSection";
 import BlogCard from "@/components/blog/BlogCard";
 import { BLOG_POSTS } from "@/lib/blogData";
@@ -88,6 +88,12 @@ export default function Home() {
               >
                 Visit TechDerks Insights
               </a>
+              <Link
+                to="/login"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-primary/40 text-primary font-medium text-sm hover:bg-primary/10 transition-colors"
+              >
+                <LogIn className="w-4 h-4" /> Sign In
+              </Link>
 
             </div>
           </div>
