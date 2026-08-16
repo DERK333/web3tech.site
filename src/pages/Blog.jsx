@@ -209,8 +209,8 @@ export default function Blog() {
         </div>
       </div>
 
-      {/* Tag Cloud */}
-      <div className="mb-10">
+      {/* Tag Cloud — shown inline on tablet/mobile (sidebar is hidden below xl) */}
+      <div className="mb-10 xl:hidden">
         <TagCloud activeTag={activeTag} onTagClick={setActiveTag} />
       </div>
 
@@ -240,7 +240,8 @@ export default function Blog() {
         </div>
 
         {/* Sidebar: hidden on mobile/tablet, visible on large screens */}
-        <aside className="hidden xl:block w-64 flex-shrink-0 sticky top-24">
+        <aside className="hidden xl:block w-64 flex-shrink-0 sticky top-24 space-y-6">
+          <TagCloud activeTag={activeTag} onTagClick={setActiveTag} />
           <NewsletterWidget />
         </aside>
       </div>
