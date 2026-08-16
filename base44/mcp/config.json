@@ -1,3 +1,41 @@
 {
-  "auth": "oauth"
+  "auth": "oauth",
+  "tools": {
+    "functions": [
+      {
+        "name": "blog_knowledge_base",
+        "title": "Query Blog Knowledge Base",
+        "description": "Search and retrieve articles from the Web3 Insights Hub blog (Web3, crypto, blockchain, Linux, security, privacy, and software topics). Use action \"list\" to get every post's title, slug, category, tags, and excerpt; action \"search\" with a free-text query to find relevant articles (matches titles, tags, and full body); or action \"get\" with a slug to retrieve one article's full content. Call list or search first to discover slugs, then get the full article.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["list", "search", "get"],
+              "description": "What to do: list all posts, search posts by query, or get the full content of one post by slug."
+            },
+            "query": {
+              "type": "string",
+              "description": "Free-text search query (required for action=search). Matches article titles, excerpts, tags, and body content."
+            },
+            "slug": {
+              "type": "string",
+              "description": "Article slug (required for action=get). Discover it via list or search first."
+            },
+            "limit": {
+              "type": "string",
+              "description": "Max search results to return (for action=search). 1-30, defaults to 10."
+            }
+          },
+          "required": ["action"]
+        },
+        "handler": "blogKnowledgeBase",
+        "annotations": {
+          "read_only_hint": true,
+          "destructive_hint": false,
+          "idempotent_hint": true
+        }
+      }
+    ]
+  }
 }
