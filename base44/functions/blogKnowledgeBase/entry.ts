@@ -2,9 +2,9 @@
 // Exposes the full blog post corpus — list, search, and retrieve — so connected
 // AI assistants (ChatGPT, Claude, Cursor, …) can use the posts as a knowledge base.
 //
-// The post corpus lives in the frontend data module (src/lib/blogData.js), which is
-// pure static JS with no React/browser dependencies, so it can be imported here.
-import { BLOG_POSTS } from '../../../src/lib/blogData.js';
+// The post corpus lives in the shared backend module (base44/shared/blogPostsContent.js),
+// a self-contained mirror of the frontend blog data that backend functions can bundle.
+import { BLOG_POSTS } from '../../shared/blogPostsContent.js';
 
 // Lightweight metadata view (omit the heavy `content` body) for list/search results.
 function meta(p: any) {
