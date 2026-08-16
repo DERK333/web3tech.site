@@ -36,13 +36,19 @@ async function listProperties(token) {
 }
 
 // Run a report on a property
-function runReport(propertyId, token, dateRange, dimensions, metrics) {
-  const body = JSON.stringify({
+function runReport(propertyId, token, dateRange, dimensions, metrics, opts = {}) {
+  const body = {
     dateRanges: [{ startDate: dateRange.start, endDate: dateRange.end }],
     dimensions: dimensions.map(d => ({ name: d })),
     metrics: metrics.map(m => ({ name: m })),
+  };
+  if (opts.dimensionFilter) body.dimensionFilter = opts.dimensionFilter;
+  if (opts.orderBys) body.orderBys = opts.orderBys;
+  if (opts.limit) body.limit = opts.limit;
+  return gaFetch(`${DATA_API}/properties/${propertyId}:runReport`, token, {
+    method: 'POST',
+    body: JSON.stringify(body),
   });
-  return gaFetch(`${DATA_API}/properties/${propertyId}:runReport`, token, { method: 'POST', body });
 }
 
 function rowToObj(row) {
@@ -89,16 +95,32 @@ export default async function(req) {
     const fmt = (d) => d.toISOString().slice(0, 10);
     const range = { start: fmt(start), end: fmt(end) };
 
-    const [overview, byDay, topPages, topSources, topCountries] = await Promise.all([
+    // Dedicated report for blog posts: filter pagePath to /blog/ and rank by views
+    // so individual posts always surface, even when the homepage dominates the
+    // generic top-pages list.
+    const blogFilter = {
+      filter: {
+        fieldName: 'pagePath',
+        stringFilter: { matchType: 'BEGINS_WITH', value: '/blog/' },
+      },
+    };
+    const blogOrder = [{ metric: { metricName: 'screenPageViews' }, desc: true }];
+
+    const [overview, byDay, topPages, topSources, topCountries, blogPages] = await Promise.all([
       runReport(targetId, accessToken, range, [], ['sessions', 'totalUsers', 'screenPageViews', 'engagementRate', 'averageSessionDuration']),
       runReport(targetId, accessToken, range, ['date'], ['sessions', 'totalUsers']),
       runReport(targetId, accessToken, range, ['pagePath', 'pageTitle'], ['screenPageViews']),
       runReport(targetId, accessToken, range, ['sessionDefaultChannelGroup', 'sessionSource'], ['sessions']),
       runReport(targetId, accessToken, range, ['country'], ['sessions']),
+      runReport(targetId, accessToken, range, ['pagePath'], ['screenPageViews'], {
+        dimensionFilter: blogFilter,
+        orderBys: blogOrder,
+        limit: 50,
+      }),
     ]);
 
-    const pick = (report, dims, metrics) =>
-      (report.rows || []).slice(0, 15).map((r, ri) => {
+    const pick = (report, dims, metrics, limit = 15) =>
+      (report.rows || []).slice(0, limit).map((r, ri) => {
         const o = rowToObj(r);
         const out = { rank: ri + 1 };
         dims.forEach((d, i) => { out[d] = o[`d${i}`]; });
@@ -134,6 +156,8 @@ export default async function(req) {
       },
       byDay: byDayRows,
       topPages: pick(topPages, ['pagePath', 'pageTitle'], ['screenPageViews']),
+      // /blog/-only page paths ranked by views — feeds the Top Blog Posts widget.
+      topBlogPages: pick(blogPages, ['pagePath'], ['screenPageViews'], 50),
       topSources: pick(topSources, ['channel', 'source'], ['sessions']),
       topCountries: pick(topCountries, ['country'], ['sessions']),
     });

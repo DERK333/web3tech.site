@@ -209,7 +209,7 @@ export default function Analytics() {
 
           {/* Top blog posts by views — GA4 page paths mapped to blog posts */}
           <div className="mb-6">
-            <TopBlogPosts topPages={data.topPages} days={days} />
+            <TopBlogPosts topPages={data.topBlogPages || []} days={days} />
           </div>
 
           {/* Daily chart */}
