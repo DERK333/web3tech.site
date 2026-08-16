@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,12 +8,22 @@ import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function Login() {
+  const { isAuthenticated } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // If the visitor is already authenticated, leave the login page so a signed-in
+  // user never sees the form again (e.g. after a successful login that lands back
+  // here, or visiting /login while already logged in).
+  if (isAuthenticated) {
+    const dest = safeReturnTo();
+    return <Navigate to={dest === "/login" ? "/" : dest} replace />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
