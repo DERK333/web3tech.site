@@ -29,6 +29,7 @@ import Archive from '@/pages/Archive';
 import Testimonials from '@/pages/Testimonials';
 import Subscribe from '@/pages/Subscribe';
 import { AnimatePresence, motion } from 'framer-motion';
+import PageViewTracker from '@/components/PageViewTracker';
 
 const pageVariants = {
   initial: { opacity: 0, x: 18 },
@@ -84,7 +85,12 @@ function AnimatedRoutes() {
   );
 }
 
-const AuthenticatedApp = () => <AnimatedRoutes />;
+const AuthenticatedApp = () => (
+  <>
+    <PageViewTracker />
+    <AnimatedRoutes />
+  </>
+);
 
 
 function App() {
