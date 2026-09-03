@@ -4,8 +4,8 @@ import { POSTS } from '../../shared/blogPostsMeta.js';
 const FOLDER_NAME = 'Web3Tech Blog Backup';
 
 function buildPostMarkdown(post, includeBody) {
-  const tags = (post.tags || []).map((t) => `"${String(t).replace(/"/g, '\\"')}"`).join(', ');
   const safe = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const tags = (post.tags || []).map((t) => `"${safe(t)}"`).join(', ');
   let md = `---
 title: "${safe(post.title)}"
 slug: "${safe(post.slug)}"
