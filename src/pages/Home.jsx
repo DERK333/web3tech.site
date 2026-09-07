@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, LogIn } from "lucide-react";
 import HeroSection from "@/components/blog/HeroSection";
 import BlogCard from "@/components/blog/BlogCard";
+import NewsletterWidget from "@/components/blog/NewsletterWidget";
 import { BLOG_POSTS } from "@/lib/blogData";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import PullToRefreshIndicator from "@/components/blog/PullToRefreshIndicator";
@@ -64,37 +65,41 @@ export default function Home() {
 
       {/* CTA */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
-        <div className="relative rounded-2xl border border-border/50 bg-card/50 p-8 sm:p-12 text-center overflow-hidden">
+        <div className="relative rounded-2xl border border-border/50 bg-card/50 p-8 sm:p-12 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5" />
-          <div className="relative z-10">
-            <h2 className="font-heading font-bold text-2xl mb-3">Stay Ahead of the Curve</h2>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
-              Get practical Web3, crypto, and Linux insights delivered through our blogs.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a
-                href="https://web3tech.site"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors touch-manipulation"
-              >
-                Visit The Web3 Tech Blog
-              </a>
-              <a
-                href="https://techderksinsights.blogspot.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-secondary text-secondary-foreground font-medium text-sm hover:bg-secondary/80 transition-colors"
-              >
-                Visit TechDerks Insights
-              </a>
-              <Link
-                to="/login"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-primary/40 text-primary font-medium text-sm hover:bg-primary/10 transition-colors"
-              >
-                <LogIn className="w-4 h-4" /> Sign In
-              </Link>
-
+          <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+            <div className="flex-1 text-center lg:text-left">
+              <h2 className="font-heading font-bold text-2xl mb-3">Stay Ahead of the Curve</h2>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto lg:mx-0 mb-6">
+                Get practical Web3, crypto, and Linux insights delivered through our blogs.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+                <a
+                  href="https://web3tech.site"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors touch-manipulation"
+                >
+                  Visit The Web3 Tech Blog
+                </a>
+                <a
+                  href="https://techderksinsights.blogspot.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-secondary text-secondary-foreground font-medium text-sm hover:bg-secondary/80 transition-colors"
+                >
+                  Visit TechDerks Insights
+                </a>
+                <Link
+                  to="/login"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-primary/40 text-primary font-medium text-sm hover:bg-primary/10 transition-colors"
+                >
+                  <LogIn className="w-4 h-4" /> Sign In
+                </Link>
+              </div>
+            </div>
+            <div className="w-full max-w-sm">
+              <NewsletterWidget />
             </div>
           </div>
         </div>
