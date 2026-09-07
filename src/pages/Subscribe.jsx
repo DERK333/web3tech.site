@@ -23,6 +23,7 @@ export default function Subscribe() {
         return;
       }
       await base44.entities.Subscriber.create({ email: email.trim() });
+      base44.analytics.track({ eventName: "newsletter_subscribed" });
       setStatus("success");
     } catch (err) {
       setStatus("error");

@@ -24,6 +24,7 @@ export default function NewsletterWidget() {
     }
 
     await base44.entities.Subscriber.create({ email: email.trim() });
+    base44.analytics.track({ eventName: "newsletter_subscribed" });
     setStatus("success");
   };
 

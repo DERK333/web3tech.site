@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Calendar, Clock, Tag, ArrowLeft, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { BLOG_POSTS, AUTHOR } from "@/lib/blogData";
+import { base44 } from "@/api/base44Client";
 import CommentSection from "@/components/blog/CommentSection";
 import ShareButtons from "@/components/blog/ShareButtons";
 import RelatedArticles from "@/components/blog/RelatedArticles";
@@ -25,6 +26,27 @@ export default function BlogPost() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+
+  // Fire "blog_post_read" once per post view when the reader reaches 50% of the page
+  useEffect(() => {
+    if (!post) return;
+    let fired = false;
+    const onScroll = () => {
+      if (fired) return;
+      const doc = document.documentElement;
+      if (window.scrollY + window.innerHeight >= doc.scrollHeight * 0.5) {
+        fired = true;
+        window.removeEventListener("scroll", onScroll);
+        base44.analytics.track({
+          eventName: "blog_post_read",
+          properties: { slug: post.slug, category: post.category },
+        });
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [post]);
 
   useEffect(() => {
     if (post) {
