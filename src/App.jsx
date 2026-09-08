@@ -30,6 +30,7 @@ import Testimonials from '@/pages/Testimonials';
 import Subscribe from '@/pages/Subscribe';
 import { AnimatePresence, motion } from 'framer-motion';
 import PageViewTracker from '@/components/PageViewTracker';
+import RouteMeta from '@/components/RouteMeta';
 
 const pageVariants = {
   initial: { opacity: 0, x: 18 },
@@ -88,6 +89,7 @@ function AnimatedRoutes() {
 const AuthenticatedApp = () => (
   <>
     <PageViewTracker />
+    <RouteMeta />
     <AnimatedRoutes />
   </>
 );

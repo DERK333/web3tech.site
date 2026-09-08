@@ -122,6 +122,8 @@ tar -czf backup-$(date +%F).tar.gz ~/
 
 Windows can technically do all this. But it takes downloads, installs, and GUI hunting. On Linux, it's just *there*, and the ceiling keeps rising the more you learn.
 
+Want a head start? I rounded up the ten one-liners I actually use daily in [10 Linux Terminal Commands So Powerful They Feel Illegal](/blog/linux-terminal-commands-so-powerful-they-feel-illegal).
+
 ### Software I Actually Prefer Now
 
 | Windows Tool | Linux Replacement | Verdict |
@@ -398,6 +400,8 @@ Here's what these commands have in common: **they compose.** Pipe the output of 
 | Space report | \`df -h\` |
 | Disk image | \`dd if=... of=... status=progress\` |
 
+If you spend your days in containers, [watching Docker container logs live](/blog/docker-container-logs-linux-guide) is this same idea in action — one command, a live window into your server.
+
 Pick one command this week. Use it until it's muscle memory. Then come back for the next one. In a month, the terminal stops being the scary part of Linux and becomes the reason you stay.`
   },
   {
@@ -573,6 +577,8 @@ The rule of macOS: *whenever a setting seems missing, hold Option and look again
 
 None of these required an app, a download, or a single Terminal command. Apple built them all in — it just never advertised the manual.
 
-Pick three of these that fit your workflow, use them for a week, and your Mac starts feeling less like an appliance and more like the tool it was designed to be.`
+Pick three of these that fit your workflow, use them for a week, and your Mac starts feeling less like an appliance and more like the tool it was designed to be.
+
+And if you're curious what life looks like on the other side of the OS fence — I wiped Windows off my machine and [went full Linux for 30 days](/blog/replaced-windows-linux-30-days-what-broke). The results surprised me.`
   },
 ];
