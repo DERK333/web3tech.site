@@ -11,6 +11,7 @@ import CodeBlockCopy from "@/components/blog/CodeBlockCopy";
 import { base44 } from "@/api/base44Client";
 import CommentSection from "@/components/blog/CommentSection";
 import ShareButtons from "@/components/blog/ShareButtons";
+import NotifyUpdateButton from "@/components/blog/NotifyUpdateButton";
 import RelatedArticles from "@/components/blog/RelatedArticles";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -138,6 +139,11 @@ export default function BlogPost() {
         >
           {post.title}
         </motion.h1>
+
+        {/* Notify-me-when-updated */}
+        <div className="mb-4">
+          <NotifyUpdateButton postSlug={post.slug} />
+        </div>
 
         {/* Meta */}
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
