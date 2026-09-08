@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { POSTS } from '../../shared/blogPostsMeta.js';
+import { resolveAuthorUrn, postToLinkedIn } from '../../shared/linkedinPost.ts';
 
 const SITE_URL = 'https://web3tech.site';
 
@@ -21,17 +22,7 @@ export default async function (req) {
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('linkedin');
 
     // Resolve the member URN (urn:li:person:<sub>) used as the post author.
-    const meRes = await fetch('https://api.linkedin.com/v2/userinfo', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    if (!meRes.ok) {
-      return Response.json(
-        { error: 'Failed to fetch LinkedIn profile', detail: await meRes.text() },
-        { status: 502 }
-      );
-    }
-    const me = await meRes.json();
-    const authorUrn = `urn:li:person:${me.sub}`;
+    const authorUrn = await resolveAuthorUrn(accessToken);
 
     // Track which slugs have already been shared.
     const existing = await base44.asServiceRole.entities.LinkedinPostedSlug.list(undefined, 1000);
@@ -57,33 +48,12 @@ export default async function (req) {
 
     for (const post of newPosts) {
       const url = `${SITE_URL}/blog/${post.slug}`;
-      const text = `New on TheWeb3Tech: ${post.title}\n\n${post.excerpt}\n\n${url}`;
+      // Lead with the excerpt (the hook), not the title — plus a CTA and hashtags.
+      const text = `${post.excerpt}\n\nRead the full guide: ${url}\n\n#Web3 #${post.category.replace(/[^A-Za-z0-9]/g, '')}`;
       try {
-        const res = await fetch('https://api.linkedin.com/v2/ugcPosts', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'X-Restli-Method': 'CREATE',
-          },
-          body: JSON.stringify({
-            author: authorUrn,
-            lifecycleState: 'PUBLISHED',
-            specificContent: {
-              'com.linkedin.ugc.ShareContent': {
-                shareCommentary: { text },
-                shareMediaCategory: 'NONE',
-              },
-            },
-            visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' },
-          }),
-        });
-        if (res.ok) {
-          await base44.asServiceRole.entities.LinkedinPostedSlug.create({ slug: post.slug });
-          shared.push(post.slug);
-        } else {
-          errors.push({ slug: post.slug, status: res.status, detail: await res.text() });
-        }
+        await postToLinkedIn(accessToken, authorUrn, text);
+        await base44.asServiceRole.entities.LinkedinPostedSlug.create({ slug: post.slug });
+        shared.push(post.slug);
       } catch (e) {
         errors.push({ slug: post.slug, error: e.message });
       }

@@ -1,0 +1,35 @@
+{
+  "name": "LinkedinInsightSlug",
+  "type": "object",
+  "properties": {
+    "slug": {
+      "type": "string",
+      "description": "Blog post slug that has already been cross-posted to LinkedIn as a weekly original insight"
+    }
+  },
+  "required": [
+    "slug"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
