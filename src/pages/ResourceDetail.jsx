@@ -19,7 +19,7 @@ export default function ResourceDetail() {
   // Unique meta title + description per tool (same pattern as BlogPost)
   useEffect(() => {
     if (!resource) return;
-    document.title = `${resource.name} — TheWeb3Tech`;
+    document.title = `${resource.name} - Web3 Insights Hub Resources`;
     const desc = document.querySelector("meta[name='description']");
     if (desc) desc.setAttribute("content", resource.usage);
   }, [resource]);
