@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
-import { Send, Plus, MessageSquare, Loader2, Sparkles, LogIn } from "lucide-react";
+import { Send, Plus, MessageSquare, Loader2, Sparkles, UserRound } from "lucide-react";
+import { Link } from "react-router-dom";
 import MessageBubble from "@/components/agent/MessageBubble";
 import { useAuth } from "@/lib/AuthContext";
 
@@ -87,27 +88,6 @@ export default function Assistant() {
     }
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
-        <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
-          <Sparkles className="w-7 h-7 text-primary" />
-        </div>
-        <h1 className="font-heading text-2xl font-bold mb-2">Insights Assistant</h1>
-        <p className="text-muted-foreground mb-6 max-w-md">
-          Sign in to chat with the assistant — ask about blog topics, manage your comments, or subscribe to the newsletter.
-        </p>
-        <button
-          onClick={() => base44.auth.redirectToLogin("/assistant")}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
-        >
-          <LogIn className="w-4 h-4" />
-          Sign in to continue
-        </button>
-      </div>
-    );
-  }
-
   const busy = messages.some((m) => m.role === "assistant" && m.tool_calls?.some((tc) => ["pending", "running", "in_progress"].includes(tc.status)));
 
   return (
@@ -169,6 +149,13 @@ export default function Assistant() {
           </div>
 
           <div className="border-t border-border/50 p-3">
+            {!isAuthenticated && (
+              <div className="flex items-center gap-2 mb-2 px-3 py-2 rounded-lg bg-secondary/60 border border-border/50 text-xs text-muted-foreground">
+                <UserRound className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                <span className="flex-1">You are chatting as a guest. Subscribe to save your conversation history.</span>
+                <Link to="/subscribe" className="text-primary font-medium hover:underline flex-shrink-0">Subscribe</Link>
+              </div>
+            )}
             <form
               onSubmit={(e) => { e.preventDefault(); handleSend(); }}
               className="flex items-end gap-2"
