@@ -22,6 +22,7 @@ import Connect from '@/pages/Connect';
 import Assistant from '@/pages/Assistant';
 import FAQ from '@/pages/FAQ';
 import Categories from '@/pages/Categories';
+import CategoryDetail from '@/pages/CategoryDetail';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import Resources from '@/pages/Resources';
 import ResourceDetail from '@/pages/ResourceDetail';
@@ -74,6 +75,7 @@ function AnimatedRoutes() {
             <Route path="/assistant" element={<Assistant />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/categories" element={<Categories />} />
+            <Route path="/categories/:slug" element={<CategoryDetail />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/resources/:slug" element={<ResourceDetail />} />

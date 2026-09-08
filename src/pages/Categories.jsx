@@ -1,16 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Code, Shield, Terminal, Eye, Box, ArrowRight } from "lucide-react";
+import { Code, ArrowRight } from "lucide-react";
 import { BLOG_POSTS, CATEGORIES } from "@/lib/blogData";
-
-const CATEGORY_META = {
-  Blockchain: { icon: Box, desc: "Smart contracts, Ethereum, Kaspa, Monero, node setups, and Docker-based blockchain tooling." },
-  Security: { icon: Shield, desc: "TailsOS, phishing defense, Google Advanced Protection, hardening, and operational security." },
-  Linux: { icon: Terminal, desc: "Ubuntu, Debian, Docker, system administration, partitioning, and server management." },
-  Privacy: { icon: Eye, desc: "Tor, Tails, anonymous browsing, and tools for protecting your digital footprint." },
-  Software: { icon: Code, desc: "Trusted download sources, Windows utilities, developer tools, and productivity apps." },
-};
+import { CATEGORY_META } from "@/lib/categoryMeta";
 
 export default function Categories() {
   return (
@@ -35,7 +28,7 @@ export default function Categories() {
                 transition={{ delay: i * 0.05 }}
               >
                 <Link
-                  to={`/blog?category=${encodeURIComponent(cat.name)}`}
+                  to={`/categories/${meta.slug}`}
                   className="block h-full rounded-xl border border-border/50 bg-card/50 p-6 hover:border-primary/40 hover:bg-card transition-all group"
                 >
                   <div className="flex items-start justify-between mb-4">
