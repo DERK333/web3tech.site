@@ -24,6 +24,7 @@ import FAQ from '@/pages/FAQ';
 import Categories from '@/pages/Categories';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import Resources from '@/pages/Resources';
+import ResourceDetail from '@/pages/ResourceDetail';
 import SearchPage from '@/pages/Search';
 import Tags from '@/pages/Tags';
 import Archive from '@/pages/Archive';
@@ -75,6 +76,7 @@ function AnimatedRoutes() {
             <Route path="/categories" element={<Categories />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/resources" element={<Resources />} />
+            <Route path="/resources/:slug" element={<ResourceDetail />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/tags" element={<Tags />} />
             <Route path="/archive" element={<Archive />} />
