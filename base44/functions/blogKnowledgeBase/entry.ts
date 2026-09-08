@@ -5,6 +5,7 @@
 // The post corpus lives in the shared backend module (base44/shared/blogPostsContent.js),
 // a self-contained mirror of the frontend blog data that backend functions can bundle.
 import { BLOG_POSTS } from '../../shared/blogPostsContent.js';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 
 // Lightweight metadata view (omit the heavy `content` body) for list/search results.
 function meta(p: any) {
@@ -45,6 +46,17 @@ function scorePost(post: any, q: string): number {
 }
 
 export default async function (req: Request) {
+  try {
+    // Reject unauthenticated callers — the function is otherwise open to anyone on the internet.
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user) {
+      return Response.json({ error: 'Unauthorized. Sign in to query the knowledge base.' }, { status: 401 });
+    }
+  } catch {
+    return Response.json({ error: 'Unauthorized. Sign in to query the knowledge base.' }, { status: 401 });
+  }
+
   let body: any = {};
   try {
     const ct = req.headers.get('content-type') || '';
