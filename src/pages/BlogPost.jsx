@@ -12,6 +12,7 @@ import { base44 } from "@/api/base44Client";
 import CommentSection from "@/components/blog/CommentSection";
 import ShareButtons from "@/components/blog/ShareButtons";
 import NotifyUpdateButton from "@/components/blog/NotifyUpdateButton";
+import PullQuoteShareCard, { extractText } from "@/components/blog/PullQuoteShareCard";
 import RelatedArticles from "@/components/blog/RelatedArticles";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -191,6 +192,15 @@ export default function BlogPost() {
             components={{
               h2: ({ children }) => <h2 id={headingIdFromChildren(children)} className="scroll-mt-24">{children}</h2>,
               h3: ({ children }) => <h3 id={headingIdFromChildren(children)} className="scroll-mt-24">{children}</h3>,
+              blockquote: ({ children }) => {
+                const quote = extractText(children);
+                return (
+                  <>
+                    <blockquote>{children}</blockquote>
+                    {quote && <PullQuoteShareCard quote={quote} post={post} />}
+                  </>
+                );
+              },
             }}
           >
             {applyInternalLinks(post.content, post.slug)}
