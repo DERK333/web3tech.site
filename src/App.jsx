@@ -30,6 +30,7 @@ import SearchPage from '@/pages/Search';
 import Tags from '@/pages/Tags';
 import Archive from '@/pages/Archive';
 import Testimonials from '@/pages/Testimonials';
+import StartHere from '@/pages/StartHere';
 import Subscribe from '@/pages/Subscribe';
 import { AnimatePresence, motion } from 'framer-motion';
 import PageViewTracker from '@/components/PageViewTracker';
@@ -64,6 +65,7 @@ function AnimatedRoutes() {
           <Route path="/oauth/consent" element={<OAuthConsent />} />
           <Route element={<BlogLayout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/start" element={<StartHere />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/share/:slug" element={<ShareLanding />} />
