@@ -1,7 +1,8 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 
-/* global Deno */
-Deno.serve(async (req) => {
+// Deletes the calling user's own account. Verifies the caller is signed in
+// first — the endpoint is publicly reachable, so no caller means no deletion.
+export default async function (req: Request) {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
@@ -17,4 +18,4 @@ Deno.serve(async (req) => {
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
-});
+}
