@@ -28,7 +28,10 @@ const buttons = [
 export default function ShareButtons({ post }) {
   const title = post?.title || "";
   const [copied, setCopied] = useState(false);
-  const url = window.location.href;
+  // Share the conversion-optimized landing page for this post
+  const url = post?.slug
+    ? `${window.location.origin}/share/${post.slug}`
+    : window.location.href;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(url);
