@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Calendar, Clock, Tag, ArrowLeft, User } from "lucide-react";
@@ -7,6 +7,7 @@ import { BLOG_POSTS, AUTHOR } from "@/lib/blogData";
 import { applyInternalLinks } from "@/lib/internalLinks";
 import { extractHeadings, headingIdFromChildren } from "@/lib/toc";
 import TableOfContents from "@/components/blog/TableOfContents";
+import CodeBlockCopy from "@/components/blog/CodeBlockCopy";
 import { base44 } from "@/api/base44Client";
 import CommentSection from "@/components/blog/CommentSection";
 import ShareButtons from "@/components/blog/ShareButtons";
@@ -24,6 +25,7 @@ const categoryColors = {
 
 export default function BlogPost() {
   const { slug } = useParams();
+  const contentRef = useRef(null);
   const post = BLOG_POSTS.find((p) => p.slug === slug);
 
   useEffect(() => {
@@ -161,6 +163,7 @@ export default function BlogPost() {
 
         {/* Content */}
         <motion.div
+          ref={contentRef}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.05, duration: 0.25 }}
@@ -187,6 +190,9 @@ export default function BlogPost() {
             {applyInternalLinks(post.content, post.slug)}
           </ReactMarkdown>
         </motion.div>
+
+        {/* Copy buttons injected into each rendered code block */}
+        <CodeBlockCopy containerRef={contentRef} watch={post.slug} />
 
         {/* Share */}
         <div className="mt-10 pt-6 border-t border-border">
