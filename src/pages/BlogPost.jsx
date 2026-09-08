@@ -5,6 +5,8 @@ import { Calendar, Clock, Tag, ArrowLeft, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { BLOG_POSTS, AUTHOR } from "@/lib/blogData";
 import { applyInternalLinks } from "@/lib/internalLinks";
+import { extractHeadings, headingIdFromChildren } from "@/lib/toc";
+import TableOfContents from "@/components/blog/TableOfContents";
 import { base44 } from "@/api/base44Client";
 import CommentSection from "@/components/blog/CommentSection";
 import ShareButtons from "@/components/blog/ShareButtons";
@@ -154,6 +156,9 @@ export default function BlogPost() {
           {post.excerpt}
         </blockquote>
 
+        {/* Table of contents (long posts only) */}
+        <TableOfContents headings={extractHeadings(post.content)} />
+
         {/* Content */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -172,7 +177,15 @@ export default function BlogPost() {
             prose-strong:text-foreground
             prose-li:text-muted-foreground"
         >
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{applyInternalLinks(post.content, post.slug)}</ReactMarkdown>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              h2: ({ children }) => <h2 id={headingIdFromChildren(children)} className="scroll-mt-24">{children}</h2>,
+              h3: ({ children }) => <h3 id={headingIdFromChildren(children)} className="scroll-mt-24">{children}</h3>,
+            }}
+          >
+            {applyInternalLinks(post.content, post.slug)}
+          </ReactMarkdown>
         </motion.div>
 
         {/* Share */}
