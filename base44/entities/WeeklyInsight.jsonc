@@ -1,0 +1,32 @@
+{
+  "name": "WeeklyInsight",
+  "type": "object",
+  "properties": {
+    "week_key": {
+      "type": "string",
+      "description": "ISO week identifier (e.g. 2026-W37) this insight was generated for"
+    },
+    "topic": {
+      "type": "string",
+      "description": "The technical topic the insight covers"
+    },
+    "title": {
+      "type": "string",
+      "description": "Headline of the AI-generated technical insight"
+    },
+    "content": {
+      "type": "string",
+      "description": "Plain-text body of the AI-generated technical insight"
+    },
+    "model": {
+      "type": "string",
+      "description": "Hugging Face model deployment that generated this insight"
+    }
+  },
+  "required": [
+    "week_key",
+    "topic",
+    "title",
+    "content"
+  ]
+}
