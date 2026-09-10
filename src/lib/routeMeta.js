@@ -92,4 +92,8 @@ export const ROUTE_META = {
     title: "Set a New Password | TheWeb3Tech",
     description: "Set a new password for your TheWeb3Tech account.",
   },
+  "/reddit": {
+    title: "Reddit Drafts | TheWeb3Tech",
+    description: "AI-drafted original insight posts for Reddit communities — review and post by hand.",
+  },
 };

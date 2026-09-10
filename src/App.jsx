@@ -31,6 +31,7 @@ import Tags from '@/pages/Tags';
 import Archive from '@/pages/Archive';
 import Testimonials from '@/pages/Testimonials';
 import StartHere from '@/pages/StartHere';
+import Reddit from '@/pages/Reddit';
 import Subscribe from '@/pages/Subscribe';
 import { AnimatePresence, motion } from 'framer-motion';
 import PageViewTracker from '@/components/PageViewTracker';
@@ -73,6 +74,7 @@ function AnimatedRoutes() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/reddit" element={<Reddit />} />
             <Route path="/connect" element={<Connect />} />
             <Route path="/assistant" element={<Assistant />} />
             <Route path="/faq" element={<FAQ />} />

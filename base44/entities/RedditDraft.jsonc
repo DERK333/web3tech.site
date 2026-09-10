@@ -1,0 +1,64 @@
+{
+  "name": "RedditDraft",
+  "type": "object",
+  "properties": {
+    "subreddit": {
+      "type": "string",
+      "enum": [
+        "web3",
+        "selfhosted",
+        "privacyguides"
+      ],
+      "description": "Target subreddit for this draft post"
+    },
+    "title": {
+      "type": "string",
+      "description": "Draft post title"
+    },
+    "body": {
+      "type": "string",
+      "description": "Draft post body \u2014 value-first original insight, no promo framing"
+    },
+    "link_line": {
+      "type": "string",
+      "description": "Optional casual closing line linking a directly relevant blog post"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "posted",
+        "discarded"
+      ],
+      "default": "draft",
+      "description": "Workflow state of this draft"
+    }
+  },
+  "required": [
+    "subreddit",
+    "title",
+    "body"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

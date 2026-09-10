@@ -23,7 +23,7 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { theme, toggle } = useTheme();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   // Show back button on sub-pages (blog posts, etc.)
   const isChildRoute = location.pathname !== "/" && location.pathname !== "/blog" && location.pathname !== "/about" && location.pathname !== "/contact" && location.pathname !== "/settings";
@@ -113,6 +113,18 @@ export default function Navbar() {
                 }`}
               >
                 Analytics
+              </Link>
+            )}
+            {user?.role === "admin" && (
+              <Link
+                to="/reddit"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  location.pathname === "/reddit"
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                }`}
+              >
+                Reddit drafts
               </Link>
             )}
             <button
@@ -220,6 +232,19 @@ export default function Navbar() {
                       }`}
                     >
                       Analytics
+                    </Link>
+                  )}
+                  {user?.role === "admin" && (
+                    <Link
+                      to="/reddit"
+                      onClick={() => setMobileOpen(false)}
+                      className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                        location.pathname === "/reddit"
+                          ? "text-primary bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      Reddit drafts
                     </Link>
                   )}
                   {!isAuthenticated && (
