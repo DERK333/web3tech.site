@@ -103,7 +103,7 @@ export default function Navbar() {
                 </Link>
               )
             )}
-            {isAuthenticated && (
+            {user?.role === "admin" && (
               <Link
                 to="/analytics"
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -221,7 +221,7 @@ export default function Navbar() {
                   </Link>
                     )
                   )}
-                  {isAuthenticated && (
+                  {user?.role === "admin" && (
                     <Link
                       to="/analytics"
                       onClick={() => setMobileOpen(false)}
