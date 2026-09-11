@@ -15,17 +15,22 @@ export default function NewsletterWidget() {
     setStatus("loading");
     setErrorMsg("");
 
-    // Check for duplicate
-    const existing = await base44.entities.Subscriber.filter({ email: email.trim() });
-    if (existing.length > 0) {
+    try {
+      const res = await base44.functions.invoke("sendSubscriptionConfirmation", {
+        kind: "newsletter",
+        email: email.trim(),
+      });
+      if (res.data?.already_subscribed) {
+        setStatus("error");
+        setErrorMsg("This email is already subscribed!");
+        return;
+      }
+      base44.analytics.track({ eventName: "newsletter_subscribed" });
+      setStatus("success");
+    } catch (err) {
       setStatus("error");
-      setErrorMsg("This email is already subscribed!");
-      return;
+      setErrorMsg("Something went wrong. Please try again.");
     }
-
-    await base44.entities.Subscriber.create({ email: email.trim() });
-    base44.analytics.track({ eventName: "newsletter_subscribed" });
-    setStatus("success");
   };
 
   return (
@@ -46,9 +51,9 @@ export default function NewsletterWidget() {
       </p>
 
       {status === "success" ? (
-        <div className="flex items-center gap-2 text-primary text-sm py-2">
-          <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-          <span>You're subscribed! 🎉</span>
+        <div className="flex items-start gap-2 text-primary text-sm py-2">
+          <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          <span>Almost there! Check your inbox — click the confirmation link to finish subscribing.</span>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-2">

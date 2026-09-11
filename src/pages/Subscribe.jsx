@@ -16,13 +16,15 @@ export default function Subscribe() {
     setErrorMsg("");
 
     try {
-      const existing = await base44.entities.Subscriber.filter({ email: email.trim() });
-      if (existing.length > 0) {
+      const res = await base44.functions.invoke("sendSubscriptionConfirmation", {
+        kind: "newsletter",
+        email: email.trim(),
+      });
+      if (res.data?.already_subscribed) {
         setStatus("error");
         setErrorMsg("This email is already subscribed!");
         return;
       }
-      await base44.entities.Subscriber.create({ email: email.trim() });
       base44.analytics.track({ eventName: "newsletter_subscribed" });
       setStatus("success");
     } catch (err) {
@@ -47,9 +49,9 @@ export default function Subscribe() {
         {status === "success" ? (
           <div className="rounded-xl border border-primary/40 bg-primary/10 p-8 text-center">
             <CheckCircle2 className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h2 className="font-heading font-bold text-xl mb-2">You're subscribed! 🎉</h2>
+            <h2 className="font-heading font-bold text-xl mb-2">Almost there!</h2>
             <p className="text-sm text-muted-foreground">
-              Watch your inbox for the next article. You can unsubscribe at any time.
+              We sent a confirmation link to your inbox — click it to finish subscribing. You can unsubscribe at any time.
             </p>
           </div>
         ) : (

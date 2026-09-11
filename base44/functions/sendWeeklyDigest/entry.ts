@@ -105,7 +105,7 @@ export default async function (req) {
     }
 
     // All newsletter subscribers.
-    const subscribers = await base44.asServiceRole.entities.Subscriber.list(undefined, 1000);
+    const subscribers = await base44.asServiceRole.entities.Subscriber.filter({ verified: true }, undefined, 1000);
     const emails = (subscribers || []).map((s) => s.email).filter(Boolean);
     if (emails.length === 0) {
       return Response.json({ status: 'ok', sent: 0, posts: recent.length, message: 'No subscribers — nothing to send.' });

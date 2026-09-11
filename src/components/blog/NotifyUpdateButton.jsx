@@ -16,6 +16,7 @@ export default function NotifyUpdateButton({ postSlug }) {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [doneMsg, setDoneMsg] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -27,11 +28,16 @@ export default function NotifyUpdateButton({ postSlug }) {
     setSubmitting(true);
     setError("");
     try {
-      await base44.entities.PostUpdateSubscriber.create({
-        email: email.trim(),
+      const res = await base44.functions.invoke("sendSubscriptionConfirmation", {
+        kind: "post_update",
         post_slug: postSlug,
-        notified: false,
+        email: email.trim(),
       });
+      setDoneMsg(
+        res.data?.already_subscribed
+          ? `You're already set to receive update notifications at ${email.trim()}.`
+          : `We sent a confirmation link to ${email.trim()} — click it to activate update notifications.`
+      );
       setDone(true);
     } catch (err) {
       setError("Something went wrong. Please try again.");
@@ -46,6 +52,7 @@ export default function NotifyUpdateButton({ postSlug }) {
       // Reset for next open, keep it feeling snappy
       setTimeout(() => {
         setDone(false);
+        setDoneMsg("");
         setError("");
       }, 200);
     }
@@ -67,10 +74,8 @@ export default function NotifyUpdateButton({ postSlug }) {
             <div className="flex flex-col items-center gap-3 py-6 text-center">
               <CheckCircle2 className="w-10 h-10 text-primary" />
               <DialogHeader className="space-y-1.5">
-                <DialogTitle>You're on the list</DialogTitle>
-                <DialogDescription>
-                  We'll email you at <span className="text-foreground">{email}</span> when this guide gets updated.
-                </DialogDescription>
+                <DialogTitle>Almost there</DialogTitle>
+                <DialogDescription>{doneMsg}</DialogDescription>
               </DialogHeader>
             </div>
           ) : (

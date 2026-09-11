@@ -5,6 +5,20 @@
     "email": {
       "type": "string",
       "description": "Subscriber email address"
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the subscriber confirmed their email via the double opt-in link"
+    },
+    "verify_token": {
+      "type": "string",
+      "description": "One-time token used in the email confirmation link"
+    },
+    "verify_expires": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the confirmation token expires (also throttles confirmation-email resends)"
     }
   },
   "required": [

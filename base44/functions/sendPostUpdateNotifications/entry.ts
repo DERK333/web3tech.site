@@ -20,7 +20,7 @@ export default async function (req) {
 
     // Pending update-notification subscriptions.
     const pending = await base44.asServiceRole.entities.PostUpdateSubscriber.filter(
-      { notified: false },
+      { notified: false, verified: true },
       undefined,
       1000
     );

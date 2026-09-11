@@ -180,7 +180,7 @@ export default async function (req) {
       return Response.json({ status: 'ok', dry_run: true, week_key: weekKey, insight });
     }
 
-    const subscribers = await base44.asServiceRole.entities.Subscriber.list(undefined, 1000);
+    const subscribers = await base44.asServiceRole.entities.Subscriber.filter({ verified: true }, undefined, 1000);
     const emails = (subscribers || []).map((s) => s.email).filter(Boolean);
     if (emails.length === 0) {
       return Response.json({ status: 'ok', sent: 0, week_key: weekKey, message: 'Insight generated but no subscribers to email.' });
