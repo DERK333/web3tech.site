@@ -5,6 +5,7 @@ const CONFIRM_URL = 'https://web3tech.base44.app/functions/confirmSubscription';
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const MAX_CONFIRM_EMAILS_PER_IP_PER_HOUR = 5;
+const MAX_CONFIRM_EMAILS_PER_HOUR_GLOBAL = 10;
 
 // The subscription forms are anonymous by design, but this function must not
 // become an open mail relay. Only requests originating from the app's own
@@ -79,22 +80,22 @@ export default async function (req) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Origin headers alone are spoofable by direct HTTP clients, so the send
-    // is also rate-limited by the edge-verified client IP: a tight, server-side
-    // cap that turns any header forgery into at most a few emails per hour.
+    // Origin headers alone are spoofable by direct HTTP clients, so sends are
+    // also rate-limited server-side: a tight per-IP cap (the edge-verified
+    // client IP cannot be forged by callers) plus a global hourly ceiling,
+    // so even a rotating pool of IPs cannot relay more than a few emails.
     const clientIp = getClientIp(req);
     if (!clientIp) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
-    const recentSends = await base44.asServiceRole.entities.SubscriptionSendLog.filter(
-      { client_ip: clientIp },
-      '-created_date',
-      50
-    );
-    const sendsInWindow = (recentSends || []).filter(
+    const recentSends = await base44.asServiceRole.entities.SubscriptionSendLog.list('-created_date', 30);
+    const inWindow = (recentSends || []).filter(
       (l) => new Date(l.created_date).getTime() >= Date.now() - RATE_WINDOW_MS
-    ).length;
-    if (sendsInWindow >= MAX_CONFIRM_EMAILS_PER_IP_PER_HOUR) {
+    );
+    if (inWindow.length >= MAX_CONFIRM_EMAILS_PER_HOUR_GLOBAL) {
+      return Response.json({ error: 'Too many confirmation emails requested. Please try again later.' }, { status: 429 });
+    }
+    if (inWindow.filter((l) => l.client_ip === clientIp).length >= MAX_CONFIRM_EMAILS_PER_IP_PER_HOUR) {
       return Response.json({ error: 'Too many confirmation emails requested. Please try again later.' }, { status: 429 });
     }
 
