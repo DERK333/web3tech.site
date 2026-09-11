@@ -1,0 +1,40 @@
+{
+  "name": "SubscriptionSendLog",
+  "type": "object",
+  "properties": {
+    "client_ip": {
+      "type": "string",
+      "description": "Edge-verified client IP that triggered a subscription confirmation email"
+    },
+    "email": {
+      "type": "string",
+      "description": "Recipient address of the confirmation email"
+    }
+  },
+  "required": [
+    "client_ip",
+    "email"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

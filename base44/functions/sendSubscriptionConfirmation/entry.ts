@@ -3,6 +3,8 @@ import { POSTS } from '../../shared/blogPostsMeta.js';
 
 const CONFIRM_URL = 'https://web3tech.base44.app/functions/confirmSubscription';
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
+const RATE_WINDOW_MS = 60 * 60 * 1000;
+const MAX_CONFIRM_EMAILS_PER_IP_PER_HOUR = 5;
 
 // The subscription forms are anonymous by design, but this function must not
 // become an open mail relay. Only requests originating from the app's own
@@ -19,6 +21,12 @@ function hostOf(value) {
 function isFromOwnSite(req) {
   const hosts = [hostOf(req.headers.get('origin')), hostOf(req.headers.get('referer'))].filter(Boolean);
   return hosts.some((h) => h === 'web3tech.site' || h.endsWith('.base44.app'));
+}
+
+// Edge-verified client IP — set by the platform's proxy (Cloudflare), which
+// strips client-supplied values, so this cannot be forged by the caller.
+function getClientIp(req) {
+  return req.headers.get('cf-connecting-ip') || req.headers.get('x-real-ip') || null;
 }
 
 function isValidEmail(email) {
@@ -71,6 +79,25 @@ export default async function (req) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    // Origin headers alone are spoofable by direct HTTP clients, so the send
+    // is also rate-limited by the edge-verified client IP: a tight, server-side
+    // cap that turns any header forgery into at most a few emails per hour.
+    const clientIp = getClientIp(req);
+    if (!clientIp) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    const recentSends = await base44.asServiceRole.entities.SubscriptionSendLog.filter(
+      { client_ip: clientIp },
+      '-created_date',
+      50
+    );
+    const sendsInWindow = (recentSends || []).filter(
+      (l) => new Date(l.created_date).getTime() >= Date.now() - RATE_WINDOW_MS
+    ).length;
+    if (sendsInWindow >= MAX_CONFIRM_EMAILS_PER_IP_PER_HOUR) {
+      return Response.json({ error: 'Too many confirmation emails requested. Please try again later.' }, { status: 429 });
+    }
+
     let body = {};
     try {
       body = await req.json();
@@ -121,6 +148,9 @@ export default async function (req) {
     const confirmUrl = `${CONFIRM_URL}?kind=${kind}&token=${token}`;
     const html = buildConfirmEmailHtml(kind, post ? post.title : null, confirmUrl);
 
+    // Count this send against the IP's hourly cap before dispatching.
+    const sendLog = await base44.asServiceRole.entities.SubscriptionSendLog.create({ client_ip: clientIp, email });
+
     try {
       await base44.asServiceRole.integrations.Core.SendEmail({
         to: email,
@@ -130,8 +160,9 @@ export default async function (req) {
         html,
       });
     } catch (e) {
-      // Send failed — clear the token so the reader can retry immediately.
+      // Send failed — clear the token and the rate-log entry so the reader can retry immediately.
       await entity.update(record.id, { verify_token: null, verify_expires: null });
+      await base44.asServiceRole.entities.SubscriptionSendLog.delete(sendLog.id);
       return Response.json({ error: 'Could not send confirmation email', details: e.message }, { status: 502 });
     }
 
