@@ -7,21 +7,37 @@
       "enum": [
         "web3",
         "selfhosted",
-        "privacyguides"
+        "privacyguides",
+        "ethereum",
+        "linux",
+        "netsec"
       ],
       "description": "Target subreddit for this draft post"
     },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "insight",
+        "answer"
+      ],
+      "default": "insight",
+      "description": "Whether this is an original insight post or an answer to someone's question"
+    },
     "title": {
       "type": "string",
-      "description": "Draft post title"
+      "description": "Draft post title \u2014 for answers, the title of the question being answered"
     },
     "body": {
       "type": "string",
-      "description": "Draft post body \u2014 value-first original insight, no promo framing"
+      "description": "Draft post body \u2014 value-first original insight, no promo framing; for answers, the drafted reply"
     },
     "link_line": {
       "type": "string",
       "description": "Optional casual closing line linking a directly relevant blog post"
+    },
+    "question_url": {
+      "type": "string",
+      "description": "For answers: permalink of the Reddit question thread this draft replies to"
     },
     "status": {
       "type": "string",

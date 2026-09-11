@@ -11,7 +11,11 @@ const statusStyles = {
 
 export default function RedditDraftCard({ draft, onStatus }) {
   const [copied, setCopied] = useState(false);
-  const fullText = [draft.title, draft.body, draft.link_line].filter(Boolean).join("\n\n");
+  const isAnswer = draft.kind === "answer";
+  // Answers get pasted as a reply — the question title stays on the thread.
+  const fullText = [isAnswer ? "" : draft.title, draft.body, draft.link_line]
+    .filter(Boolean)
+    .join("\n\n");
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(fullText);
@@ -19,26 +23,37 @@ export default function RedditDraftCard({ draft, onStatus }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const openLink = isAnswer && draft.question_url
+    ? draft.question_url
+    : `https://www.reddit.com/r/${draft.subreddit}/submit/`;
+  const openLabel = isAnswer ? "Open thread" : `Open r/${draft.subreddit}`;
+
   return (
     <div className="rounded-xl border border-border/50 bg-card/50 p-5 space-y-3">
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <span className="text-xs font-medium text-muted-foreground">r/{draft.subreddit}</span>
+        <span className="text-xs font-medium text-muted-foreground">
+          {isAnswer ? "Answer" : "Insight"} · r/{draft.subreddit}
+        </span>
         <Badge className={`border ${statusStyles[draft.status] || statusStyles.draft}`}>
           {draft.status}
         </Badge>
       </div>
-      <h3 className="font-heading font-bold text-foreground leading-snug">{draft.title}</h3>
+      {isAnswer ? (
+        <p className="text-xs text-muted-foreground italic leading-snug">{draft.title}</p>
+      ) : (
+        <h3 className="font-heading font-bold text-foreground leading-snug">{draft.title}</h3>
+      )}
       <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">{draft.body}</p>
       {draft.link_line && <p className="text-xs text-primary break-words">{draft.link_line}</p>}
       <div className="flex gap-2 pt-1 flex-wrap">
         <Button size="sm" variant="outline" onClick={handleCopy}>
           {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-          {copied ? "Copied" : "Copy post"}
+          {copied ? "Copied" : isAnswer ? "Copy reply" : "Copy post"}
         </Button>
         <Button size="sm" variant="outline" asChild>
-          <a href={`https://www.reddit.com/r/${draft.subreddit}/submit/`} target="_blank" rel="noopener noreferrer">
+          <a href={openLink} target="_blank" rel="noopener noreferrer">
             <ExternalLink className="w-3.5 h-3.5" />
-            Open r/{draft.subreddit}
+            {openLabel}
           </a>
         </Button>
         {draft.status === "draft" && (
