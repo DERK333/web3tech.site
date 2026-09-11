@@ -4,6 +4,23 @@ import { POSTS } from '../../shared/blogPostsMeta.js';
 const CONFIRM_URL = 'https://web3tech.base44.app/functions/confirmSubscription';
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
+// The subscription forms are anonymous by design, but this function must not
+// become an open mail relay. Only requests originating from the app's own
+// pages (browser Origin/Referer) may trigger a confirmation email: the app's
+// custom domain, or any *.base44.app host the platform serves the app on.
+function hostOf(value) {
+  try {
+    return new URL(value).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
+function isFromOwnSite(req) {
+  const hosts = [hostOf(req.headers.get('origin')), hostOf(req.headers.get('referer'))].filter(Boolean);
+  return hosts.some((h) => h === 'web3tech.site' || h.endsWith('.base44.app'));
+}
+
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
 }
@@ -49,6 +66,10 @@ function buildConfirmEmailHtml(kind, postTitle, confirmUrl) {
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
+
+    if (!isFromOwnSite(req)) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     let body = {};
     try {
