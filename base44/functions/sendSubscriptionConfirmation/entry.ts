@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { secrets } from 'base44:runtime';
 import { POSTS } from '../../shared/blogPostsMeta.js';
 
 const CONFIRM_URL = 'https://web3tech.base44.app/functions/confirmSubscription';
@@ -98,6 +99,30 @@ export default async function (req) {
     // scripts auto-fill it. Silently drop (bots shouldn't learn why).
     if (String(body.company_website || '').trim() !== '') {
       return Response.json({ status: 'ok', confirmation_sent: true });
+    }
+
+    // Server-verified human check. Origin/Referer headers are spoofable by
+    // direct HTTP clients, so they cannot be the trust boundary for who may
+    // trigger a branded email. A Turnstile token is validated by Cloudflare
+    // and cannot be minted by a scripted request — this is the real gate
+    // that stops this endpoint being used as an email relay. The origin
+    // check and the rate limits below remain as defense-in-depth.
+    const turnstileToken = String(body.turnstile_token || '');
+    if (!turnstileToken) {
+      return Response.json({ error: 'Please complete the verification and try again.' }, { status: 400 });
+    }
+    const verifyResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        secret: secrets.get('TURNSTILE_SECRET_KEY'),
+        response: turnstileToken,
+        remoteip: clientIp,
+      }),
+    });
+    const verifyResult = await verifyResponse.json().catch(() => null);
+    if (!verifyResult || verifyResult.success !== true) {
+      return Response.json({ error: 'Verification failed. Please try again.' }, { status: 403 });
     }
 
     const recentSends = await base44.asServiceRole.entities.SubscriptionSendLog.list('-created_date', 30);

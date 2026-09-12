@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Bell, Loader2, CheckCircle2 } from "lucide-react";
 import {
   Dialog,
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
 import HoneypotField from "@/components/blog/HoneypotField";
+import TurnstileWidget from "@/components/blog/TurnstileWidget";
 
 export default function NotifyUpdateButton({ postSlug }) {
   const [open, setOpen] = useState(false);
@@ -20,6 +21,8 @@ export default function NotifyUpdateButton({ postSlug }) {
   const [doneMsg, setDoneMsg] = useState("");
   const [error, setError] = useState("");
   const [companyWebsite, setCompanyWebsite] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +38,7 @@ export default function NotifyUpdateButton({ postSlug }) {
         post_slug: postSlug,
         email: email.trim(),
         company_website: companyWebsite,
+        turnstile_token: turnstileToken,
       });
       setDoneMsg(
         res.data?.already_subscribed
@@ -43,6 +47,7 @@ export default function NotifyUpdateButton({ postSlug }) {
       );
       setDone(true);
     } catch (err) {
+      turnstileRef.current?.reset();
       setError("Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
@@ -103,7 +108,10 @@ export default function NotifyUpdateButton({ postSlug }) {
                 required
               />
               {error && <p className="text-xs text-destructive mt-2">{error}</p>}
-              <Button type="submit" className="w-full mt-4" disabled={submitting}>
+              <div className="mt-3">
+                <TurnstileWidget ref={turnstileRef} onToken={setTurnstileToken} />
+              </div>
+              <Button type="submit" className="w-full mt-4" disabled={submitting || !turnstileToken}>
                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                 {submitting ? "Signing you up..." : "Notify me"}
               </Button>

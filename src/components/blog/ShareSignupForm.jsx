@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Mail, CheckCircle2, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import HoneypotField from "@/components/blog/HoneypotField";
+import TurnstileWidget from "@/components/blog/TurnstileWidget";
 
 // Full-width newsletter signup band used on the share landing pages.
 export default function ShareSignupForm() {
   const [email, setEmail] = useState("");
   const [companyWebsite, setCompanyWebsite] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef(null);
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -24,8 +27,10 @@ export default function ShareSignupForm() {
         kind: "newsletter",
         email: email.trim(),
         company_website: companyWebsite,
+        turnstile_token: turnstileToken,
       });
       if (res.data?.already_subscribed) {
+        turnstileRef.current?.reset();
         setStatus("error");
         setErrorMsg("This email is already subscribed!");
         return;
@@ -33,6 +38,7 @@ export default function ShareSignupForm() {
       base44.analytics.track({ eventName: "newsletter_subscribed" });
       setStatus("success");
     } catch (err) {
+      turnstileRef.current?.reset();
       setStatus("error");
       setErrorMsg("Something went wrong. Please try again.");
     }
@@ -58,8 +64,9 @@ export default function ShareSignupForm() {
             <span>Almost there! Check your inbox — click the confirmation link to finish subscribing.</span>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+          <form onSubmit={handleSubmit} className="max-w-lg mx-auto space-y-3">
             <HoneypotField value={companyWebsite} onChange={setCompanyWebsite} />
+            <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="email"
               required
@@ -70,7 +77,7 @@ export default function ShareSignupForm() {
             />
             <button
               type="submit"
-              disabled={status === "loading"}
+              disabled={status === "loading" || !turnstileToken}
               className="inline-flex items-center justify-center gap-2 py-3 px-6 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
             >
               {status === "loading" ? (
@@ -79,6 +86,8 @@ export default function ShareSignupForm() {
                 "Subscribe"
               )}
             </button>
+            </div>
+            <TurnstileWidget ref={turnstileRef} onToken={setTurnstileToken} />
           </form>
         )}
         {errorMsg && (

@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Mail, CheckCircle2, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import HoneypotField from "@/components/blog/HoneypotField";
+import TurnstileWidget from "@/components/blog/TurnstileWidget";
 import { motion } from "framer-motion";
 
 export default function NewsletterWidget() {
   const [email, setEmail] = useState("");
   const [companyWebsite, setCompanyWebsite] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef(null);
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -18,8 +21,9 @@ export default function NewsletterWidget() {
     setErrorMsg("");
 
     try {
-      const res = await base44.functions.invoke("sendSubscriptionConfirmation", { kind: "newsletter", email: email.trim(), company_website: companyWebsite });
+      const res = await base44.functions.invoke("sendSubscriptionConfirmation", { kind: "newsletter", email: email.trim(), company_website: companyWebsite, turnstile_token: turnstileToken });
       if (res.data?.already_subscribed) {
+        turnstileRef.current?.reset();
         setStatus("error");
         setErrorMsg("This email is already subscribed!");
         return;
@@ -27,6 +31,7 @@ export default function NewsletterWidget() {
       base44.analytics.track({ eventName: "newsletter_subscribed" });
       setStatus("success");
     } catch (err) {
+      turnstileRef.current?.reset();
       setStatus("error");
       setErrorMsg("Something went wrong. Please try again.");
     }
@@ -65,12 +70,13 @@ export default function NewsletterWidget() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-3 py-2 text-sm rounded-lg bg-secondary border border-border/60 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 transition-all"
           />
+          <TurnstileWidget ref={turnstileRef} onToken={setTurnstileToken} />
           {errorMsg && (
             <p className="text-xs text-destructive">{errorMsg}</p>
           )}
           <button
             type="submit"
-            disabled={status === "loading"}
+            disabled={status === "loading" || !turnstileToken}
             className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-60"
           >
             {status === "loading" ? (
