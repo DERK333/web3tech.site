@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Mail, CheckCircle2, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import HoneypotField from "@/components/blog/HoneypotField";
 
 // Full-width newsletter signup band used on the share landing pages.
 export default function ShareSignupForm() {
   const [email, setEmail] = useState("");
+  const [companyWebsite, setCompanyWebsite] = useState("");
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -15,16 +17,25 @@ export default function ShareSignupForm() {
     setStatus("loading");
     setErrorMsg("");
 
-    const existing = await base44.entities.Subscriber.filter({ email: email.trim() });
-    if (existing.length > 0) {
+    try {
+      // Double opt-in: the backend sends a confirmation link and only
+      // marks the address verified once the reader clicks it.
+      const res = await base44.functions.invoke("sendSubscriptionConfirmation", {
+        kind: "newsletter",
+        email: email.trim(),
+        company_website: companyWebsite,
+      });
+      if (res.data?.already_subscribed) {
+        setStatus("error");
+        setErrorMsg("This email is already subscribed!");
+        return;
+      }
+      base44.analytics.track({ eventName: "newsletter_subscribed" });
+      setStatus("success");
+    } catch (err) {
       setStatus("error");
-      setErrorMsg("This email is already subscribed!");
-      return;
+      setErrorMsg("Something went wrong. Please try again.");
     }
-
-    await base44.entities.Subscriber.create({ email: email.trim() });
-    base44.analytics.track({ eventName: "newsletter_subscribed" });
-    setStatus("success");
   };
 
   return (
@@ -44,10 +55,11 @@ export default function ShareSignupForm() {
         {status === "success" ? (
           <div className="inline-flex items-center gap-2 text-primary text-sm font-medium py-2">
             <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-            <span>You're subscribed! 🎉</span>
+            <span>Almost there! Check your inbox — click the confirmation link to finish subscribing.</span>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+            <HoneypotField value={companyWebsite} onChange={setCompanyWebsite} />
             <input
               type="email"
               required

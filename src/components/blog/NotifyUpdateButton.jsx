@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
+import HoneypotField from "@/components/blog/HoneypotField";
 
 export default function NotifyUpdateButton({ postSlug }) {
   const [open, setOpen] = useState(false);
@@ -18,6 +19,7 @@ export default function NotifyUpdateButton({ postSlug }) {
   const [done, setDone] = useState(false);
   const [doneMsg, setDoneMsg] = useState("");
   const [error, setError] = useState("");
+  const [companyWebsite, setCompanyWebsite] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,6 +34,7 @@ export default function NotifyUpdateButton({ postSlug }) {
         kind: "post_update",
         post_slug: postSlug,
         email: email.trim(),
+        company_website: companyWebsite,
       });
       setDoneMsg(
         res.data?.already_subscribed
@@ -80,6 +83,7 @@ export default function NotifyUpdateButton({ postSlug }) {
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
+              <HoneypotField value={companyWebsite} onChange={setCompanyWebsite} />
               <DialogHeader className="mb-4">
                 <DialogTitle>Get update notifications</DialogTitle>
                 <DialogDescription>

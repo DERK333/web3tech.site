@@ -94,6 +94,12 @@ export default async function (req) {
       body = await req.json();
     } catch {}
 
+    // Honeypot: this field is invisible to real users — only bulk spam
+    // scripts auto-fill it. Silently drop (bots shouldn't learn why).
+    if (String(body.company_website || '').trim() !== '') {
+      return Response.json({ status: 'ok', confirmation_sent: true });
+    }
+
     const recentSends = await base44.asServiceRole.entities.SubscriptionSendLog.list('-created_date', 30);
     const inWindow = (recentSends || []).filter(
       (l) => new Date(l.created_date).getTime() >= Date.now() - RATE_WINDOW_MS

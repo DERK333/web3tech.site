@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, CheckCircle2, Loader2, Bell, ShieldCheck, Zap } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import HoneypotField from "@/components/blog/HoneypotField";
 
 export default function Subscribe() {
   const [email, setEmail] = useState("");
+  const [companyWebsite, setCompanyWebsite] = useState("");
   const [status, setStatus] = useState("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -16,7 +18,7 @@ export default function Subscribe() {
     setErrorMsg("");
 
     try {
-      const res = await base44.functions.invoke("sendSubscriptionConfirmation", { kind: "newsletter", email: email.trim() });
+      const res = await base44.functions.invoke("sendSubscriptionConfirmation", { kind: "newsletter", email: email.trim(), company_website: companyWebsite });
       if (res.data?.already_subscribed) {
         setStatus("error");
         setErrorMsg("This email is already subscribed!");
@@ -54,6 +56,7 @@ export default function Subscribe() {
         ) : (
           <div className="rounded-xl border border-border/50 bg-card/50 p-6 sm:p-8">
             <form onSubmit={handleSubmit} className="space-y-4">
+              <HoneypotField value={companyWebsite} onChange={setCompanyWebsite} />
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">Email address</label>
                 <input

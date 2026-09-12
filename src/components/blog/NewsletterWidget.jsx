@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Mail, CheckCircle2, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import HoneypotField from "@/components/blog/HoneypotField";
 import { motion } from "framer-motion";
 
 export default function NewsletterWidget() {
   const [email, setEmail] = useState("");
+  const [companyWebsite, setCompanyWebsite] = useState("");
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -16,7 +18,7 @@ export default function NewsletterWidget() {
     setErrorMsg("");
 
     try {
-      const res = await base44.functions.invoke("sendSubscriptionConfirmation", { kind: "newsletter", email: email.trim() });
+      const res = await base44.functions.invoke("sendSubscriptionConfirmation", { kind: "newsletter", email: email.trim(), company_website: companyWebsite });
       if (res.data?.already_subscribed) {
         setStatus("error");
         setErrorMsg("This email is already subscribed!");
@@ -54,6 +56,7 @@ export default function NewsletterWidget() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-2">
+          <HoneypotField value={companyWebsite} onChange={setCompanyWebsite} />
           <input
             type="email"
             required
