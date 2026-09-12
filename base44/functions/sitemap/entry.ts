@@ -61,7 +61,9 @@ Deno.serve(async (_req) => {
     status: 200,
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=86400',
+      // Short cache so search engines pick up newly published posts the same
+      // day instead of serving a stale list for 24h.
+      'Cache-Control': 'public, max-age=3600',
       'Access-Control-Allow-Origin': '*',
     },
   });
