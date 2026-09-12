@@ -1,6 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { POSTS } from '../../shared/blogPostsMeta.js';
-import { verifySubscriptionRequest } from '../../shared/formSecret.js';
 
 const CONFIRM_URL = 'https://web3tech.base44.app/functions/confirmSubscription';
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
@@ -95,12 +94,6 @@ export default async function (req) {
       body = await req.json();
     } catch {}
 
-    // Shared-secret request signature — proves the caller is the app's own
-    // form, not a script replaying this endpoint with forged Origin/Referer.
-    if (!(await verifySubscriptionRequest(body, body.ts, body.sig))) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
     const recentSends = await base44.asServiceRole.entities.SubscriptionSendLog.list('-created_date', 30);
     const inWindow = (recentSends || []).filter(
       (l) => new Date(l.created_date).getTime() >= Date.now() - RATE_WINDOW_MS
@@ -121,6 +114,15 @@ export default async function (req) {
     }
     if (kind === 'post_update' && !POSTS.some((p) => p.slug === postSlug)) {
       return Response.json({ error: 'Unknown post' }, { status: 400 });
+    }
+
+    // Per-recipient cap (server-side, not forgeable): at most ONE confirmation
+    // email per address per 24h, across both subscription kinds. This is the
+    // hard bound on relaying branded emails to arbitrary addresses — the
+    // per-IP and global hourly caps below only bound total volume.
+    const priorSendsToEmail = await base44.asServiceRole.entities.SubscriptionSendLog.filter({ email });
+    if ((priorSendsToEmail || []).some((l) => new Date(l.created_date).getTime() >= Date.now() - TOKEN_TTL_MS)) {
+      return Response.json({ status: 'ok', confirmation_pending: true });
     }
 
     const isNewsletter = kind === 'newsletter';

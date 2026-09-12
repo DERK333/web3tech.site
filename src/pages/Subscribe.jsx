@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, CheckCircle2, Loader2, Bell, ShieldCheck, Zap } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { signSubscriptionRequest } from "@/lib/formSecret";
 
 export default function Subscribe() {
   const [email, setEmail] = useState("");
@@ -17,8 +16,7 @@ export default function Subscribe() {
     setErrorMsg("");
 
     try {
-      const payload = await signSubscriptionRequest({ kind: "newsletter", email: email.trim() });
-      const res = await base44.functions.invoke("sendSubscriptionConfirmation", payload);
+      const res = await base44.functions.invoke("sendSubscriptionConfirmation", { kind: "newsletter", email: email.trim() });
       if (res.data?.already_subscribed) {
         setStatus("error");
         setErrorMsg("This email is already subscribed!");

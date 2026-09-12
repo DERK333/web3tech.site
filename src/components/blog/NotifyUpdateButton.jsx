@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
-import { signSubscriptionRequest } from "@/lib/formSecret";
 
 export default function NotifyUpdateButton({ postSlug }) {
   const [open, setOpen] = useState(false);
@@ -29,12 +28,11 @@ export default function NotifyUpdateButton({ postSlug }) {
     setSubmitting(true);
     setError("");
     try {
-      const payload = await signSubscriptionRequest({
+      const res = await base44.functions.invoke("sendSubscriptionConfirmation", {
         kind: "post_update",
         post_slug: postSlug,
         email: email.trim(),
       });
-      const res = await base44.functions.invoke("sendSubscriptionConfirmation", payload);
       setDoneMsg(
         res.data?.already_subscribed
           ? `You're already set to receive update notifications at ${email.trim()}.`
