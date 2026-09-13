@@ -9,6 +9,11 @@
     "email": {
       "type": "string",
       "description": "Recipient address of the confirmation email"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional notes about this send log entry",
+      "maxLength": 1000
     }
   },
   "required": [

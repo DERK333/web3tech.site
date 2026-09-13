@@ -5,6 +5,11 @@
     "slug": {
       "type": "string",
       "description": "Blog post slug that has already been cross-posted to LinkedIn as a weekly original insight"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional notes about this cross-posted insight record",
+      "maxLength": 1000
     }
   },
   "required": [

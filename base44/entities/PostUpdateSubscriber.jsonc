@@ -28,6 +28,11 @@
       "type": "string",
       "format": "date-time",
       "description": "When the confirmation token expires (also throttles confirmation-email resends)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional notes about this subscription",
+      "maxLength": 1000
     }
   },
   "required": [
