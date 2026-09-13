@@ -5,6 +5,11 @@
     "slug": {
       "type": "string",
       "description": "Blog post slug that has already been shared to the builder's LinkedIn profile"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional notes about this shared post record",
+      "maxLength": 1000
     }
   },
   "required": [

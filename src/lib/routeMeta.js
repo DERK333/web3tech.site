@@ -11,6 +11,11 @@ export const ROUTE_META = {
     description:
       "Every article on Web3, blockchain, cybersecurity, Linux, privacy, and software tools — practical guides you can use today.",
   },
+  "/start": {
+    title: "Start Here — Beginner Guides & Reading Paths | TheWeb3Tech",
+    description:
+      "New to the Web3 Insights Hub? Follow curated reading paths to run your first blockchain node, harden a Linux server, and build a privacy workspace.",
+  },
   "/about": {
     title: "About | TheWeb3Tech",
     description:
