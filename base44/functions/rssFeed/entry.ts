@@ -48,7 +48,7 @@ ${cats}
     <lastBuildDate>${lastBuildDate}</lastBuildDate>
     <managingEditor>${escapeXml(AUTHOR_NAME)}</managingEditor>
     <generator>Web3Tech RSS Generator</generator>
-    <atom:link href="${SITE_URL}/api/rssFeed" rel="self" type="application/rss+xml"/>
+    <atom:link href="${SITE_URL}/functions/rssFeed" rel="self" type="application/rss+xml"/>
 ${items}
   </channel>
 </rss>`;

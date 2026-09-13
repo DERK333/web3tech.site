@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sitemap index: the actual sitemap is generated live from the site's blog
+     data by the sitemap backend function, so it always lists every published
+     post without any manual maintenance. -->
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://web3tech.site/functions/sitemap</loc>
+  </sitemap>
+</sitemapindex>

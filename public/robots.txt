@@ -1,0 +1,17 @@
+# Web3Tech — crawler rules
+# The sitemap is generated live from the site's blog data at the URL below.
+
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /oauth
+Disallow: /settings
+Disallow: /analytics
+Disallow: /reddit
+Disallow: /connect
+Disallow: /assistant
+
+Sitemap: https://web3tech.site/functions/sitemap
