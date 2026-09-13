@@ -4,10 +4,25 @@ import { ROUTE_META } from "@/lib/routeMeta";
 
 // Sets a unique <title> and meta description for every static route.
 // Article pages (/blog/:slug) set their own meta in BlogPost.jsx.
+const SITE_URL = "https://web3tech.site";
+
+// Keep a canonical <link> in sync with the current route so search engines
+// fold www/http variants of every page into the single https:// URL.
+function upsertCanonical(pathname) {
+  let link = document.querySelector("link[rel='canonical']");
+  if (!link) {
+    link = document.createElement("link");
+    link.setAttribute("rel", "canonical");
+    document.head.appendChild(link);
+  }
+  link.setAttribute("href", `${SITE_URL}${pathname === "/" ? "/" : pathname}`);
+}
+
 export default function RouteMeta() {
   const location = useLocation();
 
   useEffect(() => {
+    upsertCanonical(location.pathname);
     if (location.pathname.startsWith("/blog/")) return;
     const meta = ROUTE_META[location.pathname];
     if (!meta) return;
