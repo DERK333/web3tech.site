@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { secrets } from 'base44:runtime';
 import { POSTS } from '../../shared/blogPostsMeta.js';
+import { signConfirmToken } from '../../shared/confirmLink.ts';
 
 const CONFIRM_URL = 'https://web3tech.base44.app/functions/confirmSubscription';
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
@@ -187,7 +188,10 @@ export default async function (req) {
     }
 
     const post = isNewsletter ? null : POSTS.find((p) => p.slug === postSlug);
-    const confirmUrl = `${CONFIRM_URL}?kind=${kind}&token=${token}`;
+    // Sign the token so the confirm endpoint can verify this link was issued
+    // by this function — a token alone (e.g. leaked or injected) is not enough.
+    const sig = await signConfirmToken(token);
+    const confirmUrl = `${CONFIRM_URL}?kind=${kind}&token=${token}&sig=${sig}`;
     const html = buildConfirmEmailHtml(kind, post ? post.title : null, confirmUrl);
 
     // Abuse detectability: an IP pushing branded confirmations to several

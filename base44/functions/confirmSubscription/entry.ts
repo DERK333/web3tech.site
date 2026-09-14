@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { verifyConfirmSignature } from '../../shared/confirmLink.ts';
 
 function escapeHtml(str) {
   return String(str || '')
@@ -36,8 +37,8 @@ export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Token normally arrives via the email link's query string; a JSON body is
-    // also accepted so the flow is testable programmatically.
+    // Token and signature normally arrive via the email link's query string; a
+    // JSON body is also accepted so the flow is testable programmatically.
     const urlStr = String(req.url || '');
     const qIndex = urlStr.indexOf('?');
     const params = new URLSearchParams(qIndex >= 0 ? urlStr.slice(qIndex + 1) : '');
@@ -46,6 +47,7 @@ export default async function (req) {
         const body = await req.json();
         if (body && body.token) {
           if (body.kind) params.set('kind', String(body.kind));
+          if (body.sig) params.set('sig', String(body.sig));
           params.set('token', String(body.token));
         }
       } catch {}
@@ -53,8 +55,20 @@ export default async function (req) {
 
     const kind = params.get('kind') === 'post_update' ? 'post_update' : 'newsletter';
     const token = params.get('token') || '';
+    const sig = params.get('sig') || '';
 
     if (!/^[a-f0-9]{64}$/.test(token)) {
+      return htmlPage('Invalid link', 'This confirmation link is invalid. Please subscribe again from the site.');
+    }
+
+    // Caller verification: this endpoint is reachable by anyone (subscribers
+    // are not app users), so before any record is touched we require proof the
+    // link was issued by this app — an HMAC signature over the token computed
+    // with a server-only secret. A token without a valid signature never came
+    // from one of our confirmation emails and is rejected outright.
+    const signatureValid = await verifyConfirmSignature(token, sig).catch(() => false);
+    if (!signatureValid) {
+      console.warn('[confirm-subscription] rejected request with missing or invalid signature');
       return htmlPage('Invalid link', 'This confirmation link is invalid. Please subscribe again from the site.');
     }
 
