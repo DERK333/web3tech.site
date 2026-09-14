@@ -114,6 +114,11 @@
 }
 
 @layer base {
+  html {
+    /* Stop the brief sideways pan caused by page-transition animations. */
+    overflow-x: clip;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
@@ -121,6 +126,11 @@
   body {
     @apply bg-background text-foreground;
     overscroll-behavior-y: none;
+    /* Never allow sideways scrolling — entrance animations slide in from the
+       right edge and must be clipped at the viewport, not panned. `clip` is
+       used instead of `hidden` so it doesn't create a new scroll container
+       (which would break the sticky navbar and category filters). */
+    overflow-x: clip;
     /* Ensure correct rendering on high-DPI displays (tablets, XR, ChromeOS) */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
