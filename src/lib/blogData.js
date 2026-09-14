@@ -19,6 +19,7 @@ import { BLOG_POSTS_19 } from "./blogPosts19";
 import { BLOG_POSTS_20 } from "./blogPosts20";
 import { BLOG_POSTS_21 } from "./blogPosts21";
 import { BLOG_POSTS_22 } from "./blogPosts22";
+import { BLOG_POSTS_23 } from "./blogPosts23";
 
 const BLOG_POSTS_1 = [
   {
@@ -1934,7 +1935,7 @@ The command line is the most direct, scriptable, and automation-friendly way to 
 ];
 
 // Deduplicate by slug before exporting
-const allPosts = [...BLOG_POSTS_1, ...BLOG_POSTS_2, ...BLOG_POSTS_3, ...BLOG_POSTS_4, ...BLOG_POSTS_5, ...BLOG_POSTS_6, ...BLOG_POSTS_7, ...BLOG_POSTS_8, ...BLOG_POSTS_9, ...BLOG_POSTS_10, ...BLOG_POSTS_11, ...BLOG_POSTS_12, ...BLOG_POSTS_13, ...BLOG_POSTS_14, ...BLOG_POSTS_15, ...BLOG_POSTS_16, ...BLOG_POSTS_17, ...BLOG_POSTS_18, ...BLOG_POSTS_19, ...BLOG_POSTS_20, ...BLOG_POSTS_21, ...BLOG_POSTS_22];
+const allPosts = [...BLOG_POSTS_1, ...BLOG_POSTS_2, ...BLOG_POSTS_3, ...BLOG_POSTS_4, ...BLOG_POSTS_5, ...BLOG_POSTS_6, ...BLOG_POSTS_7, ...BLOG_POSTS_8, ...BLOG_POSTS_9, ...BLOG_POSTS_10, ...BLOG_POSTS_11, ...BLOG_POSTS_12, ...BLOG_POSTS_13, ...BLOG_POSTS_14, ...BLOG_POSTS_15, ...BLOG_POSTS_16, ...BLOG_POSTS_17, ...BLOG_POSTS_18, ...BLOG_POSTS_19, ...BLOG_POSTS_20, ...BLOG_POSTS_21, ...BLOG_POSTS_22, ...BLOG_POSTS_23];
 const seenSlugs = new Set();
 export const BLOG_POSTS = allPosts.filter(p => {
   if (seenSlugs.has(p.slug)) return false;
@@ -1949,6 +1950,7 @@ export const CATEGORIES = [
   { name: "Linux", count: BLOG_POSTS.filter(p => p.category === "Linux").length },
   { name: "Privacy", count: BLOG_POSTS.filter(p => p.category === "Privacy").length },
   { name: "Software", count: BLOG_POSTS.filter(p => p.category === "Software").length },
+  { name: "Emerging Tech", count: BLOG_POSTS.filter(p => p.category === "Emerging Tech").length },
 ];
 
 export const AUTHOR = {

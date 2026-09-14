@@ -1,6 +1,6 @@
 // Shared category registry — powers the Categories listing and the
 // indexable /categories/:slug landing pages.
-import { Code, Shield, Terminal, Eye, Box } from "lucide-react";
+import { Code, Shield, Terminal, Eye, Box, Rocket } from "lucide-react";
 
 export const CATEGORY_META = {
   Blockchain: {
@@ -37,6 +37,13 @@ export const CATEGORY_META = {
     desc: "Trusted download sources, Windows utilities, developer tools, and productivity apps.",
     metaTitle: "Software Guides & Reviews - Web3 Insights Hub",
     metaDesc: "Software guides and reviews: trusted download sources, Windows utilities, AI tools like Obsidian and Hugging Face, and everyday productivity apps.",
+  },
+  "Emerging Tech": {
+    icon: Rocket,
+    slug: "emerging-tech",
+    desc: "Flying cars, eVTOL aircraft, next-gen hardware, and the new tech worth watching — with an honest look at the risk.",
+    metaTitle: "Emerging Tech - Web3 Insights Hub",
+    metaDesc: "Emerging tech deep dives: eVTOLs and personal flying cars, new hardware platforms, and clear-eyed analysis of what is real and what is pitch.",
   },
 };
 
