@@ -78,22 +78,6 @@ export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Caller identity gate. This endpoint lives at a public URL, so it must
-    // verify who is calling before doing any service-role work. The
-    // newsletter and post-update forms invoke it through the app SDK, which
-    // attaches the caller's app token (anonymous visitors get one too). A
-    // request that arrives with no valid app token — i.e. a raw call to the
-    // public URL from outside the app — is rejected here.
-    let caller = null;
-    try {
-      caller = await base44.auth.me();
-    } catch {
-      caller = null;
-    }
-    if (!caller || !caller.id) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     if (!isFromOwnSite(req)) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
