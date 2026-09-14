@@ -70,11 +70,11 @@ function RankTable({ rows, columns, emptyText }) {
   );
 }
 
-const OWNER_EMAIL = "derricksamuel012@gmail.com";
-
 export default function Analytics() {
   const { isAuthenticated, user, isLoadingAuth } = useAuth();
-  const isOwner = isAuthenticated && user?.email?.toLowerCase() === OWNER_EMAIL;
+  // Access is granted by the user's app role — the backend function
+  // independently re-checks admin role before returning any data.
+  const isOwner = isAuthenticated && user?.role === "admin";
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -136,7 +136,7 @@ export default function Analytics() {
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <AlertTriangle className="w-10 h-10 text-primary mx-auto mb-4" />
         <h2 className="text-xl font-heading font-bold text-foreground mb-2">Access restricted</h2>
-        <p className="text-muted-foreground">This page is private. You must be signed in as the site owner to view it.</p>
+        <p className="text-muted-foreground">This page is private. You must be signed in as an admin to view it.</p>
       </div>
     );
   }
