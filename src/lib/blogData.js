@@ -1,12 +1,13 @@
-// Blog data — single source of truth.
+// Blog data — frontend view of the post corpus.
 //
-// The canonical post corpus lives in the backend-shared module
-// base44/shared/blogPostsContent.js. Every post-consuming integration
-// (sitemap, RSS feed, weekly digest, post-update notifications, LinkedIn
-// sharing, Reddit drafts, AI knowledge base) bundles that SAME file, so
-// adding a post object to it (front of the array) updates the live site
-// and every integration automatically — one file, no other steps.
-import { BLOG_POSTS as ALL_POSTS } from '../../../base44/shared/blogPostsContent.js';
+// The canonical corpus is base44/shared/blogPostsContent.js — it is what
+// every post-consuming integration (sitemap, RSS feed, weekly digest,
+// post-update notifications, LinkedIn sharing, Reddit drafts, and the AI
+// knowledge base) bundles automatically. The frontend cannot import across
+// the frontend/backend boundary, so src/lib/blogPostsContent.js is a
+// byte-identical generated copy of that canonical file — both are updated
+// together whenever a post is added (the two stay in exact sync).
+import { BLOG_POSTS as ALL_POSTS } from './blogPostsContent.js';
 
 // Safety net: deduplicate by slug (the corpus is authored unique).
 const seenSlugs = new Set();
