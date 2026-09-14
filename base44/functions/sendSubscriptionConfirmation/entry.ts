@@ -190,8 +190,30 @@ export default async function (req) {
     const confirmUrl = `${CONFIRM_URL}?kind=${kind}&token=${token}`;
     const html = buildConfirmEmailHtml(kind, post ? post.title : null, confirmUrl);
 
+    // Abuse detectability: an IP pushing branded confirmations to several
+    // distinct addresses within the hour is the relay-abuse pattern. The
+    // caps above still bound volume, but the pattern is now recorded on the
+    // send log and written to runtime logs so repeated abuse from a single
+    // IP is visible and alertable in the dashboard despite the Turnstile gate.
+    const distinctAddresses = new Set(
+      inWindow.filter((l) => l.client_ip === clientIp).map((l) => l.email)
+    );
+    distinctAddresses.add(email);
+    const isSuspicious = distinctAddresses.size >= 3;
+    if (isSuspicious) {
+      console.warn(
+        `[subscription-abuse] IP ${clientIp} has now requested confirmation emails for ${distinctAddresses.size} distinct addresses within the last hour`
+      );
+    }
+
     // Count this send against the IP's hourly cap before dispatching.
-    const sendLog = await base44.asServiceRole.entities.SubscriptionSendLog.create({ client_ip: clientIp, email });
+    const sendLog = await base44.asServiceRole.entities.SubscriptionSendLog.create({
+      client_ip: clientIp,
+      email,
+      description: isSuspicious
+        ? `Abuse signal: this IP requested confirmations for ${distinctAddresses.size} distinct addresses within 1h`
+        : undefined,
+    });
 
     try {
       await base44.asServiceRole.integrations.Core.SendEmail({
