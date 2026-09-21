@@ -28,6 +28,7 @@ import Resources from '@/pages/Resources';
 import ResourceDetail from '@/pages/ResourceDetail';
 import SearchPage from '@/pages/Search';
 import Tags from '@/pages/Tags';
+import Glossary from '@/pages/Glossary';
 import Archive from '@/pages/Archive';
 import Testimonials from '@/pages/Testimonials';
 import StartHere from '@/pages/StartHere';
@@ -88,6 +89,7 @@ function AnimatedRoutes() {
             <Route path="/resources/:slug" element={<ResourceDetail />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/tags" element={<Tags />} />
+            <Route path="/glossary" element={<Glossary />} />
             <Route path="/archive" element={<Archive />} />
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/subscribe" element={<Subscribe />} />

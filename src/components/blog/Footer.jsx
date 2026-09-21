@@ -46,6 +46,7 @@ export default function Footer() {
             </h3>
             <div className="space-y-2">
               <Link to="/faq" className="block text-sm text-muted-foreground hover:text-primary transition-colors">FAQ</Link>
+              <Link to="/glossary" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Glossary</Link>
               <Link to="/resources" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Resources</Link>
               <Link to="/testimonials" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Testimonials</Link>
               <Link to="/subscribe" className="block text-sm text-muted-foreground hover:text-primary transition-colors">Subscribe</Link>

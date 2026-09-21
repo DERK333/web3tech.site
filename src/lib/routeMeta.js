@@ -40,6 +40,11 @@ export const ROUTE_META = {
     title: "Tags | TheWeb3Tech",
     description: "Browse articles by tag — every topic on TheWeb3Tech in one place.",
   },
+  "/glossary": {
+    title: "Web3 and Linux Glossary - TheWeb3Tech",
+    description:
+      "Plain-English definitions of Web3 and Linux terms — Geth, Kaspa, Monero, TailsOS, Docker Compose, smart contracts, and more — each linked to a full guide.",
+  },
   "/archive": {
     title: "Article Archive | TheWeb3Tech",
     description: "The full chronological archive of every article published on TheWeb3Tech.",
