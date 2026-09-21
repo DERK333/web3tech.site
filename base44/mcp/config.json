@@ -1,6 +1,60 @@
 {
   "auth": "oauth",
+  "login_path": null,
+  "consent_path": null,
   "tools": {
+    "excluded_agents": [],
+    "entity_overrides": {
+      "Comment": {
+        "operations": [
+          "read",
+          "create"
+        ],
+        "description": null
+      },
+      "LinkedinInsightSlug": {
+        "operations": [
+          "read"
+        ],
+        "description": null
+      },
+      "LinkedinPostedSlug": {
+        "operations": [
+          "read"
+        ],
+        "description": null
+      },
+      "PostUpdateSubscriber": {
+        "operations": [
+          "read",
+          "create"
+        ],
+        "description": null
+      },
+      "RedditDraft": {
+        "operations": [
+          "read"
+        ],
+        "description": null
+      },
+      "Subscriber": {
+        "operations": [
+          "read",
+          "create"
+        ],
+        "description": null
+      },
+      "SubscriptionSendLog": {
+        "operations": [],
+        "description": null
+      },
+      "WeeklyInsight": {
+        "operations": [
+          "read"
+        ],
+        "description": null
+      }
+    },
     "functions": [
       {
         "name": "blog_knowledge_base",
@@ -11,7 +65,11 @@
           "properties": {
             "action": {
               "type": "string",
-              "enum": ["list", "search", "get"],
+              "enum": [
+                "list",
+                "search",
+                "get"
+              ],
               "description": "What to do: list all posts, search posts by query, or get the full content of one post by slug."
             },
             "query": {
@@ -27,14 +85,18 @@
               "description": "Max search results to return (for action=search). 1-30, defaults to 10."
             }
           },
-          "required": ["action"]
+          "required": [
+            "action"
+          ]
         },
-        "handler": "blogKnowledgeBase",
         "annotations": {
           "read_only_hint": true,
           "destructive_hint": false,
-          "idempotent_hint": true
-        }
+          "idempotent_hint": true,
+          "open_world_hint": null
+        },
+        "handler": "blogKnowledgeBase",
+        "disabled": false
       }
     ]
   }
