@@ -8,6 +8,8 @@ const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const MAX_CONFIRM_EMAILS_PER_IP_PER_HOUR = 5;
 const MAX_CONFIRM_EMAILS_PER_HOUR_GLOBAL = 10;
+// At most this many DISTINCT recipient addresses per email domain per hour.
+const MAX_DISTINCT_RECIPIENTS_PER_DOMAIN_PER_HOUR = 3;
 
 // The subscription forms are anonymous by design, but this function must not
 // become an open mail relay. Only requests originating from the app's own
@@ -125,6 +127,17 @@ export default async function (req) {
     if (!verifyResult || verifyResult.success !== true) {
       return Response.json({ error: 'Verification failed. Please try again.' }, { status: 403 });
     }
+    // Turnstile tokens are hostname-bound: only a challenge solved on the
+    // app's own pages produces a token whose hostname passes here. An
+    // attacker who embeds the public site-key widget on their own page gets
+    // a valid-looking token, but it carries THEIR hostname — and is
+    // rejected. This is the primary proof that the confirmation request
+    // came from the real subscription form, not a scripted relay.
+    const tokenHostname = String(verifyResult.hostname || '').toLowerCase();
+    const isOwnHost = tokenHostname === 'web3tech.site' || tokenHostname.endsWith('.base44.app');
+    if (!tokenHostname || !isOwnHost) {
+      return Response.json({ error: 'Verification failed. Please try again.' }, { status: 403 });
+    }
 
     const recentSends = await base44.asServiceRole.entities.SubscriptionSendLog.list('-created_date', 30);
     const inWindow = (recentSends || []).filter(
@@ -146,6 +159,24 @@ export default async function (req) {
     }
     if (kind === 'post_update' && !POSTS.some((p) => p.slug === postSlug)) {
       return Response.json({ error: 'Unknown post' }, { status: 400 });
+    }
+
+    // Domain-level cap (server-side, not forgeable): at most
+    // MAX_DISTINCT_RECIPIENTS_PER_DOMAIN_PER_HOUR different addresses per
+    // email domain per hour, across all IPs. The relay-abuse pattern is
+    // MANY DISTINCT addresses at one victim organization (list poisoning,
+    // harassment) — the per-recipient and per-IP caps don't bound it, but
+    // this does. Legitimate subscribers arrive from unrelated domains and
+    // never hit it.
+    const recipientDomain = email.split('@')[1] || '';
+    const domainRecipients = new Set(
+      (inWindow || [])
+        .filter((l) => String(l.email || '').toLowerCase().endsWith('@' + recipientDomain))
+        .map((l) => l.email)
+    );
+    domainRecipients.add(email);
+    if (domainRecipients.size > MAX_DISTINCT_RECIPIENTS_PER_DOMAIN_PER_HOUR) {
+      return Response.json({ error: 'Too many confirmation emails requested. Please try again later.' }, { status: 429 });
     }
 
     // Per-recipient cap (server-side, not forgeable): at most ONE confirmation
