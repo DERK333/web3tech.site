@@ -14,6 +14,7 @@ import ShareButtons from "@/components/blog/ShareButtons";
 import NotifyUpdateButton from "@/components/blog/NotifyUpdateButton";
 import PullQuoteShareCard, { extractText } from "@/components/blog/PullQuoteShareCard";
 import RelatedArticles from "@/components/blog/RelatedArticles";
+import TechDerksCallout from "@/components/blog/TechDerksCallout";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -214,6 +215,11 @@ export default function BlogPost() {
         <div className="mt-10 pt-6 border-t border-border">
           <ShareButtons post={post} />
         </div>
+
+        {/* Cross-link the second blog on matching categories */}
+        {(post.category === "Blockchain" || post.category === "Security") && (
+          <TechDerksCallout />
+        )}
 
         {/* Author card */}
         <div className="mt-8 p-5 rounded-xl border border-border bg-card flex gap-4 items-start">

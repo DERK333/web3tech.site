@@ -2,6 +2,7 @@ import React from "react";
 import { ExternalLink, Shield, Code, Cpu, Terminal } from "lucide-react";
 import { motion } from "framer-motion";
 import { AUTHOR, BLOG_POSTS, CATEGORIES } from "@/lib/blogData";
+import TechDerksSection from "@/components/blog/TechDerksSection";
 
 export default function About() {
   return (
@@ -72,6 +73,11 @@ export default function About() {
             <p className="font-heading font-bold text-2xl text-primary">2</p>
             <p className="text-xs text-muted-foreground mt-1">Blog Sources</p>
           </div>
+        </div>
+
+        {/* Also published on TechDerks Insights */}
+        <div className="mt-8">
+          <TechDerksSection />
         </div>
       </motion.div>
     </div>

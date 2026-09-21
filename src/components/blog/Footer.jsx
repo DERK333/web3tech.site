@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Terminal, ExternalLink, Rss } from "lucide-react";
 import { AUTHOR } from "@/lib/blogData";
+import TechDerksSection from "@/components/blog/TechDerksSection";
 
 const RSS_URL = "https://web3tech.site/api/rssFeed";
 
@@ -81,6 +82,7 @@ export default function Footer() {
                   {blog.name}
                 </a>
               ))}
+              <TechDerksSection compact />
             </div>
           </div>
         </div>
