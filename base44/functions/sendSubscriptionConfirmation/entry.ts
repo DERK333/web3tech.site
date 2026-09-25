@@ -23,9 +23,14 @@ function hostOf(value) {
   }
 }
 
+// Only the app's own exact hostnames count. Never a broad *.base44.app
+// suffix: every other app on the platform lives on that suffix too, so
+// accepting it would treat a stranger's app page as "our site".
+const OWN_HOSTS = new Set(['web3tech.site', 'www.web3tech.site', 'web3tech.base44.app']);
+
 function isFromOwnSite(req) {
   const hosts = [hostOf(req.headers.get('origin')), hostOf(req.headers.get('referer'))].filter(Boolean);
-  return hosts.some((h) => h === 'web3tech.site' || h.endsWith('.base44.app'));
+  return hosts.some((h) => OWN_HOSTS.has(h));
 }
 
 // Edge-verified client IP — set by the platform's proxy (Cloudflare), which
@@ -129,13 +134,13 @@ export default async function (req) {
     }
     // Turnstile tokens are hostname-bound: only a challenge solved on the
     // app's own pages produces a token whose hostname passes here. An
-    // attacker who embeds the public site-key widget on their own page gets
-    // a valid-looking token, but it carries THEIR hostname — and is
-    // rejected. This is the primary proof that the confirmation request
+    // attacker who embeds the public site-key widget on their own page —
+    // including another app hosted on *.base44.app — gets a valid-looking
+    // token, but it carries THEIR hostname, which is not in OWN_HOSTS, so it
+    // is rejected. This is the primary proof that the confirmation request
     // came from the real subscription form, not a scripted relay.
     const tokenHostname = String(verifyResult.hostname || '').toLowerCase();
-    const isOwnHost = tokenHostname === 'web3tech.site' || tokenHostname.endsWith('.base44.app');
-    if (!tokenHostname || !isOwnHost) {
+    if (!tokenHostname || !OWN_HOSTS.has(tokenHostname)) {
       return Response.json({ error: 'Verification failed. Please try again.' }, { status: 403 });
     }
 
