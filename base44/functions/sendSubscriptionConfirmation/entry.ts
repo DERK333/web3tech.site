@@ -7,7 +7,13 @@ const CONFIRM_URL = 'https://web3tech.base44.app/functions/confirmSubscription';
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const MAX_CONFIRM_EMAILS_PER_IP_PER_HOUR = 5;
-const MAX_CONFIRM_EMAILS_PER_HOUR_GLOBAL = 10;
+// Global ceiling == per-IP cap: even a rotating pool of IPs solving human
+// challenges cannot push more than 5 branded confirmation emails per hour
+// TOTAL across the app. Legitimate signup volume is far below this, and the
+// weekly digest is sent by a separate function that does not pass through
+// this cap. Abuse-pattern logging for sustained solver-driven traffic is in
+// the send path below ([subscription-abuse] entries).
+const MAX_CONFIRM_EMAILS_PER_HOUR_GLOBAL = 5;
 // At most this many DISTINCT recipient addresses per email domain per hour.
 const MAX_DISTINCT_RECIPIENTS_PER_DOMAIN_PER_HOUR = 3;
 
