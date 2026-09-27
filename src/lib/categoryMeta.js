@@ -1,6 +1,6 @@
 // Shared category registry — powers the Categories listing and the
 // indexable /categories/:slug landing pages.
-import { Code, Shield, Terminal, Eye, Box, Rocket } from "lucide-react";
+import { Code, Shield, Terminal, Eye, Box, Rocket, Trophy } from "lucide-react";
 
 export const CATEGORY_META = {
   Blockchain: {
@@ -44,6 +44,13 @@ export const CATEGORY_META = {
     desc: "Flying cars, eVTOL aircraft, next-gen hardware, and the new tech worth watching — with an honest look at the risk.",
     metaTitle: "Emerging Tech - Web3 Insights Hub",
     metaDesc: "Emerging tech deep dives: eVTOLs and personal flying cars, new hardware platforms, and clear-eyed analysis of what is real and what is pitch.",
+  },
+  "Sports & Culture": {
+    icon: Trophy,
+    slug: "sports-culture",
+    desc: "Game-day stories and the moments where sports, tech, and American life collide.",
+    metaTitle: "Sports & Culture - Web3 Insights Hub",
+    metaDesc: "Game-day stories and cultural moments: presidential visits to Neyland Stadium, College GameDay in Knoxville, and the Saturdays where sports and American life collide.",
   },
 };
 
