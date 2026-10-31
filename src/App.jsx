@@ -14,6 +14,7 @@ import Contact from '@/pages/Contact';
 import Settings from '@/pages/Settings';
 import Analytics from '@/pages/Analytics';
 import TradingBot from '@/pages/TradingBot';
+import TradeHistory from '@/pages/TradeHistory';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -79,6 +80,7 @@ function AnimatedRoutes() {
             <Route element={<AdminRoute />}>
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/trading" element={<TradingBot />} />
+              <Route path="/trades" element={<TradeHistory />} />
               <Route path="/reddit" element={<Reddit />} />
             </Route>
             <Route path="/connect" element={<Connect />} />

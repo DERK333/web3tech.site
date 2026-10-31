@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Activity, RefreshCw, ShieldAlert } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -140,7 +141,15 @@ export default function TradingBot() {
               </section>
 
               <section>
-                <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Trade log</h2>
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <h2 className="font-heading text-lg font-semibold text-foreground">Trade log</h2>
+                  <Link
+                    to="/trades"
+                    className="text-xs font-semibold text-primary hover:underline whitespace-nowrap"
+                  >
+                    Full trade history
+                  </Link>
+                </div>
                 <TradeLog trades={trades} />
               </section>
             </div>
