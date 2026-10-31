@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import PortfolioSummary from "@/components/bot/PortfolioSummary";
 import PnLChart from "@/components/bot/PnLChart";
 import AssetClassTrend from "@/components/bot/AssetClassTrend";
+import PerpSetups from "@/components/bot/PerpSetups";
 import LiveAccountSummary from "@/components/bot/LiveAccountSummary";
 import SignalBoard from "@/components/bot/SignalBoard";
 import PositionsTable from "@/components/bot/PositionsTable";
@@ -182,6 +183,16 @@ export default function TradingBot() {
               Simulated cash and fills used to test the strategy. Nothing in this panel touches your
               Kraken or Alpaca accounts.
             </p>
+          </section>
+
+          <section className="mt-8">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <h2 className="font-heading text-lg font-semibold text-foreground">Perp setups</h2>
+              <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-cyan-400">
+                Manual · Atomic
+              </span>
+            </div>
+            <PerpSetups />
           </section>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-3">
