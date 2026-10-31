@@ -33,6 +33,18 @@
       ],
       "description": "What the strategy recommends for this asset"
     },
+    "expected_gain_pct": {
+      "type": "number",
+      "description": "Estimated gain over roughly ten sessions if the recent pace holds \u2014 an estimate, not a forecast"
+    },
+    "risk_pct": {
+      "type": "number",
+      "description": "Estimated adverse swing over roughly ten sessions, from realized volatility"
+    },
+    "reward_risk": {
+      "type": "number",
+      "description": "Estimated gain divided by estimated risk"
+    },
     "rsi14": {
       "type": "number"
     },

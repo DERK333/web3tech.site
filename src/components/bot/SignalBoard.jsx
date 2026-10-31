@@ -54,6 +54,10 @@ export default function SignalBoard({ signals }) {
                     {meta.label}
                   </span>
 
+                  <span className="hidden sm:inline text-[11px] text-foreground/70">
+                    est. {signal.expected_gain_pct == null ? "—" : fmtPct(signal.expected_gain_pct)}
+                  </span>
+
                   <span className={`hidden sm:flex items-center gap-1 text-xs ${pnlClass(mom)}`}>
                     {Number.isFinite(mom) && mom >= 0 ? (
                       <ArrowUpRight className="w-3 h-3" />
@@ -80,6 +84,12 @@ export default function SignalBoard({ signals }) {
                     <span>vs 200d: {signal.sma200_gap_pct == null ? "—" : fmtPct(signal.sma200_gap_pct)}</span>
                     <span>60d: {signal.momentum_60d_pct == null ? "—" : fmtPct(signal.momentum_60d_pct)}</span>
                     <span>volatility: {signal.volatility_pct == null ? "—" : `${signal.volatility_pct}%`}</span>
+                    <span>
+                      est. gain ~10d: {
+                        signal.expected_gain_pct == null ? "—" : fmtPct(signal.expected_gain_pct)
+                      }
+                    </span>
+                    <span>est. risk ~10d: {signal.risk_pct == null ? "—" : `${signal.risk_pct}%`}</span>
                     <span>scanned: {signal.scanned_at ? new Date(signal.scanned_at).toLocaleString() : "—"}</span>
                   </div>
                 </div>

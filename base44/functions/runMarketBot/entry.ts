@@ -13,6 +13,7 @@ import {
   alpacaSell,
 } from '../../shared/brokers.ts';
 import { loadBrokerCredentials, hasKeys } from '../../shared/brokerCredentials.ts';
+import { UNIVERSE } from '../../shared/marketUniverse.ts';
 
 // The market bot. One call = one full cycle for the signed-in user:
 //   1. pull daily candles for every enabled asset on their watchlist
@@ -44,6 +45,7 @@ const DEFAULTS = {
 };
 
 const MIN_SCAN_GAP_MS = 5 * 60 * 1000;
+const MAX_SCAN_ASSETS = 40;
 const MIN_ORDER_USD = 50;
 
 const money = (n) => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
@@ -136,10 +138,21 @@ export default async function (req) {
       }
     }
 
-    // ---- assets (this user's watchlist) ------------------------------------
-    const assets = await sr.entities.BotAsset.filter({ owner_id: ownerId, enabled: true });
-    if (!assets || assets.length === 0) {
-      return Response.json({ status: 'skipped', message: 'No enabled assets to scan.' });
+    // ---- assets (watchlist first, then the whole built-in universe) -------
+    // The bot does not stop at the watchlist: every liquid name in the universe
+    // is scanned too, so a bigger setup elsewhere is never missed.
+    const watchlist = (await sr.entities.BotAsset.filter({ owner_id: ownerId, enabled: true })) || [];
+    const scanTargets = [];
+    const seenSymbols = new Set();
+    for (const asset of [...watchlist, ...UNIVERSE]) {
+      const symbol = String(asset.symbol || '').toUpperCase().trim();
+      if (!symbol || seenSymbols.has(symbol)) continue;
+      seenSymbols.add(symbol);
+      scanTargets.push({ symbol, asset_class: asset.asset_class });
+      if (scanTargets.length >= MAX_SCAN_ASSETS) break;
+    }
+    if (scanTargets.length === 0) {
+      return Response.json({ status: 'skipped', message: 'No assets to scan.' });
     }
 
     const startedAt = new Date().toISOString();
@@ -148,9 +161,9 @@ export default async function (req) {
 
     // Small sequential batches, with a short pause between them, so the free
     // public endpoints do not rate-limit the scan.
-    for (let i = 0; i < assets.length; i += 3) {
+    for (let i = 0; i < scanTargets.length; i += 3) {
       if (i > 0) await new Promise((resolve) => setTimeout(resolve, 400));
-      const batch = assets.slice(i, i + 3);
+      const batch = scanTargets.slice(i, i + 3);
       const settled = await Promise.allSettled(
         batch.map((a) => fetchSeries(a.symbol, a.asset_class))
       );
@@ -208,6 +221,9 @@ export default async function (req) {
         momentum_20d_pct: s.mom20,
         momentum_60d_pct: s.mom60,
         volatility_pct: s.vol,
+        expected_gain_pct: s.expected_gain_pct,
+        risk_pct: s.risk_pct,
+        reward_risk: s.reward_risk,
         rationale: s.rationale,
         scanned_at: now,
       };
@@ -450,6 +466,8 @@ export default async function (req) {
     // ---- entries ----------------------------------------------------------
     const held = new Set(keptPositions.map((p) => p.symbol.toUpperCase()));
 
+    // Entries are ranked by the largest estimated gain, not by score alone.
+    // Assets in a deep downtrend are skipped however strong one week looks.
     const candidates = liveSignals
       .filter(
         (s) =>
@@ -457,9 +475,15 @@ export default async function (req) {
           Number(s.score) >= entryScore &&
           !held.has(s.symbol) &&
           !tradedToday.has(s.symbol) &&
-          Number(s.price) > 0
+          Number(s.price) > 0 &&
+          Number(s.expected_gain_pct) > 0 &&
+          Number(s.momentum_20d_pct ?? 0) > -20
       )
-      .sort((a, b) => Number(b.score) - Number(a.score));
+      .sort(
+        (a, b) =>
+          Number(b.expected_gain_pct) - Number(a.expected_gain_pct) ||
+          Number(b.score) - Number(a.score)
+      );
 
     const opened = [];
     let openCount = keptPositions.length;
@@ -523,13 +547,21 @@ export default async function (req) {
         price,
         notional,
         score: candidate.score,
-        reason: `Score ${candidate.score} — ${candidate.rationale}`,
+        reason:
+          `Biggest estimated gain on the board: ${Number(candidate.expected_gain_pct).toFixed(1)}% over about ten sessions ` +
+          `(score ${candidate.score}, risk ${Number(candidate.risk_pct).toFixed(1)}%). ${candidate.rationale}`,
         mode: venue === 'paper' ? 'paper' : 'live',
         venue,
         order_id: orderId,
         executed_at: new Date().toISOString(),
       });
-      opened.push({ symbol: candidate.symbol, notional, score: candidate.score, venue });
+      opened.push({
+        symbol: candidate.symbol,
+        notional,
+        score: candidate.score,
+        venue,
+        expected_gain_pct: candidate.expected_gain_pct,
+      });
 
       held.add(candidate.symbol);
       tradedToday.add(candidate.symbol);
@@ -546,6 +578,16 @@ export default async function (req) {
       cashPots.alpaca > 0 ? (alpacaPaper ? 'Alpaca paper' : 'Alpaca live') : null,
     ].filter(Boolean);
 
+    // Biggest gainers and losers across everything scanned, so the picture is
+    // never only the winners the bot happened to buy.
+    const rankedByMomentum = [...liveSignals].sort(
+      (a, b) => Number(b.momentum_20d_pct ?? 0) - Number(a.momentum_20d_pct ?? 0)
+    );
+    const moverLabel = (s) =>
+      `${s.symbol} ${Number(s.momentum_20d_pct ?? 0) >= 0 ? '+' : ''}${Number(s.momentum_20d_pct ?? 0).toFixed(1)}%`;
+    const topGainers = rankedByMomentum.slice(0, 3).map(moverLabel);
+    const topLosers = rankedByMomentum.slice(-3).reverse().map(moverLabel);
+
     const summary =
       `Scanned ${scanned.length} asset${scanned.length === 1 ? '' : 's'}` +
       (failures.length ? ` (${failures.length} unavailable)` : '') +
@@ -553,7 +595,10 @@ export default async function (req) {
       `${opened.length} opened, ${closed.length} closed. ` +
       `${liveEnabled ? `Live via ${liveVenues.length ? liveVenues.join(' + ') : 'no reachable broker'}` : 'Paper only'}` +
       ` — equity $${equity.toLocaleString('en-US')} with $${money(totalCash()).toLocaleString('en-US')} cash.` +
-      (orderErrors.length ? ` ${orderErrors.length} order${orderErrors.length === 1 ? '' : 's'} rejected by the broker.` : '');
+      (orderErrors.length ? ` ${orderErrors.length} order${orderErrors.length === 1 ? '' : 's'} rejected by the broker.` : '') +
+      (rankedByMomentum.length
+        ? ` 20-day moves — up: ${topGainers.join(', ')}; down: ${topLosers.join(', ')}.`
+        : '');
 
     await sr.entities.BotConfig.update(config.id, {
       mode: liveEnabled ? 'live' : 'paper',
@@ -598,9 +643,16 @@ export default async function (req) {
       learned_entry_score: learned,
       win_rate: winRate,
       top_signals: [...liveSignals]
-        .sort((a, b) => Number(b.score) - Number(a.score))
+        .sort((a, b) => Number(b.expected_gain_pct) - Number(a.expected_gain_pct))
         .slice(0, 3)
-        .map((s) => ({ symbol: s.symbol, score: s.score, action: s.action })),
+        .map((s) => ({
+          symbol: s.symbol,
+          score: s.score,
+          action: s.action,
+          expected_gain_pct: s.expected_gain_pct,
+        })),
+      top_gainers: topGainers,
+      top_losers: topLosers,
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

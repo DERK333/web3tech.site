@@ -59,6 +59,35 @@ export function decideAction(score: number, rsi14: number | null, gap200: number
   return 'avoid';
 }
 
+// A transparent estimate, not a forecast: how far roughly ten sessions could
+// reach if the recent pace holds (damped when the chart is already stretched or
+// the 20- and 60-day trends disagree), plus what a normal adverse swing costs.
+export function estimateMoves(parts: {
+  mom20: number | null;
+  mom60: number | null;
+  vol: number | null;
+  rsi14: number | null;
+  score: number;
+}) {
+  const { mom20, mom60, vol, rsi14, score } = parts;
+  const pace = mom20 ?? 0;
+
+  let projected = pace * 0.5;
+  if (mom60 != null && Math.sign(mom60) !== Math.sign(pace)) projected *= 0.5;
+  if (rsi14 != null && rsi14 > 72) projected *= 0.6;
+  if (rsi14 != null && rsi14 >= 45 && rsi14 <= 68) projected *= 1.1;
+
+  const expected = clamp(projected * (0.7 + 0.6 * (score / 100)), -35, 35);
+  const dailyVol = (vol ?? 30) / Math.sqrt(252);
+  const risk = clamp(dailyVol * Math.sqrt(10) * 1.5, 1, 40);
+
+  return {
+    expected_gain_pct: Number(expected.toFixed(2)),
+    risk_pct: Number(risk.toFixed(2)),
+    reward_risk: Number((expected / risk).toFixed(2)),
+  };
+}
+
 function buildRationale(parts: {
   gap50: number | null;
   gap200: number | null;
@@ -150,11 +179,13 @@ export function scoreAsset(series: { symbol: string; closes: number[]; latestPri
 
   const finalScore = Math.round(clamp(score, 0, 100));
   const action = decideAction(finalScore, rsi14, gap200);
+  const moves = estimateMoves({ mom20, mom60, vol, rsi14, score: finalScore });
 
   return {
     price: Number(price.toFixed(6)),
     score: finalScore,
     action,
+    ...moves,
     rsi14: rsi14 == null ? null : Number(rsi14.toFixed(1)),
     gap50: gap50 == null ? null : Number(gap50.toFixed(2)),
     gap200: gap200 == null ? null : Number(gap200.toFixed(2)),

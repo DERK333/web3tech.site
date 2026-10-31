@@ -43,7 +43,13 @@ export default function TradingBot() {
     ]);
 
     setConfig(asArray(configs)[0] || null);
-    setSignals(asArray(liveSignals));
+    // The board leads with the largest estimated gain, the same ranking the
+    // bot uses to pick its entries.
+    setSignals(
+      asArray(liveSignals).sort(
+        (a, b) => Number(b.expected_gain_pct ?? 0) - Number(a.expected_gain_pct ?? 0)
+      )
+    );
     setPositions(asArray(openPositions));
     setTrades(asArray(recentTrades));
     setAssets(asArray(watchlist));
