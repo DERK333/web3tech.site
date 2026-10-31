@@ -15,6 +15,7 @@ import {
 import { loadBrokerCredentials, hasKeys } from '../../shared/brokerCredentials.ts';
 import { UNIVERSE } from '../../shared/marketUniverse.ts';
 import { fetchPlatformUniverse } from '../../shared/platformUniverse.ts';
+import { evaluateAlerts } from '../../shared/watchlistAlerts.ts';
 
 // The market bot. One call = one full cycle for the signed-in user:
 //   1. pull daily candles for every enabled asset on their watchlist
@@ -269,6 +270,40 @@ export default async function (req) {
 
     const signalMap = new Map(liveSignals.map((s) => [s.symbol, s]));
     const priceMap = new Map(liveSignals.map((s) => [s.symbol, s.price]));
+
+    // ---- watchlist alerts -------------------------------------------------
+    // Only assets on this user's watchlist are watched, and only for what
+    // changed since the previous scan — a condition that simply stays true
+    // should not raise the same alert every thirty minutes.
+    const watchSymbols = new Set(
+      (watchlist || []).map((a) => String(a.symbol || '').toUpperCase())
+    );
+    let alertCount = 0;
+    if (config.alerts_enabled !== false && watchSymbols.size > 0) {
+      const recentAlerts =
+        (
+          await sr.entities.BotAlert.filter(
+            { owner_id: ownerId },
+            { sort: '-triggered_at', limit: 200 }
+          )
+        )?.items || [];
+
+      const raised = evaluateAlerts({
+        previous: signalBySymbol,
+        current: liveSignals,
+        symbols: watchSymbols,
+        settings: {
+          move_pct: Number(config.alert_move_pct ?? 8),
+          vol_pct: Number(config.alert_vol_pct ?? 60),
+        },
+        recent: recentAlerts,
+      });
+
+      if (raised.length > 0) {
+        await sr.entities.BotAlert.bulkCreate(raised.map((a) => ({ owner_id: ownerId, ...a })));
+        alertCount = raised.length;
+      }
+    }
 
     // ---- brokers (this user's own accounts) -------------------------------
     const credentials = await loadBrokerCredentials(sr, ownerId);
@@ -624,6 +659,7 @@ export default async function (req) {
       `(${platform.cryptoCount} Kraken pairs, ${platform.stockCount} Alpaca stocks/ETFs)` +
       `. ${liveSignals.length} signals updated. ` +
       `${opened.length} opened, ${closed.length} closed. ` +
+      (alertCount ? `${alertCount} watchlist alert${alertCount === 1 ? '' : 's'} raised. ` : '') +
       `${liveEnabled ? `Live via ${liveVenues.length ? liveVenues.join(' + ') : 'no reachable broker'}` : 'Paper only'}` +
       ` — equity $${equity.toLocaleString('en-US')} with $${money(totalCash()).toLocaleString('en-US')} cash.` +
       (orderErrors.length ? ` ${orderErrors.length} order${orderErrors.length === 1 ? '' : 's'} rejected by the broker.` : '') +
@@ -666,6 +702,7 @@ export default async function (req) {
       scanned: scanned.length,
       failed: failures,
       signals: liveSignals.length,
+      alerts: alertCount,
       opened,
       closed,
       order_errors: orderErrors,

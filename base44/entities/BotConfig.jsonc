@@ -102,6 +102,21 @@
       "type": "number",
       "description": "Size of the full tradable universe on Kraken and Alpaca at the last scan"
     },
+    "alerts_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Email-style watchlist alerts raised during each scan"
+    },
+    "alert_move_pct": {
+      "type": "number",
+      "default": 8,
+      "description": "Price change since the previous scan that counts as a milestone"
+    },
+    "alert_vol_pct": {
+      "type": "number",
+      "default": 60,
+      "description": "Annualized volatility above which a watchlist asset raises an alert"
+    },
     "last_scan_at": {
       "type": "string",
       "format": "date-time"

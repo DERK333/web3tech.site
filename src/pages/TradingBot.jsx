@@ -8,6 +8,8 @@ import PortfolioSummary from "@/components/bot/PortfolioSummary";
 import PnLChart from "@/components/bot/PnLChart";
 import AssetClassTrend from "@/components/bot/AssetClassTrend";
 import PerpSetups from "@/components/bot/PerpSetups";
+import AlertFeed from "@/components/bot/AlertFeed";
+import AlertSettings from "@/components/bot/AlertSettings";
 import LiveAccountSummary from "@/components/bot/LiveAccountSummary";
 import SignalBoard from "@/components/bot/SignalBoard";
 import PositionsTable from "@/components/bot/PositionsTable";
@@ -27,6 +29,7 @@ export default function TradingBot() {
   const [positions, setPositions] = useState([]);
   const [trades, setTrades] = useState([]);
   const [assets, setAssets] = useState([]);
+  const [alerts, setAlerts] = useState([]);
   const [runs, setRuns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
@@ -38,7 +41,7 @@ export default function TradingBot() {
     if (!me) return;
     setUserId(me.id);
 
-    const [configs, liveSignals, openPositions, recentTrades, watchlist, botRuns] = await Promise.all([
+    const [configs, liveSignals, openPositions, recentTrades, watchlist, botRuns, alertList] = await Promise.all([
       base44.entities.BotConfig.filter({ owner_id: me.id }),
       base44.entities.BotSignal.list("-score", 100),
       base44.entities.BotPosition.filter({ owner_id: me.id }),
@@ -51,6 +54,7 @@ export default function TradingBot() {
         },
         { sort: "started_at", limit: 500 }
       ),
+      base44.entities.BotAlert.filter({ owner_id: me.id }, { sort: "-triggered_at", limit: 20 }),
     ]);
 
     setConfig(asArray(configs)[0] || null);
@@ -64,6 +68,7 @@ export default function TradingBot() {
     setPositions(asArray(openPositions));
     setTrades(asArray(recentTrades));
     setAssets(asArray(watchlist));
+    setAlerts(asArray(alertList));
     setRuns(asArray(botRuns));
   }, []);
 
@@ -198,6 +203,13 @@ export default function TradingBot() {
           <div className="mt-8 grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-8">
               <section>
+                <h2 className="font-heading text-lg font-semibold text-foreground mb-3">
+                  Watchlist alerts
+                </h2>
+                <AlertFeed alerts={alerts} onChanged={load} />
+              </section>
+
+              <section>
                 <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Signals</h2>
                 <SignalBoard signals={signals} />
               </section>
@@ -230,6 +242,11 @@ export default function TradingBot() {
               <section>
                 <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Watchlist</h2>
                 <WatchlistManager assets={assets} onChanged={load} userId={userId} />
+              </section>
+
+              <section>
+                <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Alert rules</h2>
+                <AlertSettings config={config} onSaved={load} />
               </section>
 
               <section>
