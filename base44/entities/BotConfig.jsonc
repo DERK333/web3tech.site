@@ -94,6 +94,14 @@
       "type": "string",
       "description": "Broker-side message from the last run (connection or order errors)"
     },
+    "scan_cursor": {
+      "type": "number",
+      "description": "Position in the full platform universe where the next scan resumes"
+    },
+    "scan_total": {
+      "type": "number",
+      "description": "Size of the full tradable universe on Kraken and Alpaca at the last scan"
+    },
     "last_scan_at": {
       "type": "string",
       "format": "date-time"

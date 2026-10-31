@@ -14,6 +14,7 @@ import {
 } from '../../shared/brokers.ts';
 import { loadBrokerCredentials, hasKeys } from '../../shared/brokerCredentials.ts';
 import { UNIVERSE } from '../../shared/marketUniverse.ts';
+import { fetchPlatformUniverse } from '../../shared/platformUniverse.ts';
 
 // The market bot. One call = one full cycle for the signed-in user:
 //   1. pull daily candles for every enabled asset on their watchlist
@@ -45,7 +46,9 @@ const DEFAULTS = {
 };
 
 const MIN_SCAN_GAP_MS = 5 * 60 * 1000;
-const MAX_SCAN_ASSETS = 40;
+// Each run scores the watchlist and the core liquid names, then the next slice
+// of the full platform universe. Higher would hammer the free data endpoints.
+const MAX_SCAN_ASSETS = 55;
 const MIN_ORDER_USD = 50;
 
 const money = (n) => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
@@ -138,19 +141,43 @@ export default async function (req) {
       }
     }
 
-    // ---- assets (watchlist first, then the whole built-in universe) -------
-    // The bot does not stop at the watchlist: every liquid name in the universe
-    // is scanned too, so a bigger setup elsewhere is never missed.
+    // ---- assets (watchlist + core, then the whole platform universe) -----
+    // The bot does not stop at a fixed list. The watchlist and the core liquid
+    // names are scored on every run, and the rest of the run is spent on the
+    // next slice of every USD pair on Kraken and every tradable stock and ETF on
+    // Alpaca — so the entire market is covered on a rolling basis instead of a
+    // handful of favourites.
     const watchlist = (await sr.entities.BotAsset.filter({ owner_id: ownerId, enabled: true })) || [];
     const scanTargets = [];
     const seenSymbols = new Set();
-    for (const asset of [...watchlist, ...UNIVERSE]) {
-      const symbol = String(asset.symbol || '').toUpperCase().trim();
-      if (!symbol || seenSymbols.has(symbol)) continue;
+    const addTarget = (asset) => {
+      const symbol = String(asset?.symbol || '').toUpperCase().trim();
+      if (!symbol || seenSymbols.has(symbol)) return;
       seenSymbols.add(symbol);
       scanTargets.push({ symbol, asset_class: asset.asset_class });
-      if (scanTargets.length >= MAX_SCAN_ASSETS) break;
+    };
+
+    watchlist.forEach(addTarget);
+    UNIVERSE.forEach(addTarget);
+
+    const universeCredentials = await loadBrokerCredentials(sr, ownerId);
+    const universeAlpacaKeys = hasKeys(universeCredentials.alpaca)
+      ? { key: universeCredentials.alpaca.key, secret: universeCredentials.alpaca.secret }
+      : user.role === 'admin'
+        ? envAlpacaKeys()
+        : null;
+    const platform = await fetchPlatformUniverse(universeAlpacaKeys, config.alpaca_paper !== false);
+
+    const scanCursor = Math.max(0, Number(config.scan_cursor ?? 0));
+    const rotating = platform.assets.filter((asset) => !seenSymbols.has(asset.symbol));
+    const room = Math.max(0, MAX_SCAN_ASSETS - scanTargets.length);
+    let rotated = 0;
+    for (let i = 0; i < room && rotating.length > 0; i++) {
+      addTarget(rotating[(scanCursor + i) % rotating.length]);
+      rotated += 1;
     }
+    const nextCursor = rotating.length ? (scanCursor + rotated) % rotating.length : 0;
+
     if (scanTargets.length === 0) {
       return Response.json({ status: 'skipped', message: 'No assets to scan.' });
     }
@@ -266,7 +293,7 @@ export default async function (req) {
       kraken: 0,
       alpaca: 0,
     };
-    const brokerNotes = [];
+    const brokerNotes = [...platform.notes];
 
     if (liveEnabled && krakenKeys) {
       try {
@@ -593,6 +620,8 @@ export default async function (req) {
     const summary =
       `Scanned ${scanned.length} asset${scanned.length === 1 ? '' : 's'}` +
       (failures.length ? ` (${failures.length} unavailable)` : '') +
+      ` from a ${platform.assets.length}-asset platform universe ` +
+      `(${platform.cryptoCount} Kraken pairs, ${platform.stockCount} Alpaca stocks/ETFs).` +
       `. ${liveSignals.length} signals updated. ` +
       `${opened.length} opened, ${closed.length} closed. ` +
       `${liveEnabled ? `Live via ${liveVenues.length ? liveVenues.join(' + ') : 'no reachable broker'}` : 'Paper only'}` +
@@ -611,6 +640,8 @@ export default async function (req) {
       closed_trades: closedWindow.length,
       learning_note: learningNote,
       broker_note: [...brokerNotes, ...orderErrors].join(' · ') || '',
+      scan_cursor: nextCursor,
+      scan_total: platform.assets.length,
       last_scan_at: now,
       last_summary: summary,
     });

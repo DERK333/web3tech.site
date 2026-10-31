@@ -67,15 +67,19 @@ const krakenPublic = async (path) => {
   return data.result;
 };
 
-// Kraken rejects any nonce that is not strictly larger than the last one used
-// for the key. Wall-clock microseconds rise on their own; the stored last value
-// only steps in when two calls land inside the same millisecond, so a nonce
-// never jumps far ahead of the clock (a jump would make every later call look
-// stale and get the key locked out).
-const NONCE_SCALE = 1000000n;
+// Kraken rejects any nonce that is not strictly larger than the last one it
+// accepted for the key — and a rejected call can leave that stored value far
+// above the clock, which silently breaks every later request ("Invalid nonce").
+//
+// So the nonce is anchored to a fixed high floor plus the clock in 1ms steps:
+// always strictly rising, always above anything previously sent, and still far
+// below the 64-bit ceiling (7e18 + clock*1000 stays under 9.2e18). The per-
+// process lane keeps two simultaneous calls from landing on the same number.
+const NONCE_FLOOR = 7000000000000000000n;
+const NONCE_LANE = BigInt(Math.floor(Math.random() * 999));
 let lastNonce = 0n;
 const krakenNonce = () => {
-  const candidate = BigInt(Date.now()) * NONCE_SCALE;
+  const candidate = NONCE_FLOOR + BigInt(Date.now()) * 1000n + NONCE_LANE;
   const next = candidate > lastNonce ? candidate : lastNonce + 1n;
   lastNonce = next;
   return next.toString();
@@ -306,6 +310,12 @@ export const alpacaAccount = async (keys, paper = true) => {
     equity: Number(account?.equity) || 0,
     paper: resolved,
   };
+};
+
+// Every stock and ETF the Alpaca account can actually trade.
+export const alpacaAssets = async (keys, paper = true) => {
+  const assets = await alpacaRequest(keys, "/v2/assets?status=active&asset_class=us_equity", {}, paper);
+  return (Array.isArray(assets) ? assets : []).filter((a) => a?.tradable === true && a?.symbol);
 };
 
 export const alpacaBuy = async (keys, symbol, usdAmount, paper = true) => {

@@ -1,13 +1,13 @@
 {
   "name": "Market Bot Scan",
-  "description": "Every hour, scans the watchlist for trend and momentum, stores fresh signals, and manages the simulated (paper) portfolio.",
+  "description": "Every 30 minutes, scans the watchlist, the core liquid names and the next slice of every tradable asset on Kraken and Alpaca, stores fresh signals, and manages the portfolio so entries happen as soon as a setup appears.",
   "trigger": {
     "condition": null,
     "config": {
       "trigger_type": "scheduled",
       "events": [],
       "schedule_mode": "recurring",
-      "cron_expression": "0 * * * *",
+      "cron_expression": "*/30 * * * *",
       "one_time_date": null,
       "timezone": "America/New_York",
       "interval_value": null,
