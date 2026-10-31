@@ -621,7 +621,7 @@ export default async function (req) {
       `Scanned ${scanned.length} asset${scanned.length === 1 ? '' : 's'}` +
       (failures.length ? ` (${failures.length} unavailable)` : '') +
       ` from a ${platform.assets.length}-asset platform universe ` +
-      `(${platform.cryptoCount} Kraken pairs, ${platform.stockCount} Alpaca stocks/ETFs).` +
+      `(${platform.cryptoCount} Kraken pairs, ${platform.stockCount} Alpaca stocks/ETFs)` +
       `. ${liveSignals.length} signals updated. ` +
       `${opened.length} opened, ${closed.length} closed. ` +
       `${liveEnabled ? `Live via ${liveVenues.length ? liveVenues.join(' + ') : 'no reachable broker'}` : 'Paper only'}` +

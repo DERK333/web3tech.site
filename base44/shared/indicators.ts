@@ -135,9 +135,44 @@ function buildRationale(parts: {
   return sentences.join(', ').replace(/, and /, ' and ') + '.';
 }
 
+// Daily closes from the free sources are not split- or dividend-adjusted, so a
+// corporate action shows up as a cliff (a 10:1 split reads as -90% overnight).
+// On a broad sweep of thousands of tickers those cliffs look like enormous
+// momentum and would trigger trades on phantom moves, so such a series is
+// scored as untradeable rather than ranked.
+function biggestDailyMove(closes: number[]): number {
+  const window = closes.slice(-60);
+  let worst = 0;
+  for (let i = 1; i < window.length; i++) {
+    if (!(window[i - 1] > 0)) continue;
+    const move = Math.abs(window[i] / window[i - 1] - 1);
+    if (move > worst) worst = move;
+  }
+  return worst;
+}
+
 export function scoreAsset(series: { symbol: string; closes: number[]; latestPrice: number }) {
   const closes = series.closes || [];
   const price = series.latestPrice;
+
+  const cliff = biggestDailyMove(closes);
+  if (cliff > 0.65) {
+    return {
+      price: Number(price.toFixed(6)),
+      score: 0,
+      action: 'avoid',
+      expected_gain_pct: 0,
+      risk_pct: 40,
+      reward_risk: 0,
+      rsi14: null,
+      gap50: null,
+      gap200: null,
+      mom20: null,
+      mom60: null,
+      vol: null,
+      rationale: `Price series contains a ${(cliff * 100).toFixed(0)}% one-day jump — almost certainly an unadjusted split or dividend, so its trend and momentum readings cannot be trusted and the bot will not trade it.`,
+    };
+  }
   const sma50 = sma(closes, 50);
   const sma200 = sma(closes, 200);
   const rsi14 = rsi(closes, 14);
