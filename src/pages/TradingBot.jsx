@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import PortfolioSummary from "@/components/bot/PortfolioSummary";
 import PnLChart from "@/components/bot/PnLChart";
+import AssetClassTrend from "@/components/bot/AssetClassTrend";
 import LiveAccountSummary from "@/components/bot/LiveAccountSummary";
 import SignalBoard from "@/components/bot/SignalBoard";
 import PositionsTable from "@/components/bot/PositionsTable";
@@ -160,6 +161,10 @@ export default function TradingBot() {
 
           <section className="mt-8">
             <PnLChart runs={runs} startingCash={config?.starting_cash ?? 100000} />
+          </section>
+
+          <section className="mt-8">
+            <AssetClassTrend />
           </section>
 
           <section className="mt-8 rounded-2xl border border-dashed border-amber-500/25 bg-amber-500/[0.03] p-4">
