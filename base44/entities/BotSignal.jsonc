@@ -1,0 +1,94 @@
+{
+  "name": "BotSignal",
+  "type": "object",
+  "properties": {
+    "symbol": {
+      "type": "string",
+      "description": "Ticker the signal was computed for"
+    },
+    "asset_class": {
+      "type": "string",
+      "enum": [
+        "stock",
+        "etf",
+        "crypto"
+      ]
+    },
+    "price": {
+      "type": "number",
+      "description": "Latest close used in the calculation"
+    },
+    "score": {
+      "type": "number",
+      "description": "Composite technical score, 0-100"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "strong_buy",
+        "buy",
+        "hold",
+        "trim",
+        "avoid"
+      ],
+      "description": "What the strategy recommends for this asset"
+    },
+    "rsi14": {
+      "type": "number"
+    },
+    "sma50_gap_pct": {
+      "type": "number",
+      "description": "Percent above/below the 50-day average"
+    },
+    "sma200_gap_pct": {
+      "type": "number",
+      "description": "Percent above/below the 200-day average"
+    },
+    "momentum_20d_pct": {
+      "type": "number"
+    },
+    "momentum_60d_pct": {
+      "type": "number"
+    },
+    "volatility_pct": {
+      "type": "number",
+      "description": "Annualized 20-day realized volatility"
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Plain-English explanation of the score"
+    },
+    "scanned_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "symbol",
+    "asset_class",
+    "score",
+    "action"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

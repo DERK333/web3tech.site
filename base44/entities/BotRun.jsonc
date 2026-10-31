@@ -1,0 +1,66 @@
+{
+  "name": "BotRun",
+  "type": "object",
+  "properties": {
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "assets_scanned": {
+      "type": "number"
+    },
+    "assets_failed": {
+      "type": "number"
+    },
+    "signals": {
+      "type": "number"
+    },
+    "trades": {
+      "type": "number"
+    },
+    "equity": {
+      "type": "number"
+    },
+    "cash": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "partial",
+        "error"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "description": "Human-readable outcome of the run"
+    }
+  },
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

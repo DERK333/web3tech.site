@@ -1,0 +1,55 @@
+{
+  "name": "BotAsset",
+  "type": "object",
+  "properties": {
+    "symbol": {
+      "type": "string",
+      "description": "Ticker symbol \u2014 stock/ETF ticker (e.g. SPY) or crypto ticker (e.g. BTC)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable asset name"
+    },
+    "asset_class": {
+      "type": "string",
+      "enum": [
+        "stock",
+        "etf",
+        "crypto"
+      ],
+      "default": "stock",
+      "description": "Asset class \u2014 decides which public data source is used"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the bot scans and may trade this asset"
+    }
+  },
+  "required": [
+    "symbol",
+    "asset_class"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

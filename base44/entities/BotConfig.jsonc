@@ -1,0 +1,76 @@
+{
+  "name": "BotConfig",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "paper"
+      ],
+      "default": "paper",
+      "description": "Simulated trading only \u2014 no real orders are placed"
+    },
+    "starting_cash": {
+      "type": "number",
+      "default": 100000
+    },
+    "cash_balance": {
+      "type": "number",
+      "description": "Uninvested simulated cash"
+    },
+    "max_position_pct": {
+      "type": "number",
+      "default": 12,
+      "description": "Largest share of equity a single position may take"
+    },
+    "max_positions": {
+      "type": "number",
+      "default": 8
+    },
+    "min_entry_score": {
+      "type": "number",
+      "default": 66,
+      "description": "Minimum score required to open a position"
+    },
+    "stop_loss_pct": {
+      "type": "number",
+      "default": 8
+    },
+    "take_profit_pct": {
+      "type": "number",
+      "default": 30
+    },
+    "last_scan_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_summary": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "mode"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

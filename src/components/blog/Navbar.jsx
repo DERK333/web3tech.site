@@ -193,6 +193,19 @@ export default function Navbar() {
                       Reddit drafts
                     </Link>
                   )}
+                  {user?.role === "admin" && (
+                    <Link
+                      to="/trading"
+                      onClick={() => setMobileOpen(false)}
+                      className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                        location.pathname === "/trading"
+                          ? "text-primary bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      Market bot
+                    </Link>
+                  )}
                   {!isAuthenticated && (
                     <Link
                       to="/login"
@@ -282,6 +295,7 @@ export default function Navbar() {
         {user?.role === "admin" && (
           <>
             <Link to="/analytics" onClick={hideDrawer} className={linkClasses("/analytics")}>Analytics</Link>
+            <Link to="/trading" onClick={hideDrawer} className={linkClasses("/trading")}>Market bot</Link>
             <Link to="/reddit" onClick={hideDrawer} className={linkClasses("/reddit")}>Reddit drafts</Link>
           </>
         )}

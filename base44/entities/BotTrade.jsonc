@@ -1,0 +1,82 @@
+{
+  "name": "BotTrade",
+  "type": "object",
+  "properties": {
+    "symbol": {
+      "type": "string"
+    },
+    "asset_class": {
+      "type": "string",
+      "enum": [
+        "stock",
+        "etf",
+        "crypto"
+      ]
+    },
+    "side": {
+      "type": "string",
+      "enum": [
+        "buy",
+        "sell"
+      ]
+    },
+    "quantity": {
+      "type": "number"
+    },
+    "price": {
+      "type": "number"
+    },
+    "notional": {
+      "type": "number",
+      "description": "Quantity times price, in dollars"
+    },
+    "score": {
+      "type": "number",
+      "description": "Signal score at execution time"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Why the bot took this trade"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "paper"
+      ],
+      "default": "paper"
+    },
+    "executed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "symbol",
+    "side",
+    "quantity",
+    "price",
+    "notional"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

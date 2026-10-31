@@ -1,0 +1,68 @@
+{
+  "name": "BotPosition",
+  "type": "object",
+  "properties": {
+    "symbol": {
+      "type": "string"
+    },
+    "asset_class": {
+      "type": "string",
+      "enum": [
+        "stock",
+        "etf",
+        "crypto"
+      ]
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Units held"
+    },
+    "avg_cost": {
+      "type": "number",
+      "description": "Average entry price"
+    },
+    "last_price": {
+      "type": "number",
+      "description": "Most recent scanned price"
+    },
+    "market_value": {
+      "type": "number"
+    },
+    "unrealized_pct": {
+      "type": "number",
+      "description": "Percent gain/loss versus average cost"
+    },
+    "opened_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "symbol",
+    "asset_class",
+    "quantity",
+    "avg_cost"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
