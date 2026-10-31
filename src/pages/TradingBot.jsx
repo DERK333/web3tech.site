@@ -5,6 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import PortfolioSummary from "@/components/bot/PortfolioSummary";
+import LiveAccountSummary from "@/components/bot/LiveAccountSummary";
 import SignalBoard from "@/components/bot/SignalBoard";
 import PositionsTable from "@/components/bot/PositionsTable";
 import TradeLog from "@/components/bot/TradeLog";
@@ -124,9 +125,32 @@ export default function TradingBot() {
         </div>
       ) : (
         <>
-          <div className="mt-6">
-            <PortfolioSummary config={config} positions={positions} />
-          </div>
+          <section className="mt-6">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <h2 className="font-heading text-lg font-semibold text-foreground">Live accounts</h2>
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-400">
+                Real money
+              </span>
+            </div>
+            <LiveAccountSummary positions={positions} />
+          </section>
+
+          <section className="mt-8 rounded-2xl border border-dashed border-amber-500/25 bg-amber-500/[0.03] p-4">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <h2 className="font-heading text-lg font-semibold text-foreground">Paper portfolio</h2>
+              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-400">
+                Simulated
+              </span>
+            </div>
+            <PortfolioSummary
+              config={config}
+              positions={positions.filter((p) => !p.venue || p.venue === "paper")}
+            />
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+              Simulated cash and fills used to test the strategy. Nothing in this panel touches your
+              Kraken or Alpaca accounts.
+            </p>
+          </section>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-8">
