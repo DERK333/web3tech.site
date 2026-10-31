@@ -5,6 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import PortfolioSummary from "@/components/bot/PortfolioSummary";
+import PnLChart from "@/components/bot/PnLChart";
 import LiveAccountSummary from "@/components/bot/LiveAccountSummary";
 import SignalBoard from "@/components/bot/SignalBoard";
 import PositionsTable from "@/components/bot/PositionsTable";
@@ -24,6 +25,7 @@ export default function TradingBot() {
   const [positions, setPositions] = useState([]);
   const [trades, setTrades] = useState([]);
   const [assets, setAssets] = useState([]);
+  const [runs, setRuns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -34,12 +36,19 @@ export default function TradingBot() {
     if (!me) return;
     setUserId(me.id);
 
-    const [configs, liveSignals, openPositions, recentTrades, watchlist] = await Promise.all([
+    const [configs, liveSignals, openPositions, recentTrades, watchlist, botRuns] = await Promise.all([
       base44.entities.BotConfig.filter({ owner_id: me.id }),
       base44.entities.BotSignal.list("-score", 100),
       base44.entities.BotPosition.filter({ owner_id: me.id }),
       base44.entities.BotTrade.filter({ owner_id: me.id }, { sort: "-created_date", limit: 30 }),
       base44.entities.BotAsset.filter({ owner_id: me.id }),
+      base44.entities.BotRun.filter(
+        {
+          owner_id: me.id,
+          started_at: { $gte: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000).toISOString() },
+        },
+        { sort: "started_at", limit: 500 }
+      ),
     ]);
 
     setConfig(asArray(configs)[0] || null);
@@ -53,6 +62,7 @@ export default function TradingBot() {
     setPositions(asArray(openPositions));
     setTrades(asArray(recentTrades));
     setAssets(asArray(watchlist));
+    setRuns(asArray(botRuns));
   }, []);
 
   useEffect(() => {
@@ -146,6 +156,10 @@ export default function TradingBot() {
               </span>
             </div>
             <LiveAccountSummary positions={positions} />
+          </section>
+
+          <section className="mt-8">
+            <PnLChart runs={runs} startingCash={config?.starting_cash ?? 100000} />
           </section>
 
           <section className="mt-8 rounded-2xl border border-dashed border-amber-500/25 bg-amber-500/[0.03] p-4">
