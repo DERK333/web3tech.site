@@ -4,7 +4,11 @@ import { secrets } from "base44:runtime";
 //   Kraken  — crypto spot orders (USD pairs)
 //   Alpaca  — US stocks and ETFs (paper or live account)
 //
-// Every call is a market order sized by the caller. This module never decides
+// Every call takes the credential pair it should act with. No key is ever read
+// here on its own: the calling function resolves the account it belongs to, so
+// one user's bot can never touch another user's broker.
+//
+// Every order is a market order sized by the caller. This module never decides
 // how much to trade — the strategy does — it only signs and sends.
 
 const KRAKEN_API = "https://api.kraken.com";
@@ -42,20 +46,19 @@ const bytesToB64 = (buffer) => {
   return btoa(bin);
 };
 
-const krakenKeys = () => {
+// The app owner's own keys, kept in app secrets. Only ever used as a fallback
+// for the admin account; every other user must connect their own.
+export const envKrakenKeys = () => {
   const key = secrets.get("KRAKEN_API_KEY");
   const secret = secrets.get("KRAKEN_API_SECRET");
   return key && secret ? { key, secret } : null;
 };
 
-const alpacaKeys = () => {
+export const envAlpacaKeys = () => {
   const key = secrets.get("ALPACA_API_KEY");
   const secret = secrets.get("ALPACA_API_SECRET");
   return key && secret ? { key, secret } : null;
 };
-
-export const krakenConfigured = () => Boolean(krakenKeys());
-export const alpacaConfigured = () => Boolean(alpacaKeys());
 
 const krakenPublic = async (path) => {
   const res = await fetch(`${KRAKEN_API}${path}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
@@ -75,9 +78,8 @@ let nonceCounter = 0n;
 const krakenNonce = (bump = 0n) =>
   (BigInt(Date.now()) * NONCE_SCALE + NONCE_OFFSET + bump + nonceCounter++).toString();
 
-const krakenPrivate = async (methodPath, params = {}) => {
-  const keys = krakenKeys();
-  if (!keys) throw new Error("Kraken API keys are not set");
+const krakenPrivate = async (keys, methodPath, params = {}) => {
+  if (!keys?.key || !keys?.secret) throw new Error("No Kraken API key is connected");
 
   const send = async (nonce) => {
     const body = new URLSearchParams({ nonce, ...params }).toString();
@@ -141,15 +143,15 @@ const findKrakenPair = async (symbol) => {
   return null;
 };
 
-export const krakenUsdBalance = async () => {
-  const result = await krakenPrivate("/0/private/Balance");
+export const krakenUsdBalance = async (keys) => {
+  const result = await krakenPrivate(keys, "/0/private/Balance");
   return Number(result?.ZUSD ?? result?.USD ?? 0) || 0;
 };
 
 // Whole-account value: idle USD plus every crypto balance marked to Kraken's
 // latest trade price, so a funded account never reports just its spare change.
-export const krakenAccountValue = async () => {
-  const balances = await krakenPrivate("/0/private/Balance");
+export const krakenAccountValue = async (keys) => {
+  const balances = await krakenPrivate(keys, "/0/private/Balance");
   let cash = 0;
   const crypto = {};
 
@@ -204,14 +206,14 @@ export const krakenAccountValue = async () => {
 
 // Buys `usdAmount` of the asset. Kraken's viqc flag means volume is quoted in
 // the pair's quote currency, so the order is sized in dollars directly.
-export const krakenBuy = async (symbol, usdAmount) => {
+export const krakenBuy = async (keys, symbol, usdAmount) => {
   const market = await findKrakenPair(symbol);
   if (!market) throw new Error(`Kraken does not list ${symbol}/USD`);
   const usd = Math.round(Number(usdAmount) * 100) / 100;
   if (usd < market.minCost) {
     throw new Error(`$${usd} is below Kraken's $${market.minCost} minimum for ${symbol}`);
   }
-  const result = await krakenPrivate("/0/private/AddOrder", {
+  const result = await krakenPrivate(keys, "/0/private/AddOrder", {
     pair: market.pair,
     type: "buy",
     ordertype: "market",
@@ -221,7 +223,7 @@ export const krakenBuy = async (symbol, usdAmount) => {
   return { orderId: result?.txid?.[0] || null, pair: market.pair, usd };
 };
 
-export const krakenSell = async (symbol, quantity) => {
+export const krakenSell = async (keys, symbol, quantity) => {
   const market = await findKrakenPair(symbol);
   if (!market) throw new Error(`Kraken does not list ${symbol}/USD`);
   const volume = Number(Number(quantity).toFixed(market.lotDecimals));
@@ -229,7 +231,7 @@ export const krakenSell = async (symbol, quantity) => {
   if (volume < market.minVolume) {
     throw new Error(`${symbol}: ${volume} is below Kraken's ${market.minVolume} minimum lot`);
   }
-  const result = await krakenPrivate("/0/private/AddOrder", {
+  const result = await krakenPrivate(keys, "/0/private/AddOrder", {
     pair: market.pair,
     type: "sell",
     ordertype: "market",
@@ -238,9 +240,8 @@ export const krakenSell = async (symbol, quantity) => {
   return { orderId: result?.txid?.[0] || null, pair: market.pair, volume };
 };
 
-const alpacaRequest = async (path, options = {}, paper = true) => {
-  const keys = alpacaKeys();
-  if (!keys) throw new Error("Alpaca API keys are not set");
+const alpacaRequest = async (keys, path, options = {}, paper = true) => {
+  if (!keys?.key || !keys?.secret) throw new Error("No Alpaca API key is connected");
   const base = paper ? ALPACA_PAPER : ALPACA_LIVE;
   const authHeaders = {
     "APCA-API-KEY-ID": keys.key,
@@ -281,8 +282,8 @@ const alpacaRequest = async (path, options = {}, paper = true) => {
   return data;
 };
 
-export const alpacaAccount = async (paper = true) => {
-  const account = await alpacaRequest("/v2/account", {}, paper);
+export const alpacaAccount = async (keys, paper = true) => {
+  const account = await alpacaRequest(keys, "/v2/account", {}, paper);
   return {
     cash: Number(account?.cash) || 0,
     equity: Number(account?.equity) || 0,
@@ -290,10 +291,11 @@ export const alpacaAccount = async (paper = true) => {
   };
 };
 
-export const alpacaBuy = async (symbol, usdAmount, paper = true) => {
+export const alpacaBuy = async (keys, symbol, usdAmount, paper = true) => {
   const notional = Math.round(Number(usdAmount) * 100) / 100;
   if (!(notional > 0)) throw new Error(`${symbol}: order size rounds to zero`);
   const order = await alpacaRequest(
+    keys,
     "/v2/orders",
     {
       method: "POST",
@@ -311,8 +313,9 @@ export const alpacaBuy = async (symbol, usdAmount, paper = true) => {
 };
 
 // Omitting qty liquidates the whole position — what an exit means here.
-export const alpacaSell = async (symbol, paper = true) => {
+export const alpacaSell = async (keys, symbol, paper = true) => {
   const order = await alpacaRequest(
+    keys,
     "/v2/orders",
     {
       method: "POST",
