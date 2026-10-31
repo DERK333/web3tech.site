@@ -2,7 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 import {
   krakenConfigured,
   alpacaConfigured,
-  krakenUsdBalance,
+  krakenAccountValue,
   alpacaAccount,
 } from '../../shared/brokers.ts';
 
@@ -18,10 +18,22 @@ export default async function (req) {
     const config = configs && configs.length ? configs[0] : null;
     const alpacaPaper = config?.alpaca_paper !== false;
 
-    const kraken = { configured: krakenConfigured(), ok: false, cash: null, error: null };
+    const kraken = {
+      configured: krakenConfigured(),
+      ok: false,
+      cash: null,
+      crypto_value: null,
+      total: null,
+      holdings: [],
+      error: null,
+    };
     if (kraken.configured) {
       try {
-        kraken.cash = await krakenUsdBalance();
+        const account = await krakenAccountValue();
+        kraken.cash = account.cash;
+        kraken.crypto_value = account.cryptoValue;
+        kraken.total = account.total;
+        kraken.holdings = account.holdings;
         kraken.ok = true;
       } catch (error) {
         kraken.error = error.message;

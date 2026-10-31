@@ -38,11 +38,13 @@ export default function LiveAccountSummary({ positions = [] }) {
     return () => clearInterval(timer);
   }, [refresh]);
 
+  const krakenTotal = status?.kraken?.ok ? Number(status.kraken.total ?? status.kraken.cash) : null;
   const krakenCash = status?.kraken?.ok ? Number(status.kraken.cash) : null;
+  const krakenCrypto = status?.kraken?.ok ? Number(status.kraken.crypto_value ?? 0) : 0;
   const alpacaEquity = status?.alpaca?.ok
     ? Number(status.alpaca.equity ?? status.alpaca.cash)
     : null;
-  const known = [krakenCash, alpacaEquity].filter((n) => Number.isFinite(n));
+  const known = [krakenTotal, alpacaEquity].filter((n) => Number.isFinite(n));
   const held = known.reduce((sum, n) => sum + n, 0);
 
   const realPositions = positions.filter((p) => p.venue && p.venue !== "paper");
@@ -58,13 +60,18 @@ export default function LiveAccountSummary({ positions = [] }) {
           icon={Landmark}
           label="Live portfolio"
           value={known.length ? fmtMoney(held) : "—"}
-          hint="Kraken USD + Alpaca equity"
+          hint="Kraken holdings + Alpaca equity"
         />
         <Card
           icon={Wallet}
           label="Kraken"
-          value={krakenCash == null ? "—" : fmtMoney(krakenCash)}
-          hint={status?.kraken?.error || "USD available at the broker"}
+          value={krakenTotal == null ? "—" : fmtMoney(krakenTotal)}
+          hint={
+            status?.kraken?.error ||
+            (krakenTotal == null
+              ? "Reading the account…"
+              : `${fmtMoney(krakenCash)} USD cash · ${fmtMoney(krakenCrypto)} in crypto`)
+          }
         />
         <Card
           icon={Wallet}
