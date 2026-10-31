@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
+import { waitUntil } from 'base44:runtime';
 import { fetchSeries } from '../../shared/marketData.ts';
 import { scoreAsset } from '../../shared/indicators.ts';
 import {
@@ -48,6 +49,50 @@ const MIN_ORDER_USD = 50;
 const money = (n) => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
 const units = (n) => Math.round((Number(n) + Number.EPSILON) * 1e6) / 1e6;
 const todayKey = () => new Date().toISOString().slice(0, 10);
+
+const usd = (n) =>
+  `$${Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+const VENUE_LABEL = {
+  paper: 'Paper portfolio (simulated)',
+  kraken: 'Kraken (real money)',
+  alpaca: 'Alpaca (real money)',
+};
+
+// One short notice per closed position, with the realized result. Email trouble
+// never fails a scan: each send is caught and only logged.
+async function sendCloseNotices(sr, user, closed) {
+  for (const trade of closed) {
+    const gain = Number(trade.realized) >= 0;
+    try {
+      const sent = await sr.integrations.Core.SendEmail({
+        to: user.email,
+        template_name: 'TradeClosed',
+        category: 'transactional',
+        variables: {
+          symbol: trade.symbol,
+          headline: gain
+            ? `${trade.symbol} closed in profit`
+            : `${trade.symbol} closed at a loss`,
+          outcome_word: gain ? 'Profit booked' : 'Loss booked',
+          pnl_amount: `${gain ? '+' : '-'}${usd(Math.abs(Number(trade.realized)))}`,
+          pnl_pct: `${gain ? '+' : ''}${Number(trade.pnl).toFixed(2)}%`,
+          pnl_color: gain ? '#00ffaa' : '#ff6b7a',
+          entry_price: usd(trade.avg_cost),
+          exit_price: usd(trade.price),
+          quantity: String(trade.quantity),
+          account: VENUE_LABEL[trade.venue] || VENUE_LABEL.paper,
+          reason: trade.reason,
+        },
+      });
+      if (sent?.success === false) {
+        console.error(`Close notice for ${trade.symbol} not sent: ${sent.reason || sent.message}`);
+      }
+    } catch (error) {
+      console.error(`Close notice for ${trade.symbol} failed: ${error.message}`);
+    }
+  }
+}
 
 export default async function (req) {
   try {
@@ -388,7 +433,16 @@ export default async function (req) {
         realized_pct: realizedPct,
         executed_at: new Date().toISOString(),
       });
-      closed.push({ symbol, pnl: realizedPct, realized, venue, reason });
+      closed.push({
+        symbol,
+        pnl: realizedPct,
+        realized,
+        venue,
+        reason,
+        price,
+        avg_cost: p.avg_cost,
+        quantity: units(p.quantity),
+      });
       tradedToday.add(symbol);
       await sr.entities.BotPosition.delete(p.id);
     }
@@ -483,6 +537,8 @@ export default async function (req) {
     }
 
     if (trades.length) await sr.entities.BotTrade.bulkCreate(trades);
+
+    if (closed.length && user.email) waitUntil(sendCloseNotices(sr, user, closed));
 
     const equity = money(totalCash() + investedValue);
     const liveVenues = [

@@ -1,0 +1,98 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{symbol}} closed: {{pnl_amount}} ({{pnl_pct}})</mj-title>
+    <mj-preview>{{headline}}. Exit {{exit_price}} against an entry of {{entry_price}}.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Inter, Arial, Helvetica, sans-serif" />
+      <mj-section background-color="#080c16" padding="0 32px" />
+      <mj-text color="#e6ffff" font-size="15px" line-height="1.6" padding="0" />
+      <mj-button background-color="#00ffaa" color="#000000" border-radius="24px" font-size="15px" font-weight="700" inner-padding="14px 28px" align="left" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#080c16" width="600px">
+    <mj-section background-color="#00ffaa" padding="18px 32px">
+      <mj-column>
+        <mj-text color="#000000" font-size="16px" font-weight="800" letter-spacing="0.4px">
+          Insight-Hub
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="32px 32px 4px">
+      <mj-column>
+        <mj-text font-size="26px" font-weight="700" line-height="1.25" color="#e6ffff">
+          {{headline}}
+        </mj-text>
+        <mj-text color="#af57db" font-size="14px" padding="8px 0 0">
+          The bot closed this position and booked the result below.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-wrapper background-color="#0d1424" border-radius="24px" padding="0" padding-top="16px" padding-left="32px" padding-right="32px">
+      <mj-section background-color="#0d1424" padding="24px 24px 0">
+        <mj-column>
+          <mj-text color="#af57db" font-size="12px" font-weight="700" letter-spacing="1px" text-transform="uppercase">
+            {{outcome_word}}
+          </mj-text>
+          <mj-text color="{{pnl_color}}" font-size="38px" font-weight="800" line-height="1.1" padding="6px 0 0">
+            {{pnl_amount}}
+          </mj-text>
+          <mj-text color="{{pnl_color}}" font-size="15px" padding="4px 0 0">
+            {{pnl_pct}} on the position
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#0d1424" padding="12px 24px 24px">
+        <mj-column>
+          <mj-text color="#93a3b8" font-size="13px" line-height="1.5">{{reason}}</mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+
+    <mj-section padding="8px 32px">
+      <mj-column>
+        <mj-table cellpadding="0" cellspacing="0" width="100%">
+          <tr style="border-bottom:1px solid #20283c;">
+            <td style="padding:10px 0;color:#93a3b8;font-size:13px;">Symbol</td>
+            <td style="padding:10px 0;color:#e6ffff;font-size:14px;font-weight:600;text-align:right;">{{symbol}}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #20283c;">
+            <td style="padding:10px 0;color:#93a3b8;font-size:13px;">Entry price</td>
+            <td style="padding:10px 0;color:#e6ffff;font-size:14px;font-weight:600;text-align:right;">{{entry_price}}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #20283c;">
+            <td style="padding:10px 0;color:#93a3b8;font-size:13px;">Exit price</td>
+            <td style="padding:10px 0;color:#e6ffff;font-size:14px;font-weight:600;text-align:right;">{{exit_price}}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #20283c;">
+            <td style="padding:10px 0;color:#93a3b8;font-size:13px;">Size</td>
+            <td style="padding:10px 0;color:#e6ffff;font-size:14px;font-weight:600;text-align:right;">{{quantity}}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;color:#93a3b8;font-size:13px;">Account</td>
+            <td style="padding:10px 0;color:#e6ffff;font-size:14px;font-weight:600;text-align:right;">{{account}}</td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="8px 32px 32px">
+      <mj-column>
+        <mj-button href="https://web3tech.site/trades">
+          See the full trade history
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#0d1424" padding="20px 32px">
+      <mj-column>
+        <mj-text color="#93a3b8" font-size="12px" line-height="1.6">
+          You get this email each time your Market Bot closes a position. Realized results are what the
+          bot booked at the exit price, not a promise about future trades, and nothing here is
+          investment advice.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
