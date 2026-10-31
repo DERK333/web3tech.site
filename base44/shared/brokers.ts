@@ -68,15 +68,18 @@ const krakenPublic = async (path) => {
 };
 
 // Kraken rejects any nonce that is not strictly larger than the last one used
-// for the key, and reports a repeat as "EGeneral:Temporary lockout". Numbers
-// stay exact by going through BigInt, the offset steps past any window another
-// client may have already consumed, and the counter separates calls that land
-// in the same millisecond.
+// for the key. Wall-clock microseconds rise on their own; the stored last value
+// only steps in when two calls land inside the same millisecond, so a nonce
+// never jumps far ahead of the clock (a jump would make every later call look
+// stale and get the key locked out).
 const NONCE_SCALE = 1000000n;
-const NONCE_OFFSET = 1000000000000000n;
-let nonceCounter = 0n;
-const krakenNonce = (bump = 0n) =>
-  (BigInt(Date.now()) * NONCE_SCALE + NONCE_OFFSET + bump + nonceCounter++).toString();
+let lastNonce = 0n;
+const krakenNonce = () => {
+  const candidate = BigInt(Date.now()) * NONCE_SCALE;
+  const next = candidate > lastNonce ? candidate : lastNonce + 1n;
+  lastNonce = next;
+  return next.toString();
+};
 
 const krakenPrivate = async (keys, methodPath, params = {}) => {
   if (!keys?.key || !keys?.secret) throw new Error("No Kraken API key is connected");
@@ -115,15 +118,24 @@ const krakenPrivate = async (keys, methodPath, params = {}) => {
   const first = await send(krakenNonce());
   if (!first?.error?.length) return first.result;
 
-  // A stale nonce window clears by simply sending a much higher one.
-  const staleNonce = first.error.some((e) => /nonce|lockout/i.test(e));
-  if (staleNonce) {
-    const retry = await send(krakenNonce(NONCE_OFFSET));
+  const errors = first.error.map(String);
+
+  // A lockout is Kraken pausing the key after rejected calls. Retrying only
+  // lengthens it, so stop here and let the next scheduled call find it clear.
+  if (errors.some((e) => /lockout/i.test(e))) {
+    throw new Error(
+      'Kraken is temporarily holding API calls for this key. It clears on its own within about 15 minutes; the bot stops calling Kraken until then and reconnects automatically.'
+    );
+  }
+
+  // A genuinely stale nonce clears by resending with the next number up.
+  if (errors.some((e) => /nonce/i.test(e))) {
+    const retry = await send(krakenNonce());
     if (!retry?.error?.length) return retry.result;
     throw new Error(retry.error.join(", "));
   }
 
-  throw new Error(first.error.join(", "));
+  throw new Error(errors.join(", "));
 };
 
 const findKrakenPair = async (symbol) => {
@@ -240,54 +252,59 @@ export const krakenSell = async (keys, symbol, quantity) => {
   return { orderId: result?.txid?.[0] || null, pair: market.pair, volume };
 };
 
-const alpacaRequest = async (keys, path, options = {}, paper = true) => {
+// A key pair only works in the environment it was issued for. Rather than
+// rejecting a live key because a paper switch is on (which used to read as a
+// broken connection), the call follows the key to the environment that accepts
+// it and reports back which one answered.
+const alpacaCall = async (keys, path, options = {}, preferredPaper = true) => {
   if (!keys?.key || !keys?.secret) throw new Error("No Alpaca API key is connected");
-  const base = paper ? ALPACA_PAPER : ALPACA_LIVE;
+
   const authHeaders = {
     "APCA-API-KEY-ID": keys.key,
     "APCA-API-SECRET-KEY": keys.secret,
     "Content-Type": "application/json",
   };
-  const res = await fetch(`${base}${path}`, {
-    ...options,
-    headers: authHeaders,
-    signal: AbortSignal.timeout(TIMEOUT_MS),
-  });
-  const text = await res.text();
-  let data = null;
-  try {
-    data = text ? JSON.parse(text) : null;
-  } catch {
-    data = null;
-  }
 
-  // A key pair only works in the environment it was issued for. Say which one
-  // it is instead of letting the account silently trade real money.
-  if (!res.ok && res.status === 401) {
-    const other = paper ? ALPACA_LIVE : ALPACA_PAPER;
-    const probe = await fetch(`${other}/v2/account`, {
+  const attempt = async (usePaper) => {
+    const res = await fetch(`${usePaper ? ALPACA_PAPER : ALPACA_LIVE}${path}`, {
+      ...options,
       headers: authHeaders,
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
-    if (probe.ok) {
-      throw new Error(
-        paper
-          ? 'These Alpaca keys belong to a live account — turn off "Alpaca paper account" in Brokers to trade stocks and ETFs with them'
-          : 'These Alpaca keys belong to a paper account — turn on "Alpaca paper account" in Brokers to use them'
-      );
+    const text = await res.text();
+    let data = null;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = null;
     }
+    return { res, data, paper: usePaper };
+  };
+
+  let result = await attempt(preferredPaper);
+
+  // 401 means the keys were issued for the other environment. An order rejected
+  // with 401 was never placed, so retrying it there is safe.
+  if (result.res.status === 401) {
+    const alternate = await attempt(!preferredPaper);
+    if (alternate.res.ok) result = alternate;
   }
 
-  if (!res.ok) throw new Error(data?.message || `HTTP ${res.status}`);
-  return data;
+  if (!result.res.ok) {
+    throw new Error(result.data?.message || `HTTP ${result.res.status}`);
+  }
+  return result;
 };
 
+const alpacaRequest = async (keys, path, options = {}, paper = true) =>
+  (await alpacaCall(keys, path, options, paper)).data;
+
 export const alpacaAccount = async (keys, paper = true) => {
-  const account = await alpacaRequest(keys, "/v2/account", {}, paper);
+  const { data: account, paper: resolved } = await alpacaCall(keys, "/v2/account", {}, paper);
   return {
     cash: Number(account?.cash) || 0,
     equity: Number(account?.equity) || 0,
-    paper,
+    paper: resolved,
   };
 };
 

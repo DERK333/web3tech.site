@@ -255,7 +255,7 @@ export default async function (req) {
     if (!alpacaKeys && user.role === 'admin') alpacaKeys = envAlpacaKeys();
 
     const liveEnabled = config.live_enabled === true;
-    const alpacaPaper = config.alpaca_paper !== false;
+    let alpacaPaper = config.alpaca_paper !== false;
     const orderCap = Number(config.max_order_usd ?? DEFAULTS.max_order_usd);
     const reservePct = Number(config.min_cash_reserve_pct ?? DEFAULTS.min_cash_reserve_pct);
 
@@ -282,6 +282,8 @@ export default async function (req) {
       try {
         const account = await alpacaAccount(alpacaKeys, alpacaPaper);
         cashPots.alpaca = account.cash;
+        // Follow the keys to the environment they were issued for.
+        alpacaPaper = account.paper;
       } catch (error) {
         brokerNotes.push(`Alpaca unavailable: ${error.message}`);
       }

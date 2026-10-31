@@ -32,11 +32,15 @@ export default function LiveAccountSummary({ positions = [] }) {
     }
   }, []);
 
+  // While Kraken has a key temporarily locked out, polling it every minute only
+  // extends the lockout — slow down and let it clear.
+  const lockedOut = /lockout/i.test(status?.kraken?.error || "");
+
   useEffect(() => {
     refresh();
-    const timer = setInterval(refresh, 60000);
+    const timer = setInterval(refresh, lockedOut ? 10 * 60 * 1000 : 60000);
     return () => clearInterval(timer);
-  }, [refresh]);
+  }, [refresh, lockedOut]);
 
   const krakenTotal = status?.kraken?.ok ? Number(status.kraken.total ?? status.kraken.cash) : null;
   const krakenCash = status?.kraken?.ok ? Number(status.kraken.cash) : null;

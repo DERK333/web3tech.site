@@ -36,7 +36,8 @@ export default async function (req) {
     }
 
     const configs = await sr.entities.BotConfig.filter({ owner_id: user.id }, { limit: 1 });
-    const alpacaPaper = (configs?.items?.[0] || configs?.[0])?.alpaca_paper !== false;
+    const config = configs?.items?.[0] || configs?.[0] || null;
+    let alpacaPaper = config?.alpaca_paper !== false;
 
     const kraken = {
       configured: Boolean(krakenKeys),
@@ -80,6 +81,15 @@ export default async function (req) {
         alpaca.cash = account.cash;
         alpaca.equity = account.equity;
         alpaca.ok = true;
+
+        // Remember the environment the keys actually belong to, so the setting
+        // on screen matches the account the bot trades and never flips back to
+        // a rejected one on the next check.
+        if (account.paper !== alpacaPaper) {
+          alpacaPaper = account.paper;
+          alpaca.paper = account.paper;
+          if (config) await sr.entities.BotConfig.update(config.id, { alpaca_paper: account.paper });
+        }
       } catch (error) {
         alpaca.error = error.message;
       }
