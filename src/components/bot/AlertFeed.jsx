@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Activity, Bell, Gauge, TrendingDown, TrendingUp } from "lucide-react";
+import { Activity, Bell, Gauge, Target, TrendingDown, TrendingUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { base44 } from "@/api/base44Client";
 
@@ -25,6 +25,7 @@ function AlertIcon({ kind, value }) {
   }
   if (kind === "volatility") return <Gauge className="w-3.5 h-3.5" />;
   if (kind === "price_move") return <Activity className="w-3.5 h-3.5" />;
+  if (kind === "perp_setup") return <Target className="w-3.5 h-3.5" />;
   return <Bell className="w-3.5 h-3.5" />;
 }
 

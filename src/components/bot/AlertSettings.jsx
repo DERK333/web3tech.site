@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 export default function AlertSettings({ config, onSaved }) {
   const [movePct, setMovePct] = useState("8");
   const [volPct, setVolPct] = useState("60");
+  const [perpScore, setPerpScore] = useState("80");
   const [enabled, setEnabled] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -15,6 +16,7 @@ export default function AlertSettings({ config, onSaved }) {
     if (!config) return;
     setMovePct(String(config.alert_move_pct ?? 8));
     setVolPct(String(config.alert_vol_pct ?? 60));
+    setPerpScore(String(config.perp_alert_score ?? 80));
     setEnabled(config.alerts_enabled !== false);
   }, [config]);
 
@@ -27,6 +29,8 @@ export default function AlertSettings({ config, onSaved }) {
       const vol = Number(volPct);
       if (Number.isFinite(move) && move > 0) payload.alert_move_pct = move;
       if (Number.isFinite(vol) && vol > 0) payload.alert_vol_pct = vol;
+      const perp = Number(perpScore);
+      if (Number.isFinite(perp) && perp > 0) payload.perp_alert_score = perp;
       await base44.entities.BotConfig.update(config.id, payload);
       await onSaved();
     } finally {
@@ -78,6 +82,22 @@ export default function AlertSettings({ config, onSaved }) {
             max="300"
             value={volPct}
             onChange={(e) => setVolPct(e.target.value)}
+            className="mt-1 h-9 bg-background"
+          />
+        </div>
+        <div>
+          <Label htmlFor="perp_alert_score" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Perp score
+          </Label>
+          <Input
+            id="perp_alert_score"
+            type="number"
+            inputMode="numeric"
+            step="1"
+            min="40"
+            max="99"
+            value={perpScore}
+            onChange={(e) => setPerpScore(e.target.value)}
             className="mt-1 h-9 bg-background"
           />
         </div>

@@ -16,6 +16,7 @@ import { loadBrokerCredentials, hasKeys } from '../../shared/brokerCredentials.t
 import { UNIVERSE } from '../../shared/marketUniverse.ts';
 import { fetchPlatformUniverse } from '../../shared/platformUniverse.ts';
 import { evaluateAlerts } from '../../shared/watchlistAlerts.ts';
+import { buildPerpSetups, buildPerpAlerts } from '../../shared/perpSetups.ts';
 
 // The market bot. One call = one full cycle for the signed-in user:
 //   1. pull daily candles for every enabled asset on their watchlist
@@ -279,7 +280,7 @@ export default async function (req) {
       (watchlist || []).map((a) => String(a.symbol || '').toUpperCase())
     );
     let alertCount = 0;
-    if (config.alerts_enabled !== false && watchSymbols.size > 0) {
+    if (config.alerts_enabled !== false) {
       const recentAlerts =
         (
           await sr.entities.BotAlert.filter(
@@ -288,16 +289,33 @@ export default async function (req) {
           )
         )?.items || [];
 
-      const raised = evaluateAlerts({
-        previous: signalBySymbol,
-        current: liveSignals,
-        symbols: watchSymbols,
-        settings: {
-          move_pct: Number(config.alert_move_pct ?? 8),
-          vol_pct: Number(config.alert_vol_pct ?? 60),
-        },
-        recent: recentAlerts,
-      });
+      const raised = [];
+
+      if (watchSymbols.size > 0) {
+        raised.push(
+          ...evaluateAlerts({
+            previous: signalBySymbol,
+            current: liveSignals,
+            symbols: watchSymbols,
+            settings: {
+              move_pct: Number(config.alert_move_pct ?? 8),
+              vol_pct: Number(config.alert_vol_pct ?? 60),
+            },
+            recent: recentAlerts,
+          })
+        );
+      }
+
+      // High-probability perp setups come from the same rules as the perp
+      // panel, so an alert and its card always describe the same trade.
+      const { setups: perpCandidates } = buildPerpSetups({ signals: liveSignals, maxResults: 8 });
+      raised.push(
+        ...buildPerpAlerts({
+          setups: perpCandidates,
+          recent: recentAlerts,
+          minConviction: Number(config.perp_alert_score ?? 80),
+        })
+      );
 
       if (raised.length > 0) {
         await sr.entities.BotAlert.bulkCreate(raised.map((a) => ({ owner_id: ownerId, ...a })));

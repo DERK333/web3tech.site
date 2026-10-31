@@ -8,7 +8,7 @@
     },
     "symbol": {
       "type": "string",
-      "description": "Watchlist ticker the alert is about"
+      "description": "Ticker the alert is about"
     },
     "asset_class": {
       "type": "string",
@@ -18,15 +18,24 @@
         "crypto"
       ]
     },
+    "side": {
+      "type": "string",
+      "enum": [
+        "long",
+        "short"
+      ],
+      "description": "Direction, for perp setup alerts"
+    },
     "kind": {
       "type": "string",
       "enum": [
         "price_move",
         "sma_cross",
         "volatility",
-        "rsi_extreme"
+        "rsi_extreme",
+        "perp_setup"
       ],
-      "description": "Which watchlist rule fired"
+      "description": "Which rule fired"
     },
     "severity": {
       "type": "string",
