@@ -119,7 +119,7 @@
     },
     "perp_alert_score": {
       "type": "number",
-      "default": 80,
+      "default": 70,
       "description": "Conviction a perp setup needs before the scan raises an alert for it"
     },
     "last_scan_at": {

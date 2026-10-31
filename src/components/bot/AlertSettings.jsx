@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 export default function AlertSettings({ config, onSaved }) {
   const [movePct, setMovePct] = useState("8");
   const [volPct, setVolPct] = useState("60");
-  const [perpScore, setPerpScore] = useState("80");
+  const [perpScore, setPerpScore] = useState("70");
   const [enabled, setEnabled] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -16,7 +16,7 @@ export default function AlertSettings({ config, onSaved }) {
     if (!config) return;
     setMovePct(String(config.alert_move_pct ?? 8));
     setVolPct(String(config.alert_vol_pct ?? 60));
-    setPerpScore(String(config.perp_alert_score ?? 80));
+    setPerpScore(String(config.perp_alert_score ?? 70));
     setEnabled(config.alerts_enabled !== false);
   }, [config]);
 

@@ -36,6 +36,9 @@ import Testimonials from '@/pages/Testimonials';
 import StartHere from '@/pages/StartHere';
 import Reddit from '@/pages/Reddit';
 import Subscribe from '@/pages/Subscribe';
+import StrategyGuide from '@/pages/StrategyGuide';
+import ConnectionStatus from '@/pages/ConnectionStatus';
+import MarketInsights from '@/pages/MarketInsights';
 import AdminRoute from '@/components/AdminRoute';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -72,6 +75,7 @@ function AnimatedRoutes() {
           <Route element={<BlogLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/start" element={<StartHere />} />
+            <Route path="/strategy-guide" element={<StrategyGuide />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/share/:slug" element={<ShareLanding />} />
@@ -85,6 +89,8 @@ function AnimatedRoutes() {
             <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
               <Route path="/trading" element={<TradingBot />} />
               <Route path="/trades" element={<TradeHistory />} />
+              <Route path="/connection-status" element={<ConnectionStatus />} />
+              <Route path="/market-insights" element={<MarketInsights />} />
             </Route>
             <Route path="/connect" element={<Connect />} />
             <Route path="/assistant" element={<Assistant />} />

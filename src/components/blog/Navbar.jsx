@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { label: "Home", path: "/" },
   { label: "Blog", path: "/blog" },
   { label: "Start here", path: "/start" },
+  { label: "Strategy guide", path: "/strategy-guide" },
   { label: "About", path: "/about" },
   { label: "Contact", path: "/contact" },
   { label: "Connect AI", path: "/connect" },
@@ -206,6 +207,32 @@ export default function Navbar() {
                       Market bot
                     </Link>
                   )}
+                  {isAuthenticated && (
+                    <Link
+                      to="/market-insights"
+                      onClick={() => setMobileOpen(false)}
+                      className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                        location.pathname === "/market-insights"
+                          ? "text-primary bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      Market insights
+                    </Link>
+                  )}
+                  {isAuthenticated && (
+                    <Link
+                      to="/connection-status"
+                      onClick={() => setMobileOpen(false)}
+                      className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                        location.pathname === "/connection-status"
+                          ? "text-primary bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      Connections
+                    </Link>
+                  )}
                   {!isAuthenticated && (
                     <Link
                       to="/login"
@@ -297,6 +324,12 @@ export default function Navbar() {
             <Link to="/analytics" onClick={hideDrawer} className={linkClasses("/analytics")}>Analytics</Link>
             <Link to="/trading" onClick={hideDrawer} className={linkClasses("/trading")}>Market bot</Link>
             <Link to="/reddit" onClick={hideDrawer} className={linkClasses("/reddit")}>Reddit drafts</Link>
+          </>
+        )}
+        {isAuthenticated && (
+          <>
+            <Link to="/market-insights" onClick={hideDrawer} className={linkClasses("/market-insights")}>Market insights</Link>
+            <Link to="/connection-status" onClick={hideDrawer} className={linkClasses("/connection-status")}>Connections</Link>
           </>
         )}
       </nav>

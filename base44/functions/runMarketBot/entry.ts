@@ -313,7 +313,7 @@ export default async function (req) {
         ...buildPerpAlerts({
           setups: perpCandidates,
           recent: recentAlerts,
-          minConviction: Number(config.perp_alert_score ?? 80),
+          minConviction: Number(config.perp_alert_score ?? 70),
         })
       );
 

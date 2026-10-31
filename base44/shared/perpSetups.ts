@@ -119,8 +119,8 @@ export function buildPerpSetups({ signals, maxResults = 6, perSide = 4 }) {
 // Turn the setups clear of the user's conviction bar into alerts. A setup that
 // stays on the board for days should not re-alert on every scan, so each
 // symbol and direction is limited to one alert per cooldown window.
-export function buildPerpAlerts({ setups, recent, minConviction = 80, cooldownHours = 12 }) {
-  const bar = Number(minConviction) > 0 ? Number(minConviction) : 80;
+export function buildPerpAlerts({ setups, recent, minConviction = 70, cooldownHours = 12 }) {
+  const bar = Number(minConviction) > 0 ? Number(minConviction) : 70;
   const cutoff = Date.now() - cooldownHours * 60 * 60 * 1000;
   const recentKeys = new Set(
     (recent || [])
