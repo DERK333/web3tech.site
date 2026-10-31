@@ -16,7 +16,7 @@ function Card({ icon: Icon, label, value, hint, valueClass = "text-foreground" }
 }
 
 export default function PortfolioSummary({ config, positions }) {
-  const cash = Number(config?.cash_balance ?? 0);
+  const cash = Number(config?.cash_balance ?? 0) + Number(config?.live_cash ?? 0);
   const starting = Number(config?.starting_cash ?? 0);
   const invested = positions.reduce(
     (sum, p) => sum + Number(p.quantity) * Number(p.last_price ?? p.avg_cost ?? 0),

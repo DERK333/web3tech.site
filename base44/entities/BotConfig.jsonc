@@ -5,10 +5,16 @@
     "mode": {
       "type": "string",
       "enum": [
-        "paper"
+        "paper",
+        "live"
       ],
       "default": "paper",
-      "description": "Simulated trading only \u2014 no real orders are placed"
+      "description": "Whether the last run traded simulated or real money"
+    },
+    "live_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Master switch \u2014 real orders are only sent when this is on"
     },
     "starting_cash": {
       "type": "number",
@@ -16,7 +22,11 @@
     },
     "cash_balance": {
       "type": "number",
-      "description": "Uninvested simulated cash"
+      "description": "Simulated cash held by the paper portfolio"
+    },
+    "live_cash": {
+      "type": "number",
+      "description": "Cash held at the brokers after the last scan"
     },
     "max_position_pct": {
       "type": "number",
@@ -30,7 +40,31 @@
     "min_entry_score": {
       "type": "number",
       "default": 66,
-      "description": "Minimum score required to open a position"
+      "description": "Base minimum score required to open a position"
+    },
+    "learned_entry_score": {
+      "type": "number",
+      "description": "Entry bar the bot currently applies after tuning itself from realized results"
+    },
+    "auto_tune": {
+      "type": "boolean",
+      "default": true,
+      "description": "Let the bot raise or lower its own entry bar from its realized win rate"
+    },
+    "max_order_usd": {
+      "type": "number",
+      "default": 100,
+      "description": "Hard cap in dollars on any single order"
+    },
+    "min_cash_reserve_pct": {
+      "type": "number",
+      "default": 20,
+      "description": "Share of a broker's cash the bot never deploys"
+    },
+    "alpaca_paper": {
+      "type": "boolean",
+      "default": true,
+      "description": "Send stock and ETF orders to Alpaca's paper account instead of the live one"
     },
     "stop_loss_pct": {
       "type": "number",
@@ -39,6 +73,22 @@
     "take_profit_pct": {
       "type": "number",
       "default": 30
+    },
+    "win_rate": {
+      "type": "number",
+      "description": "Percent of closed trades that finished in profit over the recent window"
+    },
+    "closed_trades": {
+      "type": "number",
+      "description": "Number of closed trades the win rate was computed from"
+    },
+    "learning_note": {
+      "type": "string",
+      "description": "Plain-English explanation of the last adjustment the bot made to itself"
+    },
+    "broker_note": {
+      "type": "string",
+      "description": "Broker-side message from the last run (connection or order errors)"
     },
     "last_scan_at": {
       "type": "string",

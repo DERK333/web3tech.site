@@ -41,9 +41,32 @@
     "mode": {
       "type": "string",
       "enum": [
-        "paper"
+        "paper",
+        "live"
       ],
       "default": "paper"
+    },
+    "venue": {
+      "type": "string",
+      "enum": [
+        "paper",
+        "kraken",
+        "alpaca"
+      ],
+      "default": "paper",
+      "description": "Where the order was filled"
+    },
+    "order_id": {
+      "type": "string",
+      "description": "Broker order id returned by Kraken or Alpaca"
+    },
+    "realized_pnl": {
+      "type": "number",
+      "description": "Profit or loss booked when the position was closed, in dollars"
+    },
+    "realized_pct": {
+      "type": "number",
+      "description": "Profit or loss booked when the position was closed, in percent"
     },
     "executed_at": {
       "type": "string",

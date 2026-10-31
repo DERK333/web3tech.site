@@ -1,17 +1,28 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 import { fetchSeries } from '../../shared/marketData.ts';
 import { scoreAsset } from '../../shared/indicators.ts';
+import {
+  krakenConfigured,
+  alpacaConfigured,
+  krakenUsdBalance,
+  alpacaAccount,
+  krakenBuy,
+  krakenSell,
+  alpacaBuy,
+  alpacaSell,
+} from '../../shared/brokers.ts';
 
 // The market bot. One call = one full cycle:
 //   1. pull daily candles for every enabled asset (public, key-free sources)
 //   2. score each on trend / momentum / RSI / volatility
 //   3. store the signals
-//   4. manage the simulated portfolio: exits first, then new entries
-//   5. log the run
+//   4. manage the portfolio: exits first, then new entries
+//   5. record what it learned and log the run
 //
-// PAPER TRADING ONLY. No brokerage is connected and no real order is ever
-// placed by this function. It trades a simulated cash balance so the
-// strategy can be judged on real market data before any money is at risk.
+// Live trading is opt-in through BotConfig.live_enabled. When it is off every
+// fill is simulated. When it is on, crypto orders go to Kraken and stock/ETF
+// orders go to Alpaca, each hard-capped by max_order_usd and by a cash reserve
+// so an open winner is never sold to fund a new idea.
 
 const DEFAULTS = {
   mode: 'paper',
@@ -19,11 +30,14 @@ const DEFAULTS = {
   max_position_pct: 12,
   max_positions: 8,
   min_entry_score: 66,
+  max_order_usd: 100,
+  min_cash_reserve_pct: 20,
   stop_loss_pct: 8,
   take_profit_pct: 30,
 };
 
 const MIN_SCAN_GAP_MS = 5 * 60 * 1000;
+const MIN_ORDER_USD = 50;
 
 const money = (n) => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
 const units = (n) => Math.round((Number(n) + Number.EPSILON) * 1e6) / 1e6;
@@ -54,7 +68,9 @@ export default async function (req) {
       });
     }
     if (config.cash_balance == null) {
-      config = await sr.entities.BotConfig.update(config.id, { cash_balance: config.starting_cash ?? DEFAULTS.starting_cash });
+      config = await sr.entities.BotConfig.update(config.id, {
+        cash_balance: config.starting_cash ?? DEFAULTS.starting_cash,
+      });
     }
 
     if (!force && config.last_scan_at) {
@@ -157,14 +173,54 @@ export default async function (req) {
     const signalMap = new Map(liveSignals.map((s) => [s.symbol, s]));
     const priceMap = new Map(liveSignals.map((s) => [s.symbol, s.price]));
 
-    // ---- portfolio --------------------------------------------------------
+    // ---- brokers ----------------------------------------------------------
+    const liveEnabled = config.live_enabled === true;
+    const alpacaPaper = config.alpaca_paper !== false;
+    const orderCap = Number(config.max_order_usd ?? DEFAULTS.max_order_usd);
+    const reservePct = Number(config.min_cash_reserve_pct ?? DEFAULTS.min_cash_reserve_pct);
+
+    // One cash pot per place money can sit. Paper is always available; a
+    // broker only joins once its keys are set and its balance can be read.
+    const cashPots = {
+      paper: Number(config.cash_balance ?? config.starting_cash ?? DEFAULTS.starting_cash),
+      kraken: 0,
+      alpaca: 0,
+    };
+    const brokerNotes = [];
+
+    if (liveEnabled && krakenConfigured()) {
+      try {
+        cashPots.kraken = await krakenUsdBalance();
+      } catch (error) {
+        brokerNotes.push(`Kraken unavailable: ${error.message}`);
+      }
+    } else if (liveEnabled) {
+      brokerNotes.push('Kraken keys are not set — crypto orders fall back to simulation.');
+    }
+
+    if (liveEnabled && alpacaConfigured()) {
+      try {
+        const account = await alpacaAccount(alpacaPaper);
+        cashPots.alpaca = account.cash;
+      } catch (error) {
+        brokerNotes.push(`Alpaca unavailable: ${error.message}`);
+      }
+    } else if (liveEnabled) {
+      brokerNotes.push('Alpaca keys are not set — stock and ETF orders fall back to simulation.');
+    }
+
+    const venueFor = (assetClass) => {
+      if (assetClass === 'crypto') return cashPots.kraken > 0 ? 'kraken' : 'paper';
+      return cashPots.alpaca > 0 ? 'alpaca' : 'paper';
+    };
+
+    const totalCash = () => money(cashPots.paper + cashPots.kraken + cashPots.alpaca);
+
+    // ---- strategy limits ---------------------------------------------------
     const stopLoss = Number(config.stop_loss_pct ?? DEFAULTS.stop_loss_pct);
     const takeProfit = Number(config.take_profit_pct ?? DEFAULTS.take_profit_pct);
     const maxPositions = Number(config.max_positions ?? DEFAULTS.max_positions);
     const maxPositionPct = Number(config.max_position_pct ?? DEFAULTS.max_position_pct);
-    const minEntryScore = Number(config.min_entry_score ?? DEFAULTS.min_entry_score);
-
-    let cash = Number(config.cash_balance ?? config.starting_cash ?? DEFAULTS.starting_cash);
 
     const allPositions = await sr.entities.BotPosition.list();
     const positions = allPositions || [];
@@ -187,10 +243,53 @@ export default async function (req) {
       const price = priceMap.get(p.symbol.toUpperCase()) ?? p.last_price ?? p.avg_cost;
       return sum + p.quantity * price;
     }, 0);
-    const equityAtStart = cash + markedValue;
+
+    const recentTrades = await sr.entities.BotTrade.list('-created_date', 200);
+
+    // ---- learning ----------------------------------------------------------
+    // The bot grades itself on what actually happened: every closed trade logs
+    // its realized result, and the win rate over the recent window moves its
+    // own entry bar. It becomes more selective when it loses, less selective
+    // when it wins — it never claims a guaranteed outcome.
+    const autoTune = config.auto_tune !== false;
+    const baseScore = Number(config.min_entry_score ?? DEFAULTS.min_entry_score);
+    const closedWindow = (recentTrades || [])
+      .filter((t) => t.side === 'sell' && t.realized_pct != null)
+      .slice(0, 40);
+    const wins = closedWindow.filter((t) => Number(t.realized_pct) > 0).length;
+    const winRate = closedWindow.length ? Math.round((wins / closedWindow.length) * 100) : null;
+
+    let learned = Number(config.learned_entry_score ?? baseScore);
+    let learningNote;
+
+    if (!autoTune) {
+      learned = baseScore;
+      learningNote = `Self-tuning is off — the entry bar stays where you set it (${baseScore}).`;
+    } else if (closedWindow.length < 8) {
+      learned = baseScore;
+      learningNote = `Collecting results (${closedWindow.length} of 8 closed trades). The entry bar stays at ${baseScore} until it has enough evidence to move.`;
+    } else {
+      const before = learned;
+      if (winRate >= 60) learned -= 1;
+      else if (winRate <= 40) learned += 2;
+      else learned += learned > baseScore ? -1 : learned < baseScore ? 1 : 0;
+
+      learned = Math.round(
+        Math.min(
+          Math.max(learned, Math.max(52, baseScore - 10)),
+          Math.min(85, baseScore + 10)
+        )
+      );
+
+      learningNote =
+        learned === before
+          ? `Win rate ${winRate}% across ${closedWindow.length} closed trades — entry bar held at ${learned}.`
+          : `Win rate ${winRate}% across ${closedWindow.length} closed trades — entry bar moved ${before} → ${learned}.`;
+    }
+
+    const entryScore = autoTune ? learned : baseScore;
 
     // Daily guard: at most one round of trading per symbol per calendar day.
-    const recentTrades = await sr.entities.BotTrade.list('-created_date', 200);
     const tradedToday = new Set(
       (recentTrades || [])
         .filter((t) => String(t.created_date || '').slice(0, 10) === todayKey())
@@ -199,6 +298,7 @@ export default async function (req) {
 
     const trades = [];
     const closed = [];
+    const orderErrors = [];
     const keptPositions = [];
 
     // ---- exits ------------------------------------------------------------
@@ -228,9 +328,27 @@ export default async function (req) {
         continue;
       }
 
+      const venue = p.venue || 'paper';
+
+      // A real exit has to succeed at the broker before the books change.
+      if (venue !== 'paper') {
+        try {
+          if (venue === 'kraken') await krakenSell(symbol, p.quantity);
+          else await alpacaSell(symbol, alpacaPaper);
+        } catch (error) {
+          orderErrors.push(`${symbol} sell: ${error.message}`);
+          keptPositions.push(p);
+          continue;
+        }
+      }
+
       const proceeds = money(p.quantity * price);
-      cash += proceeds;
-      const trade = {
+      cashPots[venue] = money(cashPots[venue] + proceeds);
+
+      const realized = money((price - p.avg_cost) * p.quantity);
+      const realizedPct = p.avg_cost > 0 ? money(((price - p.avg_cost) / p.avg_cost) * 100) : 0;
+
+      trades.push({
         symbol,
         asset_class: p.asset_class,
         side: 'sell',
@@ -239,11 +357,13 @@ export default async function (req) {
         notional: proceeds,
         score: signal.score,
         reason,
-        mode: 'paper',
+        mode: venue === 'paper' ? 'paper' : 'live',
+        venue,
+        realized_pnl: realized,
+        realized_pct: realizedPct,
         executed_at: new Date().toISOString(),
-      };
-      trades.push(trade);
-      closed.push({ symbol, pnl: money(pnl), reason });
+      });
+      closed.push({ symbol, pnl: realizedPct, realized, venue, reason });
       tradedToday.add(symbol);
       await sr.entities.BotPosition.delete(p.id);
     }
@@ -259,7 +379,7 @@ export default async function (req) {
       .filter(
         (s) =>
           (s.action === 'strong_buy' || s.action === 'buy') &&
-          Number(s.score) >= minEntryScore &&
+          Number(s.score) >= entryScore &&
           !held.has(s.symbol) &&
           !tradedToday.has(s.symbol) &&
           Number(s.price) > 0
@@ -272,64 +392,99 @@ export default async function (req) {
     for (const candidate of candidates) {
       if (openCount >= maxPositions) break;
 
-      const equity = cash + investedValue;
+      const venue = venueFor(candidate.asset_class);
+
+      // Only spare cash is deployed: the reserve is never touched, so money
+      // already working in a healthy position is never sold to fund a new one.
+      const spendable = money(cashPots[venue] * (1 - reservePct / 100));
+      if (spendable < MIN_ORDER_USD) continue;
+
+      const equity = totalCash() + investedValue;
       const target = money((equity * maxPositionPct) / 100);
-      const notional = money(Math.min(target, cash));
-      if (notional < 50) break;
+      const notional = money(Math.min(target, orderCap, spendable));
+      if (notional < MIN_ORDER_USD) continue;
 
       const price = Number(candidate.price);
       const quantity = units(notional / price);
       if (quantity <= 0) continue;
-      const cost = money(quantity * price);
-      if (cost > cash) continue;
 
-      cash = money(cash - cost);
-      investedValue += cost;
+      let orderId = null;
+      if (venue !== 'paper') {
+        try {
+          const placed =
+            venue === 'kraken'
+              ? await krakenBuy(candidate.symbol, notional)
+              : await alpacaBuy(candidate.symbol, notional, alpacaPaper);
+          orderId = placed?.orderId || null;
+        } catch (error) {
+          orderErrors.push(`${candidate.symbol} buy: ${error.message}`);
+          continue;
+        }
+      }
 
-      const position = await sr.entities.BotPosition.create({
+      cashPots[venue] = money(cashPots[venue] - notional);
+      investedValue += notional;
+
+      await sr.entities.BotPosition.create({
         symbol: candidate.symbol,
         asset_class: candidate.asset_class,
+        venue,
+        order_id: orderId,
         quantity,
         avg_cost: price,
         last_price: price,
-        market_value: cost,
+        market_value: notional,
         unrealized_pct: 0,
         opened_at: new Date().toISOString(),
       });
 
-      const trade = {
+      trades.push({
         symbol: candidate.symbol,
         asset_class: candidate.asset_class,
         side: 'buy',
         quantity,
         price,
-        notional: cost,
+        notional,
         score: candidate.score,
         reason: `Score ${candidate.score} — ${candidate.rationale}`,
-        mode: 'paper',
+        mode: venue === 'paper' ? 'paper' : 'live',
+        venue,
+        order_id: orderId,
         executed_at: new Date().toISOString(),
-      };
-      trades.push(trade);
-      opened.push({ symbol: candidate.symbol, notional: cost, score: candidate.score });
+      });
+      opened.push({ symbol: candidate.symbol, notional, score: candidate.score, venue });
 
       held.add(candidate.symbol);
       tradedToday.add(candidate.symbol);
       openCount++;
-      void position;
     }
 
     if (trades.length) await sr.entities.BotTrade.bulkCreate(trades);
 
-    const equity = money(cash + investedValue);
+    const equity = money(totalCash() + investedValue);
+    const liveVenues = [
+      cashPots.kraken > 0 ? 'Kraken' : null,
+      cashPots.alpaca > 0 ? (alpacaPaper ? 'Alpaca paper' : 'Alpaca live') : null,
+    ].filter(Boolean);
+
     const summary =
       `Scanned ${scanned.length} asset${scanned.length === 1 ? '' : 's'}` +
       (failures.length ? ` (${failures.length} unavailable)` : '') +
       `. ${liveSignals.length} signals updated. ` +
       `${opened.length} opened, ${closed.length} closed. ` +
-      `Paper equity $${equity.toLocaleString('en-US')} with $${money(cash).toLocaleString('en-US')} cash.`;
+      `${liveEnabled ? `Live via ${liveVenues.length ? liveVenues.join(' + ') : 'no reachable broker'}` : 'Paper only'}` +
+      ` — equity $${equity.toLocaleString('en-US')} with $${money(totalCash()).toLocaleString('en-US')} cash.` +
+      (orderErrors.length ? ` ${orderErrors.length} order${orderErrors.length === 1 ? '' : 's'} rejected by the broker.` : '');
 
     await sr.entities.BotConfig.update(config.id, {
-      cash_balance: money(cash),
+      mode: liveEnabled ? 'live' : 'paper',
+      cash_balance: money(cashPots.paper),
+      live_cash: money(cashPots.kraken + cashPots.alpaca),
+      learned_entry_score: learned,
+      win_rate: winRate,
+      closed_trades: closedWindow.length,
+      learning_note: learningNote,
+      broker_note: [...brokerNotes, ...orderErrors].join(' · ') || '',
       last_scan_at: now,
       last_summary: summary,
     });
@@ -342,8 +497,8 @@ export default async function (req) {
       signals: liveSignals.length,
       trades: trades.length,
       equity,
-      cash: money(cash),
-      status: failures.length ? 'partial' : 'ok',
+      cash: totalCash(),
+      status: failures.length || orderErrors.length ? 'partial' : 'ok',
       summary,
     });
 
@@ -355,8 +510,13 @@ export default async function (req) {
       signals: liveSignals.length,
       opened,
       closed,
+      order_errors: orderErrors,
+      broker_notes: brokerNotes,
+      live: liveEnabled,
       equity,
-      cash: money(cash),
+      cash: totalCash(),
+      learned_entry_score: learned,
+      win_rate: winRate,
       top_signals: [...liveSignals]
         .sort((a, b) => Number(b.score) - Number(a.score))
         .slice(0, 3)

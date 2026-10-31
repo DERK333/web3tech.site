@@ -1,11 +1,11 @@
 import React from "react";
-import { fmtMoney, fmtQty } from "@/lib/botFormat";
+import { fmtMoney, fmtQty, fmtPct, pnlClass } from "@/lib/botFormat";
 
 export default function TradeLog({ trades }) {
   if (!trades.length) {
     return (
       <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-        No trades yet. Every simulated fill the bot makes will appear here with its reason.
+        No trades yet. Every fill the bot makes will appear here with its venue and reason.
       </div>
     );
   }
@@ -36,7 +36,10 @@ export default function TradeLog({ trades }) {
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground line-clamp-2">{t.reason}</p>
           ) : null}
           <p className="mt-1 text-[11px] text-muted-foreground/70">
-            {t.executed_at ? new Date(t.executed_at).toLocaleString() : ""} · paper
+            {t.executed_at ? new Date(t.executed_at).toLocaleString() : ""} · {t.venue || "paper"}
+            {t.realized_pct != null ? (
+              <span className={pnlClass(t.realized_pct)}> · booked {fmtPct(t.realized_pct)}</span>
+            ) : null}
           </p>
         </div>
       ))}

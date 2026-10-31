@@ -13,6 +13,20 @@
         "crypto"
       ]
     },
+    "venue": {
+      "type": "string",
+      "enum": [
+        "paper",
+        "kraken",
+        "alpaca"
+      ],
+      "default": "paper",
+      "description": "Where this position is actually held"
+    },
+    "order_id": {
+      "type": "string",
+      "description": "Broker order id that opened this position"
+    },
     "quantity": {
       "type": "number",
       "description": "Units held"

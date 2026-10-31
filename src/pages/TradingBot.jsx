@@ -9,6 +9,8 @@ import PositionsTable from "@/components/bot/PositionsTable";
 import TradeLog from "@/components/bot/TradeLog";
 import WatchlistManager from "@/components/bot/WatchlistManager";
 import StrategyPanel from "@/components/bot/StrategyPanel";
+import BrokerPanel from "@/components/bot/BrokerPanel";
+import LearningPanel from "@/components/bot/LearningPanel";
 
 const asArray = (value) => (Array.isArray(value) ? value : value?.items || []);
 
@@ -87,13 +89,20 @@ export default function TradingBot() {
           <h1 className="font-heading text-3xl sm:text-4xl font-bold text-foreground">Market Bot</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             Scans stocks, ETFs and crypto every hour, scores each one on trend, momentum, RSI and
-            volatility, and manages a simulated portfolio from those signals.
+            volatility, then routes qualifying orders to Kraken and Alpaca — or keeps them simulated
+            until you switch live trading on.
           </p>
         </div>
 
         <div className="flex flex-col items-start gap-2">
-          <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-400">
-            Paper trading
+          <span
+            className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
+              config?.live_enabled
+                ? "border-red-500/30 bg-red-500/10 text-red-400"
+                : "border-amber-500/30 bg-amber-500/10 text-amber-400"
+            }`}
+          >
+            {config?.live_enabled ? "Live trading" : "Paper trading"}
           </span>
           <Button onClick={runScan} disabled={running} size="sm">
             <RefreshCw className={`w-4 h-4 mr-2 ${running ? "animate-spin" : ""}`} />
@@ -138,6 +147,11 @@ export default function TradingBot() {
 
             <aside className="space-y-6">
               <section>
+                <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Brokers</h2>
+                <BrokerPanel config={config} onSaved={load} />
+              </section>
+
+              <section>
                 <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Watchlist</h2>
                 <WatchlistManager assets={assets} onChanged={load} />
               </section>
@@ -147,16 +161,21 @@ export default function TradingBot() {
                 <StrategyPanel config={config} onSaved={load} />
               </section>
 
+              <section>
+                <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Learning</h2>
+                <LearningPanel config={config} trades={trades} onSaved={load} />
+              </section>
+
               <div className="rounded-xl border border-border bg-card p-4">
                 <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   <ShieldAlert className="w-3.5 h-3.5" />
                   Read this first
                 </div>
                 <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                  This bot trades simulated money only. It reads public daily price data from NASDAQ,
-                  Yahoo Finance and Kraken — not analyst research from paywalled sites — and its scores
-                  are technical, not predictions. Nothing here is investment advice, and past signals
-                  do not guarantee future results.
+                  With live trading off, every order is simulated. With it on, orders are sent to your
+                  Kraken and Alpaca accounts and spend real money — only your per-order cap and cash
+                  reserve limit the damage. The scores are technical measurements, not predictions,
+                  and no strategy can guarantee profit or avoid loss. Nothing here is investment advice.
                 </p>
               </div>
             </aside>
