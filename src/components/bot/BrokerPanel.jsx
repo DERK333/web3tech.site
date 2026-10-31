@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { fmtMoney } from "@/lib/botFormat";
+import BrokerKeysForm from "@/components/bot/BrokerKeysForm";
 
 function ConnectionRow({ name, detail, status }) {
   const tone = !status?.configured
@@ -96,6 +97,7 @@ export default function BrokerPanel({ config, onSaved }) {
 
   return (
     <div className="rounded-xl border border-border bg-card p-4">
+      <BrokerKeysForm status={status} onSaved={refreshStatus} />
       {loading && !status ? (
         <p className="text-xs text-muted-foreground">Checking broker connections…</p>
       ) : (

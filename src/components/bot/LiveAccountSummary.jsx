@@ -67,10 +67,14 @@ export default function LiveAccountSummary({ positions = [] }) {
           label="Kraken"
           value={krakenTotal == null ? "—" : fmtMoney(krakenTotal)}
           hint={
-            status?.kraken?.error ||
-            (krakenTotal == null
+            !status
               ? "Reading the account…"
-              : `${fmtMoney(krakenCash)} USD cash · ${fmtMoney(krakenCrypto)} in crypto`)
+              : !status.kraken?.configured
+                ? "Connect your Kraken key in Brokers"
+                : status.kraken.error ||
+                  (krakenTotal == null
+                    ? "Reading the account…"
+                    : `${fmtMoney(krakenCash)} USD cash · ${fmtMoney(krakenCrypto)} in crypto`)
           }
         />
         <Card
@@ -78,8 +82,12 @@ export default function LiveAccountSummary({ positions = [] }) {
           label="Alpaca"
           value={alpacaEquity == null ? "—" : fmtMoney(alpacaEquity)}
           hint={
-            status?.alpaca?.error ||
-            (status?.alpaca?.paper === false ? "Live account equity" : "Paper account equity")
+            !status
+              ? "Reading the account…"
+              : !status.alpaca?.configured
+                ? "Connect your Alpaca key in Brokers"
+                : status.alpaca.error ||
+                  (status.alpaca.paper === false ? "Live account equity" : "Paper account equity")
           }
         />
         <Card

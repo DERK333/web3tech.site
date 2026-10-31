@@ -16,9 +16,14 @@ export default function TradeHistory() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
+  const [userId, setUserId] = useState(null);
+
+  // The deals shown are always this user's own trades.
   const loadFirst = useCallback(async () => {
+    const me = await base44.auth.me();
+    setUserId(me.id);
     const page = await base44.entities.BotTrade.filter(
-      {},
+      { owner_id: me.id },
       { sort: "-created_date", limit: PAGE_SIZE }
     );
     setTrades(page?.items || []);
@@ -44,7 +49,7 @@ export default function TradeHistory() {
     setLoadingMore(true);
     try {
       const page = await base44.entities.BotTrade.filter(
-        {},
+        { owner_id: userId },
         { sort: "-created_date", limit: PAGE_SIZE, cursor }
       );
       setTrades((prev) => [...prev, ...(page?.items || [])]);

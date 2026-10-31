@@ -2,8 +2,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 import { fetchSeries } from '../../shared/marketData.ts';
 import { scoreAsset } from '../../shared/indicators.ts';
 import {
-  krakenConfigured,
-  alpacaConfigured,
+  envKrakenKeys,
+  envAlpacaKeys,
   krakenUsdBalance,
   alpacaAccount,
   krakenBuy,
@@ -11,18 +11,24 @@ import {
   alpacaBuy,
   alpacaSell,
 } from '../../shared/brokers.ts';
+import { loadBrokerCredentials, hasKeys } from '../../shared/brokerCredentials.ts';
 
-// The market bot. One call = one full cycle:
-//   1. pull daily candles for every enabled asset (public, key-free sources)
+// The market bot. One call = one full cycle for the signed-in user:
+//   1. pull daily candles for every enabled asset on their watchlist
 //   2. score each on trend / momentum / RSI / volatility
 //   3. store the signals
-//   4. manage the portfolio: exits first, then new entries
+//   4. manage their portfolio: exits first, then new entries
 //   5. record what it learned and log the run
 //
+// Every record — config, watchlist, positions, trades, runs — is stamped with
+// the caller's owner_id, and every broker call uses the caller's own encrypted
+// keys, so two users' bots never share money, holdings or history.
+//
 // Live trading is opt-in through BotConfig.live_enabled. When it is off every
-// fill is simulated. When it is on, crypto orders go to Kraken and stock/ETF
-// orders go to Alpaca, each hard-capped by max_order_usd and by a cash reserve
-// so an open winner is never sold to fund a new idea.
+// fill is simulated. When it is on, crypto orders go to that user's Kraken
+// account and stock/ETF orders to their Alpaca account, each hard-capped by
+// max_order_usd and by a cash reserve so an open winner is never sold to fund
+// a new idea.
 
 const DEFAULTS = {
   mode: 'paper',
@@ -47,22 +53,24 @@ export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Called from the admin screen, and by the scheduled workflow (which runs
-    // as its creator, an app admin). Admin only either way.
     const user = await base44.auth.me().catch((e) => (e.status === 401 ? null : Promise.reject(e)));
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    if (user.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
 
+    const ownerId = user.id;
     const body = await req.json().catch(() => ({}));
     const force = body?.force === true;
 
     const sr = base44.asServiceRole;
 
-    // ---- config (singleton) ------------------------------------------------
-    const configs = await sr.entities.BotConfig.list('-created_date', 1);
-    let config = configs && configs.length ? configs[0] : null;
+    // ---- config (one per user) --------------------------------------------
+    const configPage = await sr.entities.BotConfig.filter(
+      { owner_id: ownerId },
+      { sort: '-created_date', limit: 1 }
+    );
+    let config = configPage?.items?.[0] || null;
     if (!config) {
       config = await sr.entities.BotConfig.create({
+        owner_id: ownerId,
         ...DEFAULTS,
         cash_balance: DEFAULTS.starting_cash,
       });
@@ -83,8 +91,8 @@ export default async function (req) {
       }
     }
 
-    // ---- assets ------------------------------------------------------------
-    const assets = await sr.entities.BotAsset.filter({ enabled: true });
+    // ---- assets (this user's watchlist) ------------------------------------
+    const assets = await sr.entities.BotAsset.filter({ owner_id: ownerId, enabled: true });
     if (!assets || assets.length === 0) {
       return Response.json({ status: 'skipped', message: 'No enabled assets to scan.' });
     }
@@ -120,6 +128,7 @@ export default async function (req) {
     if (scanned.length === 0) {
       const summary = `Scan failed for every asset (${failures.length}). No data sources responded.`;
       await sr.entities.BotRun.create({
+        owner_id: ownerId,
         started_at: startedAt,
         finished_at: new Date().toISOString(),
         assets_scanned: 0,
@@ -132,7 +141,7 @@ export default async function (req) {
       return Response.json({ status: 'error', message: summary, failures });
     }
 
-    // ---- signals (one live row per asset) ---------------------------------
+    // ---- signals (market data, shared by every user) ----------------------
     const now = new Date().toISOString();
     const existingSignals = await sr.entities.BotSignal.list('-scanned_at', 500);
     const signalBySymbol = new Map((existingSignals || []).map((s) => [s.symbol, s]));
@@ -173,14 +182,24 @@ export default async function (req) {
     const signalMap = new Map(liveSignals.map((s) => [s.symbol, s]));
     const priceMap = new Map(liveSignals.map((s) => [s.symbol, s.price]));
 
-    // ---- brokers ----------------------------------------------------------
+    // ---- brokers (this user's own accounts) -------------------------------
+    const credentials = await loadBrokerCredentials(sr, ownerId);
+    let krakenKeys = hasKeys(credentials.kraken)
+      ? { key: credentials.kraken.key, secret: credentials.kraken.secret }
+      : null;
+    let alpacaKeys = hasKeys(credentials.alpaca)
+      ? { key: credentials.alpaca.key, secret: credentials.alpaca.secret }
+      : null;
+    if (!krakenKeys && user.role === 'admin') krakenKeys = envKrakenKeys();
+    if (!alpacaKeys && user.role === 'admin') alpacaKeys = envAlpacaKeys();
+
     const liveEnabled = config.live_enabled === true;
     const alpacaPaper = config.alpaca_paper !== false;
     const orderCap = Number(config.max_order_usd ?? DEFAULTS.max_order_usd);
     const reservePct = Number(config.min_cash_reserve_pct ?? DEFAULTS.min_cash_reserve_pct);
 
     // One cash pot per place money can sit. Paper is always available; a
-    // broker only joins once its keys are set and its balance can be read.
+    // broker only joins once that user's keys are connected and a balance reads.
     const cashPots = {
       paper: Number(config.cash_balance ?? config.starting_cash ?? DEFAULTS.starting_cash),
       kraken: 0,
@@ -188,25 +207,25 @@ export default async function (req) {
     };
     const brokerNotes = [];
 
-    if (liveEnabled && krakenConfigured()) {
+    if (liveEnabled && krakenKeys) {
       try {
-        cashPots.kraken = await krakenUsdBalance();
+        cashPots.kraken = await krakenUsdBalance(krakenKeys);
       } catch (error) {
         brokerNotes.push(`Kraken unavailable: ${error.message}`);
       }
     } else if (liveEnabled) {
-      brokerNotes.push('Kraken keys are not set — crypto orders fall back to simulation.');
+      brokerNotes.push('No Kraken key connected — crypto orders fall back to simulation.');
     }
 
-    if (liveEnabled && alpacaConfigured()) {
+    if (liveEnabled && alpacaKeys) {
       try {
-        const account = await alpacaAccount(alpacaPaper);
+        const account = await alpacaAccount(alpacaKeys, alpacaPaper);
         cashPots.alpaca = account.cash;
       } catch (error) {
         brokerNotes.push(`Alpaca unavailable: ${error.message}`);
       }
     } else if (liveEnabled) {
-      brokerNotes.push('Alpaca keys are not set — stock and ETF orders fall back to simulation.');
+      brokerNotes.push('No Alpaca key connected — stock and ETF orders fall back to simulation.');
     }
 
     const venueFor = (assetClass) => {
@@ -222,8 +241,7 @@ export default async function (req) {
     const maxPositions = Number(config.max_positions ?? DEFAULTS.max_positions);
     const maxPositionPct = Number(config.max_position_pct ?? DEFAULTS.max_position_pct);
 
-    const allPositions = await sr.entities.BotPosition.list();
-    const positions = allPositions || [];
+    const positions = (await sr.entities.BotPosition.filter({ owner_id: ownerId })) || [];
 
     // Mark to market.
     const marks = [];
@@ -239,12 +257,18 @@ export default async function (req) {
     }
     if (marks.length) await sr.entities.BotPosition.bulkUpdate(marks);
 
-    const markedValue = positions.reduce((sum, p) => {
+    let investedValue = positions.reduce((sum, p) => {
       const price = priceMap.get(p.symbol.toUpperCase()) ?? p.last_price ?? p.avg_cost;
       return sum + p.quantity * price;
     }, 0);
 
-    const recentTrades = await sr.entities.BotTrade.list('-created_date', 200);
+    const recentTrades =
+      (
+        await sr.entities.BotTrade.filter(
+          { owner_id: ownerId },
+          { sort: '-created_date', limit: 200 }
+        )
+      )?.items || [];
 
     // ---- learning ----------------------------------------------------------
     // The bot grades itself on what actually happened: every closed trade logs
@@ -333,8 +357,8 @@ export default async function (req) {
       // A real exit has to succeed at the broker before the books change.
       if (venue !== 'paper') {
         try {
-          if (venue === 'kraken') await krakenSell(symbol, p.quantity);
-          else await alpacaSell(symbol, alpacaPaper);
+          if (venue === 'kraken') await krakenSell(krakenKeys, symbol, p.quantity);
+          else await alpacaSell(alpacaKeys, symbol, alpacaPaper);
         } catch (error) {
           orderErrors.push(`${symbol} sell: ${error.message}`);
           keptPositions.push(p);
@@ -349,6 +373,7 @@ export default async function (req) {
       const realizedPct = p.avg_cost > 0 ? money(((price - p.avg_cost) / p.avg_cost) * 100) : 0;
 
       trades.push({
+        owner_id: ownerId,
         symbol,
         asset_class: p.asset_class,
         side: 'sell',
@@ -370,10 +395,6 @@ export default async function (req) {
 
     // ---- entries ----------------------------------------------------------
     const held = new Set(keptPositions.map((p) => p.symbol.toUpperCase()));
-    let investedValue = keptPositions.reduce((sum, p) => {
-      const price = priceMap.get(p.symbol.toUpperCase()) ?? p.last_price ?? p.avg_cost;
-      return sum + p.quantity * price;
-    }, 0);
 
     const candidates = liveSignals
       .filter(
@@ -413,8 +434,8 @@ export default async function (req) {
         try {
           const placed =
             venue === 'kraken'
-              ? await krakenBuy(candidate.symbol, notional)
-              : await alpacaBuy(candidate.symbol, notional, alpacaPaper);
+              ? await krakenBuy(krakenKeys, candidate.symbol, notional)
+              : await alpacaBuy(alpacaKeys, candidate.symbol, notional, alpacaPaper);
           orderId = placed?.orderId || null;
         } catch (error) {
           orderErrors.push(`${candidate.symbol} buy: ${error.message}`);
@@ -426,6 +447,7 @@ export default async function (req) {
       investedValue += notional;
 
       await sr.entities.BotPosition.create({
+        owner_id: ownerId,
         symbol: candidate.symbol,
         asset_class: candidate.asset_class,
         venue,
@@ -439,6 +461,7 @@ export default async function (req) {
       });
 
       trades.push({
+        owner_id: ownerId,
         symbol: candidate.symbol,
         asset_class: candidate.asset_class,
         side: 'buy',
@@ -490,6 +513,7 @@ export default async function (req) {
     });
 
     await sr.entities.BotRun.create({
+      owner_id: ownerId,
       started_at: startedAt,
       finished_at: new Date().toISOString(),
       assets_scanned: scanned.length,

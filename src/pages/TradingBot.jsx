@@ -13,6 +13,7 @@ import WatchlistManager from "@/components/bot/WatchlistManager";
 import StrategyPanel from "@/components/bot/StrategyPanel";
 import BrokerPanel from "@/components/bot/BrokerPanel";
 import LearningPanel from "@/components/bot/LearningPanel";
+import { ensureBotWorkspace } from "@/lib/botWorkspace";
 
 const asArray = (value) => (Array.isArray(value) ? value : value?.items || []);
 
@@ -25,14 +26,20 @@ export default function TradingBot() {
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
+  const [userId, setUserId] = useState(null);
 
+  // Only this user's config, watchlist, positions and trades are ever loaded.
   const load = useCallback(async () => {
+    const me = await ensureBotWorkspace();
+    if (!me) return;
+    setUserId(me.id);
+
     const [configs, liveSignals, openPositions, recentTrades, watchlist] = await Promise.all([
-      base44.entities.BotConfig.list("-created_date", 1),
+      base44.entities.BotConfig.filter({ owner_id: me.id }),
       base44.entities.BotSignal.list("-score", 100),
-      base44.entities.BotPosition.list(),
-      base44.entities.BotTrade.list("-created_date", 30),
-      base44.entities.BotAsset.list("symbol", 100),
+      base44.entities.BotPosition.filter({ owner_id: me.id }),
+      base44.entities.BotTrade.filter({ owner_id: me.id }, { sort: "-created_date", limit: 30 }),
+      base44.entities.BotAsset.filter({ owner_id: me.id }),
     ]);
 
     setConfig(asArray(configs)[0] || null);
@@ -186,7 +193,7 @@ export default function TradingBot() {
 
               <section>
                 <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Watchlist</h2>
-                <WatchlistManager assets={assets} onChanged={load} />
+                <WatchlistManager assets={assets} onChanged={load} userId={userId} />
               </section>
 
               <section>

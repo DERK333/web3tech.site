@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider } from '@/lib/AuthContext';
 import BlogLayout from '@/components/blog/Layout';
@@ -37,6 +37,7 @@ import StartHere from '@/pages/StartHere';
 import Reddit from '@/pages/Reddit';
 import Subscribe from '@/pages/Subscribe';
 import AdminRoute from '@/components/AdminRoute';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import { AnimatePresence, motion } from 'framer-motion';
 import PageViewTracker from '@/components/PageViewTracker';
 import RouteMeta from '@/components/RouteMeta';
@@ -79,9 +80,11 @@ function AnimatedRoutes() {
             <Route path="/settings" element={<Settings />} />
             <Route element={<AdminRoute />}>
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/reddit" element={<Reddit />} />
+            </Route>
+            <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
               <Route path="/trading" element={<TradingBot />} />
               <Route path="/trades" element={<TradeHistory />} />
-              <Route path="/reddit" element={<Reddit />} />
             </Route>
             <Route path="/connect" element={<Connect />} />
             <Route path="/assistant" element={<Assistant />} />

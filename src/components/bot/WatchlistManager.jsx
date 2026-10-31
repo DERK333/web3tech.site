@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 
 const CLASSES = ["stock", "etf", "crypto"];
 
-export default function WatchlistManager({ assets, onChanged }) {
+export default function WatchlistManager({ assets, onChanged, userId }) {
   const [symbol, setSymbol] = useState("");
   const [assetClass, setAssetClass] = useState("stock");
   const [busy, setBusy] = useState(false);
@@ -24,7 +24,12 @@ export default function WatchlistManager({ assets, onChanged }) {
     setBusy(true);
     setError("");
     try {
-      await base44.entities.BotAsset.create({ symbol: ticker, asset_class: assetClass, enabled: true });
+      await base44.entities.BotAsset.create({
+        symbol: ticker,
+        asset_class: assetClass,
+        enabled: true,
+        owner_id: userId,
+      });
       setSymbol("");
       await onChanged();
     } catch (err) {
