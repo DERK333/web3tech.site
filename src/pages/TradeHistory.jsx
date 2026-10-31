@@ -8,11 +8,6 @@ import TradeStats from "@/components/bot/TradeStats";
 import DealTable from "@/components/bot/DealTable";
 
 const PAGE_SIZE = 200;
-const FILTERS = [
-  { key: "all", label: "All deals" },
-  { key: "closed", label: "Closed" },
-  { key: "open", label: "Open" },
-];
 
 export default function TradeHistory() {
   const [trades, setTrades] = useState([]);
@@ -20,7 +15,6 @@ export default function TradeHistory() {
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [filter, setFilter] = useState("all");
 
   const loadFirst = useCallback(async () => {
     const page = await base44.entities.BotTrade.filter(
@@ -62,13 +56,8 @@ export default function TradeHistory() {
   };
 
   const deals = useMemo(() => buildDeals(trades), [trades]);
-  const visible = useMemo(
-    () =>
-      filter === "all"
-        ? deals
-        : deals.filter((deal) => (filter === "open" ? deal.status === "open" : deal.status !== "open")),
-    [deals, filter]
-  );
+  const openDeals = useMemo(() => deals.filter((deal) => deal.status === "open"), [deals]);
+  const closedDeals = useMemo(() => deals.filter((deal) => deal.status !== "open"), [deals]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
@@ -106,29 +95,31 @@ export default function TradeHistory() {
             <TradeStats deals={deals} />
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-2">
-            {FILTERS.map((option) => (
-              <button
-                key={option.key}
-                type="button"
-                onClick={() => setFilter(option.key)}
-                className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                  filter === option.key
-                    ? "border-primary/40 bg-primary/10 text-primary"
-                    : "border-border bg-card text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-            <span className="ml-auto text-xs text-muted-foreground">
-              {visible.length} deal{visible.length === 1 ? "" : "s"}
-            </span>
-          </div>
+          <section className="mt-8">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="font-heading text-lg font-semibold text-foreground">Open deals</h2>
+              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-amber-400">
+                {openDeals.length} open
+              </span>
+            </div>
+            <DealTable
+              deals={openDeals}
+              emptyMessage="No open deals right now — the bot is not holding a position."
+            />
+          </section>
 
-          <div className="mt-3">
-            <DealTable deals={visible} />
-          </div>
+          <section className="mt-10">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="font-heading text-lg font-semibold text-foreground">Closed deals</h2>
+              <span className="rounded-full border border-border bg-secondary/60 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                {closedDeals.length} finished
+              </span>
+            </div>
+            <DealTable
+              deals={closedDeals}
+              emptyMessage="Nothing has closed yet. When the bot exits a position the deal moves here with its final outcome."
+            />
+          </section>
 
           {hasMore ? (
             <div className="mt-4 text-center">

@@ -21,12 +21,12 @@ const StatusBadge = ({ deal }) => {
   );
 };
 
-export default function DealTable({ deals }) {
+export default function DealTable({ deals, emptyMessage }) {
   if (!deals.length) {
     return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-        No deals match this view yet. Every entry the bot opens appears here with its entry price, and
-        fills in the final outcome once the position closes.
+      <div className="rounded-xl border border-border bg-card p-6 text-center text-sm text-muted-foreground sm:p-8">
+        {emptyMessage ||
+          "Every entry the bot opens appears here with its entry price, and fills in the final outcome once the position closes."}
       </div>
     );
   }
