@@ -2,6 +2,10 @@
   "name": "BotAsset",
   "type": "object",
   "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "App user whose watchlist this asset is on"
+    },
     "symbol": {
       "type": "string",
       "description": "Ticker symbol \u2014 stock/ETF ticker (e.g. SPY) or crypto ticker (e.g. BTC)"
@@ -28,28 +32,57 @@
   },
   "required": [
     "symbol",
-    "asset_class"
+    "asset_class",
+    "owner_id"
   ],
   "rls": {
     "read": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "create": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     }
   }
 }
