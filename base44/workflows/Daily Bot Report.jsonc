@@ -1,0 +1,45 @@
+{
+  "name": "Daily Bot Report",
+  "description": "Every evening, writes the market bot's daily performance and analysis report to Google Drive so it lands on the owner's computer.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 18 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "daily_bot_report",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "save_daily_report": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "saveDailyBotReport",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Save daily report",
+            "description": "Writes today's bot report to Google Drive"
+          }
+        }
+      }
+    ]
+  }
+}
