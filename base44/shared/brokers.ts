@@ -53,41 +53,64 @@ const krakenPublic = async (path) => {
   return data.result;
 };
 
+// Kraken rejects any nonce that is not strictly larger than the last one used
+// for the key, and reports a repeat as "EGeneral:Temporary lockout". Numbers
+// stay exact by going through BigInt, the offset steps past any window another
+// client may have already consumed, and the counter separates calls that land
+// in the same millisecond.
+const NONCE_SCALE = 1000000n;
+const NONCE_OFFSET = 1000000000000000n;
+let nonceCounter = 0n;
+const krakenNonce = (bump = 0n) =>
+  (BigInt(Date.now()) * NONCE_SCALE + NONCE_OFFSET + bump + nonceCounter++).toString();
+
 const krakenPrivate = async (methodPath, params = {}) => {
   const keys = krakenKeys();
   if (!keys) throw new Error("Kraken API keys are not set");
 
-  const nonce = String(Date.now() * 1000);
-  const body = new URLSearchParams({ nonce, ...params }).toString();
+  const send = async (nonce) => {
+    const body = new URLSearchParams({ nonce, ...params }).toString();
 
-  const hash = await crypto.subtle.digest("SHA-256", encoder.encode(nonce + body));
-  const pathBytes = encoder.encode(methodPath);
-  const message = new Uint8Array(pathBytes.length + hash.byteLength);
-  message.set(pathBytes, 0);
-  message.set(new Uint8Array(hash), pathBytes.length);
+    const hash = await crypto.subtle.digest("SHA-256", encoder.encode(nonce + body));
+    const pathBytes = encoder.encode(methodPath);
+    const message = new Uint8Array(pathBytes.length + hash.byteLength);
+    message.set(pathBytes, 0);
+    message.set(new Uint8Array(hash), pathBytes.length);
 
-  const hmacKey = await crypto.subtle.importKey(
-    "raw",
-    b64ToBytes(keys.secret),
-    { name: "HMAC", hash: "SHA-512" },
-    false,
-    ["sign"]
-  );
-  const signature = bytesToB64(await crypto.subtle.sign("HMAC", hmacKey, message));
+    const hmacKey = await crypto.subtle.importKey(
+      "raw",
+      b64ToBytes(keys.secret),
+      { name: "HMAC", hash: "SHA-512" },
+      false,
+      ["sign"]
+    );
+    const signature = bytesToB64(await crypto.subtle.sign("HMAC", hmacKey, message));
 
-  const res = await fetch(`${KRAKEN_API}${methodPath}`, {
-    method: "POST",
-    headers: {
-      "API-Key": keys.key,
-      "API-Sign": signature,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body,
-    signal: AbortSignal.timeout(TIMEOUT_MS),
-  });
-  const data = await res.json();
-  if (data?.error?.length) throw new Error(data.error.join(", "));
-  return data.result;
+    const res = await fetch(`${KRAKEN_API}${methodPath}`, {
+      method: "POST",
+      headers: {
+        "API-Key": keys.key,
+        "API-Sign": signature,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body,
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    return res.json();
+  };
+
+  const first = await send(krakenNonce());
+  if (!first?.error?.length) return first.result;
+
+  // A stale nonce window clears by simply sending a much higher one.
+  const staleNonce = first.error.some((e) => /nonce|lockout/i.test(e));
+  if (staleNonce) {
+    const retry = await send(krakenNonce(NONCE_OFFSET));
+    if (!retry?.error?.length) return retry.result;
+    throw new Error(retry.error.join(", "));
+  }
+
+  throw new Error(first.error.join(", "));
 };
 
 const findKrakenPair = async (symbol) => {
