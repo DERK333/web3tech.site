@@ -231,7 +231,7 @@ export default function Navbar() {
                           : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                       }`}
                     >
-                      Connections
+                      Brokerage status
                     </Link>
                   )}
                   {!isAuthenticated && (
@@ -330,7 +330,7 @@ export default function Navbar() {
         {isAuthenticated && (
           <>
             <Link to="/market-insights" onClick={hideDrawer} className={linkClasses("/market-insights")}>Market insights</Link>
-            <Link to="/connection-status" onClick={hideDrawer} className={linkClasses("/connection-status")}>Connections</Link>
+            <Link to="/connection-status" onClick={hideDrawer} className={linkClasses("/connection-status")}>Brokerage status</Link>
           </>
         )}
       </nav>
