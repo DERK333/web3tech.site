@@ -84,7 +84,7 @@ export default function ConnectionStatus() {
             <BrokerStatusCard title="Alpaca" kind="alpaca" data={status?.alpaca} />
           </section>
 
-          <p className="mt-3 text-[11px] text-muted-foreground">
+          <p className="mt-3 text-[0.6875rem] text-muted-foreground">
             {updatedAt ? `Checked ${updatedAt.toLocaleTimeString()}. ` : ""}
             Connections are read-only — nothing here places an order.
           </p>

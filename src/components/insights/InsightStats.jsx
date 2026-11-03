@@ -29,13 +29,13 @@ export default function InsightStats({ config, days, signals }) {
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card) => (
         <div key={card.label} className="rounded-xl border border-border bg-card p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+          <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-muted-foreground">
             {card.label}
           </p>
           <p className={`mt-2 font-heading text-xl font-bold ${card.tone || "text-foreground"}`}>
             {card.value}
           </p>
-          <p className="mt-1 text-[11px] text-muted-foreground">{card.hint}</p>
+          <p className="mt-1 text-[0.6875rem] text-muted-foreground">{card.hint}</p>
         </div>
       ))}
     </div>

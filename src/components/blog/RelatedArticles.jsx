@@ -57,7 +57,7 @@ export default function RelatedArticles({ currentPost }) {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
-                <Badge className={`absolute top-2 left-2 border text-[10px] ${colorClass}`}>
+                <Badge className={`absolute top-2 left-2 border text-[0.625rem] ${colorClass}`}>
                   {post.category}
                 </Badge>
               </div>
@@ -65,7 +65,7 @@ export default function RelatedArticles({ currentPost }) {
                 <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2 mb-2">
                   {post.title}
                 </h3>
-                <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                <div className="flex items-center gap-3 text-[0.625rem] text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     {format(new Date(post.date), "MMM d, yyyy")}

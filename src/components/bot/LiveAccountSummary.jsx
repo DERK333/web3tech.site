@@ -103,7 +103,7 @@ export default function LiveAccountSummary({ positions = [] }) {
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-3">
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-[0.6875rem] text-muted-foreground">
           {loading && !status
             ? "Reading your broker accounts…"
             : updatedAt
@@ -113,7 +113,7 @@ export default function LiveAccountSummary({ positions = [] }) {
         <button
           type="button"
           onClick={refresh}
-          className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-1 text-[0.6875rem] text-muted-foreground hover:text-foreground transition-colors"
         >
           <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
           Refresh

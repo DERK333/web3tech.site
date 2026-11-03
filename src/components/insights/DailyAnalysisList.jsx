@@ -25,7 +25,7 @@ export default function DailyAnalysisList({ days }) {
               {dayLabel(day.day)}
             </h3>
             <span
-              className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+              className={`rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide ${
                 TONE[day.last?.status] || TONE.ok
               }`}
             >
@@ -39,7 +39,7 @@ export default function DailyAnalysisList({ days }) {
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
             {day.last?.summary || "The bot ran but wrote no summary for this day."}
           </p>
-          <p className="mt-2 text-[10px] uppercase tracking-wide text-muted-foreground">
+          <p className="mt-2 text-[0.625rem] uppercase tracking-wide text-muted-foreground">
             {day.scans} scan{day.scans === 1 ? "" : "s"} · {day.trades} trade
             {day.trades === 1 ? "" : "s"} · {day.last?.assets_scanned ?? 0} assets scored
           </p>

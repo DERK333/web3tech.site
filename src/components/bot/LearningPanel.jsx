@@ -6,7 +6,7 @@ import { fmtPct, pnlClass } from "@/lib/botFormat";
 
 const Stat = ({ label, value, valueClass = "text-foreground" }) => (
   <div>
-    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
+    <p className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">{label}</p>
     <p className={`mt-0.5 font-heading text-base font-bold ${valueClass}`}>{value}</p>
   </div>
 );
@@ -48,7 +48,7 @@ export default function LearningPanel({ config, trades, onSaved }) {
       </div>
 
       {avgClosed != null ? (
-        <p className="mt-2 text-[11px] text-muted-foreground">
+        <p className="mt-2 text-[0.6875rem] text-muted-foreground">
           Average result on the last {closed.length} closed trade{closed.length === 1 ? "" : "s"}:{" "}
           <span className={pnlClass(avgClosed)}>{fmtPct(avgClosed)}</span>
         </p>
@@ -60,12 +60,12 @@ export default function LearningPanel({ config, trades, onSaved }) {
       </p>
 
       <div className="mt-3 flex items-center justify-between gap-3 border-t border-border/60 pt-3">
-        <Label htmlFor="auto_tune" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+        <Label htmlFor="auto_tune" className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
           Self-tuning
         </Label>
         <Switch id="auto_tune" checked={autoTune} disabled={saving} onCheckedChange={toggleAutoTune} />
       </div>
-      <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground/80">
+      <p className="mt-2 text-[0.6875rem] leading-relaxed text-muted-foreground/80">
         Tuning changes how selective the bot is. It raises the bar when its own results are poor —
         it cannot make a trade profitable or remove risk.
       </p>

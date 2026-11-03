@@ -34,7 +34,7 @@ export default function PerpSetupCard({ setup }) {
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide ${
               long ? "bg-emerald-500/15 text-emerald-400" : "bg-red-500/15 text-red-400"
             }`}
           >
@@ -43,10 +43,10 @@ export default function PerpSetupCard({ setup }) {
           </span>
           <span className="font-heading text-sm font-bold text-foreground">{setup.symbol}</span>
         </div>
-        <span className="text-[10px] text-muted-foreground">conviction {setup.conviction}</span>
+        <span className="text-[0.625rem] text-muted-foreground">conviction {setup.conviction}</span>
       </div>
 
-      <div className="mt-3 grid grid-cols-3 gap-2 text-[11px]">
+      <div className="mt-3 grid grid-cols-3 gap-2 text-[0.6875rem]">
         <div>
           <p className="text-muted-foreground">Entry</p>
           <p className="mt-0.5 font-mono text-foreground">{fmt(setup.entry)}</p>
@@ -61,7 +61,7 @@ export default function PerpSetupCard({ setup }) {
         </div>
       </div>
 
-      <p className="mt-2 text-[11px] text-muted-foreground">
+      <p className="mt-2 text-[0.6875rem] text-muted-foreground">
         {setup.reward_ratio}:1 reward · {setup.leverage}x suggested · a full stop costs ~
         {setup.margin_stop_pct}% of margin
       </p>
@@ -72,14 +72,14 @@ export default function PerpSetupCard({ setup }) {
         <button
           type="button"
           onClick={copy}
-          className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
+          className="inline-flex items-center gap-1 text-[0.6875rem] font-medium text-primary hover:underline"
         >
           {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
           {copied ? "Copied" : "Copy levels"}
         </button>
         <Link
           to="/strategy-guide#perp-rules"
-          className="text-[11px] font-medium text-muted-foreground hover:text-foreground hover:underline"
+          className="text-[0.6875rem] font-medium text-muted-foreground hover:text-foreground hover:underline"
         >
           Why this was flagged
         </Link>

@@ -102,7 +102,7 @@ export default function MarketInsights() {
             <MarketSnapshot signals={topSignals} />
           </section>
 
-          <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
+          <p className="mt-4 text-[0.6875rem] leading-relaxed text-muted-foreground">
             Estimates are arithmetic projections from recent price behaviour, not forecasts. Nothing
             here is investment advice.
           </p>

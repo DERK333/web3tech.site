@@ -16,7 +16,7 @@ export default function TradeLog({ trades }) {
         <div key={t.id} className="px-4 py-3">
           <div className="flex flex-wrap items-center gap-2">
             <span
-              className={`text-[11px] font-semibold uppercase rounded px-1.5 py-0.5 ${
+              className={`text-[0.6875rem] font-semibold uppercase rounded px-1.5 py-0.5 ${
                 t.side === "buy"
                   ? "bg-emerald-500/15 text-emerald-400"
                   : "bg-red-500/15 text-red-400"
@@ -35,7 +35,7 @@ export default function TradeLog({ trades }) {
           {t.reason ? (
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground line-clamp-2">{t.reason}</p>
           ) : null}
-          <p className="mt-1 text-[11px] text-muted-foreground/70">
+          <p className="mt-1 text-[0.6875rem] text-muted-foreground/70">
             {t.executed_at ? new Date(t.executed_at).toLocaleString() : ""} · {t.venue || "paper"}
             {t.realized_pct != null ? (
               <span className={pnlClass(t.realized_pct)}> · booked {fmtPct(t.realized_pct)}</span>

@@ -7,7 +7,7 @@ export default function DailyPerformanceTable({ days }) {
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
       <table className="w-full text-left text-xs">
         <thead>
-          <tr className="border-b border-border text-[10px] uppercase tracking-wide text-muted-foreground">
+          <tr className="border-b border-border text-[0.625rem] uppercase tracking-wide text-muted-foreground">
             <th className="px-3 py-2 font-semibold">Day</th>
             <th className="px-3 py-2 font-semibold">Scans</th>
             <th className="px-3 py-2 font-semibold">Trades</th>

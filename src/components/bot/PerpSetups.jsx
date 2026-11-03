@@ -38,7 +38,7 @@ export default function PerpSetups() {
           type="button"
           onClick={load}
           disabled={loading}
-          className="inline-flex shrink-0 items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex shrink-0 items-center gap-1 text-[0.6875rem] text-muted-foreground hover:text-foreground transition-colors"
         >
           <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
           Refresh

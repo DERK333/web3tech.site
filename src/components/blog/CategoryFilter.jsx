@@ -8,7 +8,7 @@ export default function CategoryFilter({ activeCategory, onCategoryChange }) {
         <button
           key={cat.name}
           onClick={() => onCategoryChange(cat.name)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all min-h-11 ${
             activeCategory === cat.name
               ? "bg-primary text-primary-foreground"
               : "bg-secondary text-secondary-foreground hover:bg-secondary/80"

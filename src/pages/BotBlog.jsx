@@ -65,7 +65,7 @@ export default function BotBlog() {
         )}
       </div>
 
-      <p className="mt-8 border-t border-border/60 pt-4 text-[11px] leading-relaxed text-muted-foreground">
+      <p className="mt-8 border-t border-border/60 pt-4 text-[0.6875rem] leading-relaxed text-muted-foreground">
         Everything here describes a paper portfolio by default. Estimates are arithmetic, not
         forecasts, and nothing on this page is investment advice.
       </p>

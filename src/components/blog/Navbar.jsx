@@ -343,7 +343,7 @@ export default function Navbar() {
             className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-border/50 bg-secondary/50 text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all text-sm"
           >
             <Search className="w-4 h-4" /> Search
-            <kbd className="text-[10px] px-1.5 py-0.5 bg-background rounded border border-border/50">⌘K</kbd>
+            <kbd className="text-[0.625rem] px-1.5 py-0.5 bg-background rounded border border-border/50">⌘K</kbd>
           </button>
           <button
             onClick={toggle}

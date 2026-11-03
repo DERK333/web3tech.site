@@ -3,9 +3,9 @@ import { fmtMoney, fmtPct, pnlClass } from "@/lib/botFormat";
 
 const Stat = ({ label, value, hint, className = "text-foreground" }) => (
   <div className="rounded-xl border border-border bg-card p-4">
-    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+    <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
     <p className={`mt-1 font-heading text-xl font-bold ${className}`}>{value}</p>
-    {hint ? <p className="mt-0.5 text-[11px] text-muted-foreground">{hint}</p> : null}
+    {hint ? <p className="mt-0.5 text-[0.6875rem] text-muted-foreground">{hint}</p> : null}
   </div>
 );
 

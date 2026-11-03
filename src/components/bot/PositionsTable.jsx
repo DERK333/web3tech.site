@@ -15,7 +15,7 @@ export default function PositionsTable({ positions }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            <tr className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
               <th className="text-left font-medium px-4 py-2">Asset</th>
               <th className="text-right font-medium px-3 py-2">Units</th>
               <th className="text-right font-medium px-3 py-2">Avg cost</th>
@@ -29,7 +29,7 @@ export default function PositionsTable({ positions }) {
               <tr key={p.id}>
                 <td className="px-4 py-2.5">
                   <p className="font-semibold text-foreground">{p.symbol}</p>
-                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{p.asset_class}</p>
+                  <p className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">{p.asset_class}</p>
                 </td>
                 <td className="px-3 py-2.5 text-right text-muted-foreground">{fmtQty(p.quantity)}</td>
                 <td className="px-3 py-2.5 text-right text-muted-foreground">{fmtMoney(p.avg_cost)}</td>

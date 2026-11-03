@@ -222,11 +222,16 @@ export default function Blog() {
       )}
 
       {/* Main content + Sidebar */}
-      <div className="flex gap-8 items-start">
+      <div className="grid gap-8 items-start xl:grid-cols-4">
         {/* Posts grid */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 xl:col-span-3">
+          {filteredPosts.length > 0 && (
+            <p className="mb-4 text-xs text-muted-foreground">
+              {filteredPosts.length} {filteredPosts.length === 1 ? "article" : "articles"}
+            </p>
+          )}
           {filteredPosts.length > 0 ? (
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3">
               {filteredPosts.map((post, i) => (
                 <BlogCard key={post.id} post={post} index={i} onTagClick={setActiveTag} />
               ))}
@@ -240,7 +245,7 @@ export default function Blog() {
         </div>
 
         {/* Sidebar: hidden on mobile/tablet, visible on large screens */}
-        <aside className="hidden xl:block w-64 flex-shrink-0 sticky top-24 space-y-6">
+        <aside className="hidden xl:block xl:col-span-1 min-w-0 sticky top-24 space-y-6">
           <TagCloud activeTag={activeTag} onTagClick={setActiveTag} />
           <NewsletterWidget />
         </aside>

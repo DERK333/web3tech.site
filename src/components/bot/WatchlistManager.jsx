@@ -93,7 +93,7 @@ export default function WatchlistManager({ assets, onChanged, userId }) {
           <div key={asset.id} className="flex items-center gap-2 py-2">
             <div className="min-w-0">
               <p className="text-sm font-medium text-foreground truncate">{asset.symbol}</p>
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{asset.asset_class}</p>
+              <p className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">{asset.asset_class}</p>
             </div>
             <div className="ml-auto flex items-center gap-2">
               <Switch

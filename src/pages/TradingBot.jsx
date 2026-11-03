@@ -128,7 +128,7 @@ export default function TradingBot() {
 
         <div className="flex flex-col items-start gap-2">
           <span
-            className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
+            className={`rounded-full border px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-wide ${
               config?.live_enabled
                 ? "border-red-500/30 bg-red-500/10 text-red-400"
                 : "border-amber-500/30 bg-amber-500/10 text-amber-400"
@@ -158,7 +158,7 @@ export default function TradingBot() {
           <section className="mt-6">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <h2 className="font-heading text-lg font-semibold text-foreground">Live accounts</h2>
-              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-400">
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-emerald-400">
                 Real money
               </span>
             </div>
@@ -176,7 +176,7 @@ export default function TradingBot() {
           <section className="mt-8 rounded-2xl border border-dashed border-amber-500/25 bg-amber-500/[0.03] p-4">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <h2 className="font-heading text-lg font-semibold text-foreground">Paper portfolio</h2>
-              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-400">
+              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-amber-400">
                 Simulated
               </span>
             </div>
@@ -193,7 +193,7 @@ export default function TradingBot() {
           <section className="mt-8">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <h2 className="font-heading text-lg font-semibold text-foreground">Perp setups</h2>
-              <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-cyan-400">
+              <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-cyan-400">
                 Manual · Atomic
               </span>
             </div>

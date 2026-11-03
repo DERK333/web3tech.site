@@ -27,7 +27,7 @@ function ConnectionRow({ name, detail, status }) {
           <p className="text-sm font-medium text-foreground">{name}</p>
           <p className="text-xs text-muted-foreground text-right">{label}</p>
         </div>
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-[0.6875rem] text-muted-foreground">
           {detail}
           {status?.ok && status.cash != null ? ` · ${fmtMoney(status.cash)} available` : ""}
         </p>
@@ -118,7 +118,7 @@ export default function BrokerPanel({ config, onSaved }) {
       <div className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-secondary/30 p-3">
         <div>
           <p className="text-sm font-medium text-foreground">Live trading</p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-[0.6875rem] text-muted-foreground">
             {live ? "Real orders will be sent on the next scan." : "Off — every order stays simulated."}
           </p>
         </div>
@@ -126,7 +126,7 @@ export default function BrokerPanel({ config, onSaved }) {
       </div>
 
       <div className="mt-3 flex items-center justify-between gap-3">
-        <Label htmlFor="alpaca_paper" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+        <Label htmlFor="alpaca_paper" className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
           Alpaca paper account
         </Label>
         <Switch id="alpaca_paper" checked={alpacaPaper} onCheckedChange={setAlpacaPaper} />
@@ -134,7 +134,7 @@ export default function BrokerPanel({ config, onSaved }) {
 
       <div className="mt-3 grid grid-cols-2 gap-3">
         <div>
-          <Label htmlFor="max_order_usd" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+          <Label htmlFor="max_order_usd" className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
             Max per order ($)
           </Label>
           <Input
@@ -149,7 +149,7 @@ export default function BrokerPanel({ config, onSaved }) {
           />
         </div>
         <div>
-          <Label htmlFor="min_cash_reserve_pct" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+          <Label htmlFor="min_cash_reserve_pct" className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
             Cash reserve (%)
           </Label>
           <Input
@@ -172,7 +172,7 @@ export default function BrokerPanel({ config, onSaved }) {
       <button
         type="button"
         onClick={refreshStatus}
-        className="mt-2 w-full text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+        className="mt-2 w-full text-[0.6875rem] text-muted-foreground hover:text-foreground transition-colors"
       >
         Refresh balances
       </button>

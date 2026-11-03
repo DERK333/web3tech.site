@@ -59,7 +59,7 @@ export default function AlertFeed({ alerts, onChanged }) {
     <div className="rounded-xl border border-border bg-card p-3">
       <div className="flex items-center justify-between gap-2 px-1">
         <span
-          className={`text-[11px] font-semibold uppercase tracking-wide ${
+          className={`text-[0.6875rem] font-semibold uppercase tracking-wide ${
             unread.length ? "text-primary" : "text-muted-foreground"
           }`}
         >
@@ -70,7 +70,7 @@ export default function AlertFeed({ alerts, onChanged }) {
             type="button"
             onClick={markAllRead}
             disabled={busy}
-            className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+            className="text-[0.6875rem] text-muted-foreground hover:text-foreground transition-colors"
           >
             {busy ? "Marking…" : "Mark all read"}
           </button>
@@ -91,8 +91,8 @@ export default function AlertFeed({ alerts, onChanged }) {
               </span>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground">{alert.title}</p>
-                <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">{alert.message}</p>
-                <p className="mt-1 text-[10px] uppercase tracking-wide text-muted-foreground">
+                <p className="mt-0.5 text-[0.6875rem] leading-relaxed text-muted-foreground">{alert.message}</p>
+                <p className="mt-1 text-[0.625rem] uppercase tracking-wide text-muted-foreground">
                   {alert.triggered_at
                     ? formatDistanceToNow(new Date(alert.triggered_at), { addSuffix: true })
                     : ""}

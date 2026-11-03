@@ -26,9 +26,9 @@ function StatCard({ icon: Icon, label, value, sub, accent }) {
           <Icon className="w-5 h-5" />
         </div>
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</p>
+          <p className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground">{label}</p>
           <p className="text-2xl font-heading font-bold text-foreground leading-tight">{value}</p>
-          {sub && <p className="text-[11px] text-muted-foreground">{sub}</p>}
+          {sub && <p className="text-[0.6875rem] text-muted-foreground">{sub}</p>}
         </div>
       </div>
     </motion.div>
@@ -128,7 +128,7 @@ export default function SearchConsoleOverview() {
         <div className="flex flex-wrap items-center gap-2">
           {data?.sites?.length > 0 && (
             <Select value={siteUrl || data.selectedSiteUrl} onValueChange={(v) => setSiteUrl(v)}>
-              <SelectTrigger className="w-[220px] bg-card/60"><SelectValue placeholder="Property" /></SelectTrigger>
+              <SelectTrigger className="w-full min-w-0 bg-card/60 sm:w-auto sm:max-w-[16rem]"><SelectValue placeholder="Property" /></SelectTrigger>
               <SelectContent>
                 {data.sites.map((s) => (
                   <SelectItem key={s.url} value={s.url}>{s.url}</SelectItem>
@@ -137,7 +137,7 @@ export default function SearchConsoleOverview() {
             </Select>
           )}
           <Select value={String(days)} onValueChange={(v) => setDays(parseInt(v, 10))}>
-            <SelectTrigger className="w-[120px] bg-card/60"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-full min-w-0 bg-card/60 sm:w-auto"><SelectValue /></SelectTrigger>
             <SelectContent>
               {RANGES.map((r) => <SelectItem key={r.value} value={String(r.value)}>{r.label}</SelectItem>)}
             </SelectContent>
@@ -211,7 +211,7 @@ export default function SearchConsoleOverview() {
           {/* Tables */}
           <div className="grid lg:grid-cols-2 gap-4 mb-6">
             <Section title="Top Queries" icon={Search}>
-              <div className="flex items-center gap-3 px-2 pb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+              <div className="flex items-center gap-3 px-2 pb-2 text-[0.625rem] uppercase tracking-wider text-muted-foreground">
                 <span className="w-5">#</span>
                 <span className="flex-1">Query</span>
                 <span className="w-20 text-right">Impr.</span>
@@ -222,7 +222,7 @@ export default function SearchConsoleOverview() {
               <RankTable rows={data.topQueries} nameKey="query" emptyText="No query data in this period." />
             </Section>
             <Section title="Top Pages" icon={FileText}>
-              <div className="flex items-center gap-3 px-2 pb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+              <div className="flex items-center gap-3 px-2 pb-2 text-[0.625rem] uppercase tracking-wider text-muted-foreground">
                 <span className="w-5">#</span>
                 <span className="flex-1">Page</span>
                 <span className="w-20 text-right">Impr.</span>
@@ -233,7 +233,7 @@ export default function SearchConsoleOverview() {
               <RankTable rows={data.topPages} nameKey="page" emptyText="No page data in this period." />
             </Section>
             <Section title="Top Countries" icon={MapPin}>
-              <div className="flex items-center gap-3 px-2 pb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+              <div className="flex items-center gap-3 px-2 pb-2 text-[0.625rem] uppercase tracking-wider text-muted-foreground">
                 <span className="w-5">#</span>
                 <span className="flex-1">Country</span>
                 <span className="w-20 text-right">Impr.</span>
@@ -244,7 +244,7 @@ export default function SearchConsoleOverview() {
               <RankTable rows={data.topCountries} nameKey="country" emptyText="No country data in this period." />
             </Section>
             <Section title="Devices" icon={Monitor}>
-              <div className="flex items-center gap-3 px-2 pb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+              <div className="flex items-center gap-3 px-2 pb-2 text-[0.625rem] uppercase tracking-wider text-muted-foreground">
                 <span className="w-5">#</span>
                 <span className="flex-1">Device</span>
                 <span className="w-20 text-right">Impr.</span>
@@ -262,7 +262,7 @@ export default function SearchConsoleOverview() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-left text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border/50">
+                    <tr className="text-left text-[0.625rem] uppercase tracking-wider text-muted-foreground border-b border-border/50">
                       <th className="py-2 pr-4">Path</th>
                       <th className="py-2 pr-4">Type</th>
                       <th className="py-2 pr-4">Submitted</th>
@@ -275,7 +275,7 @@ export default function SearchConsoleOverview() {
                   <tbody>
                     {data.sitemaps.map((s) => (
                       <tr key={s.path} className="border-b border-border/30 last:border-0">
-                        <td className="py-2 pr-4 font-mono text-xs text-foreground truncate max-w-[200px]" title={s.path}>{s.path}</td>
+                        <td className="py-2 pr-4 font-mono text-xs text-foreground truncate max-w-[12rem]" title={s.path}>{s.path}</td>
                         <td className="py-2 pr-4 text-muted-foreground text-xs">{s.type || "—"}</td>
                         <td className="py-2 pr-4 text-muted-foreground text-xs">{s.lastSubmitted ? new Date(s.lastSubmitted).toLocaleDateString() : "—"}</td>
                         <td className="py-2 pr-4 text-right font-mono text-xs">{(s.submitted || 0).toLocaleString()}</td>

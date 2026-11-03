@@ -103,7 +103,7 @@ export default function TradeHistory() {
           <section className="mt-8">
             <div className="mb-3 flex items-center justify-between gap-3">
               <h2 className="font-heading text-lg font-semibold text-foreground">Open deals</h2>
-              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-amber-400">
+              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-wide text-amber-400">
                 {openDeals.length} open
               </span>
             </div>
@@ -116,7 +116,7 @@ export default function TradeHistory() {
           <section className="mt-10">
             <div className="mb-3 flex items-center justify-between gap-3">
               <h2 className="font-heading text-lg font-semibold text-foreground">Closed deals</h2>
-              <span className="rounded-full border border-border bg-secondary/60 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <span className="rounded-full border border-border bg-secondary/60 px-2.5 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-wide text-muted-foreground">
                 {closedDeals.length} finished
               </span>
             </div>

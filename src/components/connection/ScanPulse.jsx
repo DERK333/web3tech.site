@@ -32,7 +32,7 @@ export default function ScanPulse({ config }) {
           <h3 className="font-heading text-sm font-semibold text-foreground">Market scan</h3>
         </div>
         <span
-          className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${state.tone}`}
+          className={`rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide ${state.tone}`}
         >
           {state.label}
         </span>

@@ -57,7 +57,7 @@ function KeyForm({ broker, label, status, onSaved }) {
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="text-sm font-medium text-foreground">{label}</p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-[0.6875rem] text-muted-foreground">
             {checking
               ? "Checking your connection…"
               : configured
@@ -95,7 +95,7 @@ function KeyForm({ broker, label, status, onSaved }) {
       {open ? (
         <form onSubmit={save} className="mt-2 space-y-2 rounded-lg border border-border/60 bg-secondary/30 p-3">
           <div>
-            <Label htmlFor={`${broker}_key`} className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            <Label htmlFor={`${broker}_key`} className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
               API key
             </Label>
             <Input
@@ -109,7 +109,7 @@ function KeyForm({ broker, label, status, onSaved }) {
             />
           </div>
           <div>
-            <Label htmlFor={`${broker}_secret`} className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            <Label htmlFor={`${broker}_secret`} className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
               API secret
             </Label>
             <Input
@@ -131,7 +131,7 @@ function KeyForm({ broker, label, status, onSaved }) {
               Cancel
             </Button>
           </div>
-          <p className="text-[11px] leading-relaxed text-muted-foreground">
+          <p className="text-[0.6875rem] leading-relaxed text-muted-foreground">
             Only trading permissions are needed — never enable withdrawals on a key you paste here.
           </p>
         </form>
@@ -143,14 +143,14 @@ function KeyForm({ broker, label, status, onSaved }) {
 export default function BrokerKeysForm({ status, onSaved }) {
   return (
     <div className="mb-3 rounded-lg border border-border/60 bg-secondary/20 p-3">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-muted-foreground">
         Your broker accounts
       </p>
       <div className="mt-1 divide-y divide-border/60">
         <KeyForm broker="kraken" label="Kraken" status={status?.kraken} onSaved={onSaved} />
         <KeyForm broker="alpaca" label="Alpaca" status={status?.alpaca} onSaved={onSaved} />
       </div>
-      <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+      <p className="mt-2 text-[0.6875rem] leading-relaxed text-muted-foreground">
         Your keys are encrypted and used only for your own orders. No other user — and no one
         else's bot — can read them or trade with them.
       </p>

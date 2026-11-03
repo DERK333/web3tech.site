@@ -14,7 +14,7 @@ export default function PerpRules() {
   return (
     <div className="space-y-4">
       <div className="rounded-lg border border-border bg-secondary/40 p-3">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-muted-foreground">
           Before a coin is even considered
         </p>
         <ul className="mt-2 space-y-1 text-xs">
@@ -26,7 +26,7 @@ export default function PerpRules() {
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/5 p-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-400">
+          <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-emerald-400">
             Long candidate
           </p>
           <ul className="mt-2 space-y-1 text-xs">
@@ -36,7 +36,7 @@ export default function PerpRules() {
           </ul>
         </div>
         <div className="rounded-lg border border-red-500/25 bg-red-500/5 p-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-red-400">
+          <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-red-400">
             Short candidate
           </p>
           <ul className="mt-2 space-y-1 text-xs">
@@ -53,7 +53,7 @@ export default function PerpRules() {
       </p>
 
       <div className="rounded-lg border border-border bg-secondary/40 p-3">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-muted-foreground">
           Conviction
         </p>
         <p className="mt-1 font-mono text-xs text-foreground">
@@ -69,7 +69,7 @@ export default function PerpRules() {
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-border text-[10px] uppercase tracking-wide text-muted-foreground">
+            <tr className="border-b border-border text-[0.625rem] uppercase tracking-wide text-muted-foreground">
               <th className="py-1.5 pr-3 font-semibold">Volatility</th>
               <th className="py-1.5 pr-3 font-semibold">Suggested</th>
               <th className="py-1.5 font-semibold">Why</th>

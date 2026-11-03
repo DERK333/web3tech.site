@@ -29,18 +29,18 @@ export default function SignalBoard({ signals }) {
                 aria-expanded={open}
               >
                 <div className="flex flex-wrap items-center gap-3">
-                  <div className="min-w-[92px]">
+                  <div className="min-w-[5.75rem]">
                     <p className="font-semibold text-foreground text-sm">{signal.symbol}</p>
-                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                    <p className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
                       {signal.asset_class}
                     </p>
                   </div>
 
-                  <div className="min-w-[86px] text-sm text-muted-foreground">
+                  <div className="min-w-[5.375rem] text-sm text-muted-foreground">
                     {fmtMoney(signal.price)}
                   </div>
 
-                  <div className="flex items-center gap-2 min-w-[120px]">
+                  <div className="flex items-center gap-2 min-w-[7.5rem]">
                     <div className="h-1.5 w-16 rounded-full bg-secondary overflow-hidden">
                       <div
                         className={`h-full rounded-full ${scoreClass(signal.score)}`}
@@ -50,11 +50,11 @@ export default function SignalBoard({ signals }) {
                     <span className="text-xs font-semibold text-foreground">{signal.score}</span>
                   </div>
 
-                  <span className={`text-[11px] font-medium border rounded-full px-2 py-0.5 ${meta.className}`}>
+                  <span className={`text-[0.6875rem] font-medium border rounded-full px-2 py-0.5 ${meta.className}`}>
                     {meta.label}
                   </span>
 
-                  <span className="hidden sm:inline text-[11px] text-foreground/70">
+                  <span className="hidden sm:inline text-[0.6875rem] text-foreground/70">
                     est. {signal.expected_gain_pct == null ? "—" : fmtPct(signal.expected_gain_pct)}
                   </span>
 
@@ -79,7 +79,7 @@ export default function SignalBoard({ signals }) {
               {open && (
                 <div className="px-4 pb-4 -mt-1">
                   <p className="text-sm leading-relaxed text-muted-foreground">{signal.rationale}</p>
-                  <div className="mt-2 flex flex-wrap gap-4 text-[11px] text-muted-foreground">
+                  <div className="mt-2 flex flex-wrap gap-4 text-[0.6875rem] text-muted-foreground">
                     <span>vs 50d: {signal.sma50_gap_pct == null ? "—" : fmtPct(signal.sma50_gap_pct)}</span>
                     <span>vs 200d: {signal.sma200_gap_pct == null ? "—" : fmtPct(signal.sma200_gap_pct)}</span>
                     <span>60d: {signal.momentum_60d_pct == null ? "—" : fmtPct(signal.momentum_60d_pct)}</span>

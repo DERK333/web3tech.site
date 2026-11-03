@@ -43,7 +43,7 @@ export default function AlertSettings({ config, onSaved }) {
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-foreground">Watchlist alerts</p>
-          <p className="text-[11px] text-muted-foreground">Checked on every market scan</p>
+          <p className="text-[0.6875rem] text-muted-foreground">Checked on every market scan</p>
         </div>
         <Switch
           checked={enabled}
@@ -54,7 +54,7 @@ export default function AlertSettings({ config, onSaved }) {
 
       <div className="mt-3 grid grid-cols-2 gap-3">
         <div>
-          <Label htmlFor="alert_move_pct" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+          <Label htmlFor="alert_move_pct" className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
             Move %
           </Label>
           <Input
@@ -70,7 +70,7 @@ export default function AlertSettings({ config, onSaved }) {
           />
         </div>
         <div>
-          <Label htmlFor="alert_vol_pct" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+          <Label htmlFor="alert_vol_pct" className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
             Volatility %
           </Label>
           <Input
@@ -86,7 +86,7 @@ export default function AlertSettings({ config, onSaved }) {
           />
         </div>
         <div>
-          <Label htmlFor="perp_alert_score" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+          <Label htmlFor="perp_alert_score" className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
             Perp score
           </Label>
           <Input

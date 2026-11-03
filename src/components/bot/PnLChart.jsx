@@ -79,7 +79,7 @@ export default function PnLChart({ runs, startingCash }) {
           ) : (
             <p className="mt-1 text-sm text-muted-foreground">No scans in this period yet.</p>
           )}
-          <p className="mt-1 text-[11px] text-muted-foreground">
+          <p className="mt-1 text-[0.6875rem] text-muted-foreground">
             {data.length && latest === 0
               ? `Still level with your ${fmtMoney(Number(startingCash) || 0)} starting balance — the line moves once positions gain or lose value.`
               : `Portfolio value against your ${fmtMoney(Number(startingCash) || 0)} starting balance.`}

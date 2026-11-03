@@ -38,13 +38,13 @@ export default function RelatedResourcePosts({ resource }) {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
-                <Badge className={`absolute top-2 left-2 border text-[10px] ${colorClass}`}>{post.category}</Badge>
+                <Badge className={`absolute top-2 left-2 border text-[0.625rem] ${colorClass}`}>{post.category}</Badge>
               </div>
               <div className="p-3">
                 <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2 mb-2">
                   {post.title}
                 </h3>
-                <p className="text-[10px] text-muted-foreground">{format(new Date(post.date), "MMM d, yyyy")}</p>
+                <p className="text-[0.625rem] text-muted-foreground">{format(new Date(post.date), "MMM d, yyyy")}</p>
               </div>
             </Link>
           );

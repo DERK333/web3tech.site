@@ -15,7 +15,7 @@ const StatusBadge = ({ deal }) => {
       ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
       : "border-border bg-secondary/60 text-muted-foreground";
   return (
-    <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${className}`}>
+    <span className={`rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide ${className}`}>
       {label}
     </span>
   );
@@ -36,7 +36,7 @@ export default function DealTable({ deals, emptyMessage }) {
       {/* Desktop table */}
       <table className="hidden w-full text-sm md:table">
         <thead>
-          <tr className="border-b border-border text-[11px] uppercase tracking-wide text-muted-foreground">
+          <tr className="border-b border-border text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
             <th className="px-4 py-3 text-left font-medium">Asset</th>
             <th className="px-4 py-3 text-right font-medium">Entry price</th>
             <th className="px-4 py-3 text-right font-medium">Exit price</th>
@@ -55,7 +55,7 @@ export default function DealTable({ deals, emptyMessage }) {
                     <span className="font-semibold text-foreground">{deal.symbol}</span>
                     <StatusBadge deal={deal} />
                   </div>
-                  <p className="mt-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+                  <p className="mt-0.5 text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
                     {deal.asset_class || "asset"}
                   </p>
                 </td>
@@ -63,25 +63,25 @@ export default function DealTable({ deals, emptyMessage }) {
                   <p className="font-medium text-foreground">
                     {deal.entry_price == null ? "—" : fmtMoney(deal.entry_price)}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">{fmtDealDate(deal.entry_at)}</p>
+                  <p className="text-[0.6875rem] text-muted-foreground">{fmtDealDate(deal.entry_at)}</p>
                 </td>
                 <td className="px-4 py-3 text-right">
                   <p className="font-medium text-foreground">
                     {deal.exit_price == null ? "Still open" : fmtMoney(deal.exit_price)}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-[0.6875rem] text-muted-foreground">
                     {deal.exit_at ? fmtDealDate(deal.exit_at) : "—"}
                   </p>
                 </td>
                 <td className="px-4 py-3 text-right text-muted-foreground">{fmtQty(deal.quantity)}</td>
                 <td className="px-4 py-3 text-right">
                   <p className={`font-semibold ${result.className}`}>{result.label}</p>
-                  <p className={`text-[11px] ${result.className}`}>
+                  <p className={`text-[0.6875rem] ${result.className}`}>
                     {deal.realized == null ? "" : fmtMoney(deal.realized)}
                   </p>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <span className="rounded border border-border bg-secondary/60 px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                  <span className="rounded border border-border bg-secondary/60 px-1.5 py-0.5 text-[0.6875rem] text-muted-foreground">
                     {deal.venue}
                   </span>
                 </td>
@@ -106,25 +106,25 @@ export default function DealTable({ deals, emptyMessage }) {
               </div>
               <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
                 <div>
-                  <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">Entry</dt>
+                  <dt className="text-[0.625rem] uppercase tracking-wide text-muted-foreground">Entry</dt>
                   <dd className="text-foreground">
                     {deal.entry_price == null ? "—" : fmtMoney(deal.entry_price)}
                     <span className="ml-1 text-muted-foreground">{fmtDealDate(deal.entry_at)}</span>
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">Exit</dt>
+                  <dt className="text-[0.625rem] uppercase tracking-wide text-muted-foreground">Exit</dt>
                   <dd className="text-foreground">
                     {deal.exit_price == null ? "Still open" : fmtMoney(deal.exit_price)}
                     <span className="ml-1 text-muted-foreground">{fmtDealDate(deal.exit_at)}</span>
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">Units</dt>
+                  <dt className="text-[0.625rem] uppercase tracking-wide text-muted-foreground">Units</dt>
                   <dd className="text-muted-foreground">{fmtQty(deal.quantity)}</dd>
                 </div>
                 <div>
-                  <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">Venue</dt>
+                  <dt className="text-[0.625rem] uppercase tracking-wide text-muted-foreground">Venue</dt>
                   <dd className="text-muted-foreground">{deal.venue}</dd>
                 </div>
               </dl>

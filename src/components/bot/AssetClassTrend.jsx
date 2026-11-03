@@ -33,10 +33,10 @@ const tone = (value) => (Number(value) < 0 ? "text-red-400" : "text-primary");
 function ReturnChip({ label, value, color }) {
   const up = Number(value) >= 0;
   return (
-    <div className="flex-1 min-w-[130px] rounded-lg border border-border/60 bg-secondary/30 px-3 py-2">
+    <div className="flex-1 min-w-[8.125rem] rounded-lg border border-border/60 bg-secondary/30 px-3 py-2">
       <div className="flex items-center gap-1.5">
         <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <span className="text-[0.6875rem] font-semibold uppercase tracking-wide text-muted-foreground">
           {label}
         </span>
       </div>
@@ -56,14 +56,14 @@ function MemberList({ title, members, color }) {
   if (!members?.length) return null;
   return (
     <div>
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+      <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
         {title}
       </p>
       <div className="flex flex-wrap gap-1.5">
         {members.map((m) => (
           <span
             key={m.symbol}
-            className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-secondary/30 px-2 py-0.5 text-[11px]"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-secondary/30 px-2 py-0.5 text-[0.6875rem]"
           >
             <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
             <span className="font-mono font-semibold text-foreground">{m.symbol}</span>
@@ -120,7 +120,7 @@ export default function AssetClassTrend() {
               <button
                 key={r.value}
                 onClick={() => setDays(r.value)}
-                className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                className={`rounded-md px-2.5 py-1 text-[0.6875rem] font-semibold transition-colors ${
                   days === r.value
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground"

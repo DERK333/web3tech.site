@@ -118,7 +118,7 @@ export default function BlogPost() {
           <span>/</span>
           <Link to="/blog" className="hover:text-primary transition-colors">Blog</Link>
           <span>/</span>
-          <span className="text-foreground truncate max-w-[200px]">{post.category}</span>
+          <span className="text-foreground truncate max-w-[60%]">{post.category}</span>
         </nav>
 
         {/* Category + Tags */}

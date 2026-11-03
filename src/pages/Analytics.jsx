@@ -29,9 +29,9 @@ function StatCard({ icon: Icon, label, value, sub, accent }) {
           <Icon className="w-5 h-5" />
         </div>
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</p>
+          <p className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground">{label}</p>
           <p className="text-2xl font-heading font-bold text-foreground leading-tight">{value}</p>
-          {sub && <p className="text-[11px] text-muted-foreground">{sub}</p>}
+          {sub && <p className="text-[0.6875rem] text-muted-foreground">{sub}</p>}
         </div>
       </div>
     </motion.div>
@@ -159,7 +159,7 @@ export default function Analytics() {
         <div className="flex flex-wrap items-center gap-2">
           {data?.properties?.length > 0 && (
             <Select value={propertyId || data.selectedPropertyId} onValueChange={(v) => { setPropertyId(v); }}>
-              <SelectTrigger className="w-[220px] bg-card/60"><SelectValue placeholder="Property" /></SelectTrigger>
+              <SelectTrigger className="w-full min-w-0 bg-card/60 sm:w-auto sm:max-w-[16rem]"><SelectValue placeholder="Property" /></SelectTrigger>
               <SelectContent>
                 {data.properties.map((p) => (
                   <SelectItem key={p.id} value={p.id}>{p.displayName} <span className="text-muted-foreground">· {p.account}</span></SelectItem>
@@ -168,7 +168,7 @@ export default function Analytics() {
             </Select>
           )}
           <Select value={String(days)} onValueChange={(v) => setDays(parseInt(v, 10))}>
-            <SelectTrigger className="w-[120px] bg-card/60"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-full min-w-0 bg-card/60 sm:w-auto"><SelectValue /></SelectTrigger>
             <SelectContent>
               {RANGES.map((r) => <SelectItem key={r.value} value={String(r.value)}>{r.label}</SelectItem>)}
             </SelectContent>

@@ -46,7 +46,7 @@ export default function StrategyPanel({ config, onSaved }) {
       <div className="grid grid-cols-2 gap-3">
         {FIELDS.map((f) => (
           <div key={f.key}>
-            <Label htmlFor={f.key} className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            <Label htmlFor={f.key} className="text-[0.6875rem] uppercase tracking-wide text-muted-foreground">
               {f.label}
             </Label>
             <Input

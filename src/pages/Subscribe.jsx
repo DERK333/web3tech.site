@@ -95,7 +95,7 @@ export default function Subscribe() {
                 <div key={f.title} className="text-center">
                   <f.icon className="w-5 h-5 text-primary mx-auto mb-2" />
                   <p className="font-heading font-semibold text-xs text-foreground">{f.title}</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">{f.desc}</p>
+                  <p className="text-[0.6875rem] text-muted-foreground mt-0.5">{f.desc}</p>
                 </div>
               ))}
             </div>

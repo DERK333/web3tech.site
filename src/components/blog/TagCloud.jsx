@@ -38,7 +38,7 @@ export default function TagCloud({ activeTag, onTagClick }) {
         {activeTag && (
           <button
             onClick={() => onTagClick(null)}
-            className="text-xs px-2.5 py-1 rounded-full border border-primary/50 bg-primary/10 text-primary font-medium min-h-[36px] flex items-center"
+            className="text-xs px-2.5 py-1 rounded-full border border-primary/50 bg-primary/10 text-primary font-medium min-h-9 flex items-center"
           >
             ✕ Clear
           </button>
@@ -49,7 +49,7 @@ export default function TagCloud({ activeTag, onTagClick }) {
             onClick={() => onTagClick(tag === activeTag ? null : tag)}
             title={`${count} article${count > 1 ? "s" : ""}`}
             style={{ fontSize: `${getSize(count)}rem` }}
-            className={`px-2.5 py-1 rounded-full border transition-all min-h-[36px] flex items-center ${
+            className={`px-2.5 py-1 rounded-full border transition-all min-h-9 flex items-center ${
               tag === activeTag
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border/50 bg-secondary/50 text-muted-foreground hover:border-primary/40 hover:text-foreground"

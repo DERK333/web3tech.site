@@ -8,7 +8,7 @@ export default function GuideBlock({ number, title, icon: Icon, id, children }) 
           <Icon className="h-4 w-4 text-primary" />
         </div>
         <div className="min-w-0">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          <p className="text-[0.625rem] font-semibold uppercase tracking-widest text-muted-foreground">
             {number}
           </p>
           <h2 className="font-heading text-base font-semibold text-foreground sm:text-lg">{title}</h2>

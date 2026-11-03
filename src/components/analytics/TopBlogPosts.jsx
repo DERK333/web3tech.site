@@ -53,7 +53,7 @@ export default function TopBlogPosts({ topPages, days }) {
           <FileText className="w-4 h-4 text-primary" />
           <h3 className="text-sm font-heading font-semibold text-foreground">Top Blog Posts</h3>
         </div>
-        <span className="text-[11px] text-muted-foreground">by views · last {days} days</span>
+        <span className="text-[0.6875rem] text-muted-foreground">by views · last {days} days</span>
       </div>
 
       {ranked.length === 0 ? (
@@ -88,8 +88,8 @@ export default function TopBlogPosts({ topPages, days }) {
                       {post.title}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${colorClass}`}>{post.category}</Badge>
-                      <span className="text-[11px] text-muted-foreground truncate">/{post.slug}</span>
+                      <Badge variant="outline" className={`text-[0.625rem] px-1.5 py-0 ${colorClass}`}>{post.category}</Badge>
+                      <span className="text-[0.6875rem] text-muted-foreground truncate">/{post.slug}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0 text-primary">

@@ -41,7 +41,7 @@ export default function BrokerStatusCard({ title, kind, data }) {
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-heading text-sm font-semibold text-foreground">{title}</h3>
         <span
-          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${state.tone}`}
+          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide ${state.tone}`}
         >
           <Icon className="h-3 w-3" />
           {state.label}

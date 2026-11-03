@@ -27,7 +27,7 @@ export default function MarketSnapshot({ signals }) {
             <p className="truncate font-heading text-sm font-semibold text-foreground">
               {signal.symbol}
             </p>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+            <p className="text-[0.625rem] uppercase tracking-wide text-muted-foreground">
               {signal.asset_class} · {String(signal.action || "").replace("_", " ")}
             </p>
           </div>
@@ -35,7 +35,7 @@ export default function MarketSnapshot({ signals }) {
             <p className={`font-mono text-xs ${ACTION_TONE[signal.action] || "text-foreground"}`}>
               score {signal.score}
             </p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-[0.625rem] text-muted-foreground">
               20d {pct(signal.momentum_20d_pct)}
             </p>
           </div>
@@ -47,7 +47,7 @@ export default function MarketSnapshot({ signals }) {
             >
               {pct(signal.expected_gain_pct)}
             </p>
-            <p className="text-[10px] text-muted-foreground">est. 10d</p>
+            <p className="text-[0.625rem] text-muted-foreground">est. 10d</p>
           </div>
         </div>
       ))}
