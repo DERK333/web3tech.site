@@ -1,11 +1,22 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Activity, ArrowRight, Gauge, Radar, Ruler, ShieldAlert, Target } from "lucide-react";
 import GuideBlock from "@/components/strategy/GuideBlock";
 import ScoreAnatomy from "@/components/strategy/ScoreAnatomy";
 import PerpRules from "@/components/strategy/PerpRules";
 
 export default function StrategyGuide() {
+  const { hash } = useLocation();
+
+  // Deep links from a flagged setup land on its rule block, not the top.
+  useEffect(() => {
+    if (!hash) return;
+    const el = document.getElementById(hash.slice(1));
+    if (!el) return;
+    const timer = window.setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    return () => window.clearTimeout(timer);
+  }, [hash]);
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
       <p className="text-xs font-semibold uppercase tracking-widest text-primary">Strategy</p>
@@ -47,7 +58,7 @@ export default function StrategyGuide() {
         </p>
       </GuideBlock>
 
-      <GuideBlock number="04" title="Which perp setups get flagged" icon={Target}>
+      <GuideBlock id="perp-rules" number="04" title="Which perp setups get flagged" icon={Target}>
         <PerpRules />
       </GuideBlock>
 

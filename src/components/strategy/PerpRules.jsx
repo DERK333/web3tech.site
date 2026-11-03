@@ -1,5 +1,9 @@
 import React from "react";
 
+// Only liquid majors are considered at all — a thin pair is never a perp idea,
+// however good its chart looks.
+const MAJORS = "BTC, ETH, SOL, XRP, DOGE, ADA, AVAX, LINK, LTC, BCH, DOT, ATOM, NEAR, APT, SUI, ARB, OP, TON, TRX, XLM, HYPE";
+
 const LEVERAGE = [
   { vol: "Under 60%", leverage: "3x", note: "Calmest majors" },
   { vol: "60–90%", leverage: "2x", note: "Normal crypto swings" },
@@ -9,6 +13,17 @@ const LEVERAGE = [
 export default function PerpRules() {
   return (
     <div className="space-y-4">
+      <div className="rounded-lg border border-border bg-secondary/40 p-3">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+          Before a coin is even considered
+        </p>
+        <ul className="mt-2 space-y-1 text-xs">
+          <li>Liquid majors only — {MAJORS}.</li>
+          <li>Annualized volatility must be under 150%; wilder charts are skipped.</li>
+          <li>The board keeps the top four per side, six setups in total, ranked by conviction.</li>
+        </ul>
+      </div>
+
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/5 p-3">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-400">

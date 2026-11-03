@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { ArrowDownRight, ArrowUpRight, Check, Copy } from "lucide-react";
 
 const fmt = (value) => {
@@ -67,14 +68,22 @@ export default function PerpSetupCard({ setup }) {
 
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{setup.rationale}</p>
 
-      <button
-        type="button"
-        onClick={copy}
-        className="mt-2 inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
-      >
-        {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-        {copied ? "Copied" : "Copy levels"}
-      </button>
+      <div className="mt-2 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={copy}
+          className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
+        >
+          {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+          {copied ? "Copied" : "Copy levels"}
+        </button>
+        <Link
+          to="/strategy-guide#perp-rules"
+          className="text-[11px] font-medium text-muted-foreground hover:text-foreground hover:underline"
+        >
+          Why this was flagged
+        </Link>
+      </div>
     </div>
   );
 }

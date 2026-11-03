@@ -1,8 +1,8 @@
 import React from "react";
 
-export default function GuideBlock({ number, title, icon: Icon, children }) {
+export default function GuideBlock({ number, title, icon: Icon, id, children }) {
   return (
-    <section className="mt-5 rounded-2xl border border-border bg-card p-5">
+    <section id={id} className="mt-5 scroll-mt-24 rounded-2xl border border-border bg-card p-5">
       <div className="flex items-start gap-3">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
           <Icon className="h-4 w-4 text-primary" />
