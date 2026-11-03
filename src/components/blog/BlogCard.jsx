@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { motion } from "framer-motion";
 
 const categoryColors = {
+  Trading: "bg-primary/10 text-primary border-primary/20",
   Blockchain: "bg-chart-1/10 text-chart-1 border-chart-1/20",
   Security: "bg-destructive/10 text-destructive border-destructive/20",
   Linux: "bg-chart-2/10 text-chart-2 border-chart-2/20",

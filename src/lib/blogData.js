@@ -19,6 +19,7 @@ export const BLOG_POSTS = ALL_POSTS.filter((p) => {
 
 export const CATEGORIES = [
   { name: "All", count: BLOG_POSTS.length },
+  { name: "Trading", count: BLOG_POSTS.filter(p => p.category === "Trading").length },
   { name: "Blockchain", count: BLOG_POSTS.filter(p => p.category === "Blockchain").length },
   { name: "Security", count: BLOG_POSTS.filter(p => p.category === "Security").length },
   { name: "Linux", count: BLOG_POSTS.filter(p => p.category === "Linux").length },

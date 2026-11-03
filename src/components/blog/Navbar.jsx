@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { label: "Blog", path: "/blog" },
   { label: "Start here", path: "/start" },
   { label: "Strategy guide", path: "/strategy-guide" },
+  { label: "Market notes", path: "/bot-blog" },
   { label: "About", path: "/about" },
   { label: "Contact", path: "/contact" },
   { label: "Connect AI", path: "/connect" },

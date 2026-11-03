@@ -1,8 +1,15 @@
 // Shared category registry — powers the Categories listing and the
 // indexable /categories/:slug landing pages.
-import { Code, Shield, Terminal, Eye, Box, Rocket, Trophy } from "lucide-react";
+import { Activity, Code, Shield, Terminal, Eye, Box, Rocket, Trophy } from "lucide-react";
 
 export const CATEGORY_META = {
+  Trading: {
+    icon: Activity,
+    slug: "trading",
+    desc: "Market scans, signal scoring, risk rules, and paper-first strategy from the market bot.",
+    metaTitle: "Trading Strategies & Market Analysis - Web3 Insights Hub",
+    metaDesc: "How the market bot scores signals, ranks entries, sizes positions, and filters perpetual futures setups — transparent rules, paper-first, never investment advice.",
+  },
   Blockchain: {
     icon: Box,
     slug: "blockchain",

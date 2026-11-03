@@ -8,6 +8,7 @@ import BlogLayout from '@/components/blog/Layout';
 import Home from '@/pages/Home';
 import Blog from '@/pages/Blog';
 import BlogPost from '@/pages/BlogPost.jsx';
+import BotBlog from '@/pages/BotBlog';
 import ShareLanding from '@/pages/ShareLanding';
 import About from '@/pages/About';
 import Contact from '@/pages/Contact';
@@ -78,6 +79,7 @@ function AnimatedRoutes() {
             <Route path="/strategy-guide" element={<StrategyGuide />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/bot-blog" element={<BotBlog />} />
             <Route path="/share/:slug" element={<ShareLanding />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
