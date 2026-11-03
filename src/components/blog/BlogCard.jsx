@@ -29,8 +29,8 @@ export default function BlogCard({ post, index = 0, variant = "default", onTagCl
           isHero ? "md:grid md:grid-cols-2" : ""
         }`}
       >
-        {/* Image */}
-        <div className={`relative overflow-hidden ${isHero ? "md:h-full h-48" : "h-48"}`}>
+        {/* Image — the aspect ratio scales with the card width, no fixed height */}
+        <div className={`relative overflow-hidden aspect-[16/10] ${isHero ? "md:aspect-auto md:h-full" : ""}`}>
           <img
             src={post.image}
             alt={post.title}
@@ -73,7 +73,7 @@ export default function BlogCard({ post, index = 0, variant = "default", onTagCl
                 <button
                   key={tag}
                   onClick={() => onTagClick?.(tag)}
-                  className="text-[10px] px-2 py-0.5 rounded-full border border-border/50 bg-secondary/50 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
+                  className="text-[0.625rem] px-2 py-0.5 rounded-full border border-border/50 bg-secondary/50 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
                 >
                   #{tag}
                 </button>

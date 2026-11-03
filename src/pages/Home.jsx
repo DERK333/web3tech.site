@@ -67,13 +67,13 @@ export default function Home() {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
         <div className="relative rounded-2xl border border-border/50 bg-card/50 p-8 sm:p-12 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5" />
-          <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
-            <div className="flex-1 text-center lg:text-left">
+          <div className="relative z-10 grid grid-cols-1 items-center gap-8 lg:grid-cols-5 lg:gap-12">
+            <div className="text-center lg:col-span-3 lg:text-left">
               <h2 className="font-heading font-bold text-2xl mb-3">Stay Ahead of the Curve</h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto lg:mx-0 mb-6">
                 Get practical Web3, crypto, and Linux insights delivered through our blogs.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+              <div className="flex flex-col flex-wrap sm:flex-row gap-3 justify-center lg:justify-start">
                 <a
                   href="https://web3tech.site"
                   target="_blank"
@@ -98,7 +98,7 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <div className="w-full max-w-sm">
+            <div className="w-full lg:col-span-2">
               <NewsletterWidget />
             </div>
           </div>
