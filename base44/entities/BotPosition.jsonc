@@ -43,6 +43,10 @@
       "type": "number",
       "description": "Most recent scanned price"
     },
+    "peak_price": {
+      "type": "number",
+      "description": "Highest price seen since entry \u2014 the trailing stop measures its give-back from here"
+    },
     "market_value": {
       "type": "number"
     },

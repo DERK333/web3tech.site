@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 import { waitUntil } from 'base44:runtime';
 import { fetchSeries } from '../../shared/marketData.ts';
-import { scoreAsset } from '../../shared/indicators.ts';
+import { scoreAsset, entryGate } from '../../shared/indicators.ts';
 import {
   envKrakenKeys,
   envAlpacaKeys,
@@ -17,6 +17,11 @@ import { UNIVERSE } from '../../shared/marketUniverse.ts';
 import { fetchPlatformUniverse } from '../../shared/platformUniverse.ts';
 import { evaluateAlerts } from '../../shared/watchlistAlerts.ts';
 import { buildPerpSetups, buildPerpAlerts } from '../../shared/perpSetups.ts';
+import {
+  pickResearchTargets,
+  researchCandidates,
+  RESEARCH_COOLDOWN_MS,
+} from '../../shared/marketResearch.ts';
 
 // The market bot. One call = one full cycle for the signed-in user:
 //   1. pull daily candles for every enabled asset on their watchlist
@@ -38,13 +43,16 @@ import { buildPerpSetups, buildPerpAlerts } from '../../shared/perpSetups.ts';
 const DEFAULTS = {
   mode: 'paper',
   starting_cash: 100000,
-  max_position_pct: 12,
-  max_positions: 8,
-  min_entry_score: 66,
+  max_position_pct: 8,
+  max_positions: 6,
+  min_entry_score: 72,
   max_order_usd: 100,
   min_cash_reserve_pct: 20,
-  stop_loss_pct: 8,
+  stop_loss_pct: 6,
+  trail_stop_pct: 10,
   take_profit_pct: 30,
+  min_reward_risk: 1.2,
+  max_daily_loss_pct: 3,
 };
 
 const MIN_SCAN_GAP_MS = 5 * 60 * 1000;
@@ -267,10 +275,64 @@ export default async function (req) {
     }
 
     if (toUpdate.length) await sr.entities.BotSignal.bulkUpdate(toUpdate);
-    if (toCreate.length) await sr.entities.BotSignal.bulkCreate(toCreate);
+    if (toCreate.length) {
+      // Keep the returned ids on the in-memory rows so the news check below can
+      // write its findings straight back onto them.
+      const created = await sr.entities.BotSignal.bulkCreate(toCreate);
+      const createdBySymbol = new Map((created || []).map((row) => [row.symbol, row.id]));
+      toCreate.forEach((row) => {
+        if (!row.id) row.id = createdBySymbol.get(row.symbol) || undefined;
+      });
+    }
 
     const signalMap = new Map(liveSignals.map((s) => [s.symbol, s]));
     const priceMap = new Map(liveSignals.map((s) => [s.symbol, s.price]));
+
+    // ---- web research (catalyst and risk check on the buy list) ------------
+    // Technicals cannot see an earnings miss, a hack or a lawsuit. Before the
+    // bot may spend money it has a web-search model read the last week of news
+    // on the handful of names it actually wants to buy. That reading can veto a
+    // trade outright; it is evidence, not a promise of profit.
+    let researched = 0;
+    let researchNote = '';
+    const researchOn = config.news_research !== false;
+    const lastResearch = config.last_research_at
+      ? new Date(config.last_research_at).getTime()
+      : 0;
+    const researchDue =
+      researchOn && (force || Date.now() - lastResearch > RESEARCH_COOLDOWN_MS);
+
+    if (researchDue) {
+      const targets = pickResearchTargets(liveSignals);
+      if (targets.length > 0) {
+        try {
+          const findings = await researchCandidates(sr, targets);
+          const newsUpdates = [];
+          for (const signal of liveSignals) {
+            const found = findings.get(String(signal.symbol).toUpperCase());
+            if (!found) continue;
+            signal.news_score = found.bias;
+            signal.news_note = found.note;
+            signal.news_risk = found.risk;
+            signal.news_checked_at = now;
+            if (signal.id) {
+              newsUpdates.push({
+                id: signal.id,
+                news_score: found.bias,
+                news_note: found.note,
+                news_risk: found.risk,
+                news_checked_at: now,
+              });
+            }
+            researched += 1;
+          }
+          if (newsUpdates.length) await sr.entities.BotSignal.bulkUpdate(newsUpdates);
+        } catch (error) {
+          researchNote = `Web research unavailable this run: ${error.message}`;
+        }
+      }
+      if (researched > 0) config = { ...config, last_research_at: now };
+    }
 
     // ---- watchlist alerts -------------------------------------------------
     // Only assets on this user's watchlist are watched, and only for what
@@ -380,7 +442,10 @@ export default async function (req) {
 
     // ---- strategy limits ---------------------------------------------------
     const stopLoss = Number(config.stop_loss_pct ?? DEFAULTS.stop_loss_pct);
+    const trailStop = Number(config.trail_stop_pct ?? DEFAULTS.trail_stop_pct);
     const takeProfit = Number(config.take_profit_pct ?? DEFAULTS.take_profit_pct);
+    const minRewardRisk = Number(config.min_reward_risk ?? DEFAULTS.min_reward_risk);
+    const dailyLossLimit = Number(config.max_daily_loss_pct ?? DEFAULTS.max_daily_loss_pct);
     const maxPositions = Number(config.max_positions ?? DEFAULTS.max_positions);
     const maxPositionPct = Number(config.max_position_pct ?? DEFAULTS.max_position_pct);
 
@@ -394,6 +459,7 @@ export default async function (req) {
       marks.push({
         id: p.id,
         last_price: price,
+        peak_price: Math.max(Number(p.peak_price ?? p.avg_cost ?? price), price),
         market_value: money(p.quantity * price),
         unrealized_pct: p.avg_cost > 0 ? money(((price - p.avg_cost) / p.avg_cost) * 100) : 0,
       });
@@ -479,8 +545,16 @@ export default async function (req) {
       }
 
       const pnl = p.avg_cost > 0 ? ((price - p.avg_cost) / p.avg_cost) * 100 : 0;
+      // Trailing stop: once a position has been meaningfully in profit, give
+      // back only so much of that gain before closing it. This is what turns a
+      // round trip into a booked win.
+      const peak = Math.max(Number(p.peak_price ?? p.avg_cost ?? price), price);
+      const peakPct = p.avg_cost > 0 ? ((peak - p.avg_cost) / p.avg_cost) * 100 : 0;
+      const fromPeak = peak > 0 ? ((price - peak) / peak) * 100 : 0;
       let reason = null;
       if (pnl <= -stopLoss) reason = `Stop loss — down ${pnl.toFixed(1)}% against a ${stopLoss}% limit`;
+      else if (trailStop > 0 && peakPct >= 4 && pnl > 0 && fromPeak <= -trailStop)
+        reason = `Trailing stop — gave back ${Math.abs(fromPeak).toFixed(1)}% from a ${peakPct.toFixed(1)}% peak, still up ${pnl.toFixed(1)}%`;
       else if (pnl >= takeProfit) reason = `Take profit — up ${pnl.toFixed(1)}% against a ${takeProfit}% target`;
       else if (signal.action === 'avoid') reason = `Trend broken — signal fell to avoid (score ${signal.score})`;
       else if (signal.action === 'trim') reason = `Momentum faded — signal fell to trim (score ${signal.score})`;
@@ -548,29 +622,87 @@ export default async function (req) {
     // ---- entries ----------------------------------------------------------
     const held = new Set(keptPositions.map((p) => p.symbol.toUpperCase()));
 
-    // Entries are ranked by the largest estimated gain, not by score alone.
-    // Assets in a deep downtrend are skipped however strong one week looks.
-    const candidates = liveSignals
+    // ---- market regime ----------------------------------------------------
+    // Breadth: how much of the scanned stock market sits above its 200-day
+    // average. Trend entries fail most often in a weak tape, so there the bot
+    // demands more conviction and sizes every new position smaller.
+    const breadthRows = liveSignals.filter(
+      (s) => s.asset_class !== 'crypto' && s.sma200_gap_pct != null
+    );
+    const breadthAbove = breadthRows.filter((s) => Number(s.sma200_gap_pct) > 0).length;
+    const breadthPct = breadthRows.length
+      ? Math.round((breadthAbove / breadthRows.length) * 100)
+      : null;
+    const regimeGuard = config.regime_guard !== false;
+    const riskOff = regimeGuard && breadthPct != null && breadthPct < 35;
+    const regimeNote =
+      breadthPct == null
+        ? 'Market breadth unavailable this scan.'
+        : `${breadthPct}% of the scanned stock market is above its 200-day average` +
+          (riskOff
+            ? ' — risk-off: the entry bar is higher and new positions are half size.'
+            : '.');
+
+    // The news check tilts the ranking and can veto, so the score a trade is
+    // judged on is the technical score plus that tilt.
+    const effectiveScore = (s) =>
+      Math.max(0, Math.min(100, Number(s.score ?? 0) + Number(s.news_score ?? 0)));
+
+    const entryBar = entryScore + (riskOff ? 6 : 0);
+
+    // ---- daily loss brake -------------------------------------------------
+    // Realized losses booked today, measured against equity. Once the cap is
+    // reached the bot still manages what it holds but opens nothing new until
+    // tomorrow — one bad session cannot cascade.
+    const realizedToday = (recentTrades || [])
       .filter(
-        (s) =>
-          (s.action === 'strong_buy' || s.action === 'buy') &&
-          Number(s.score) >= entryScore &&
-          !held.has(s.symbol) &&
-          !tradedToday.has(s.symbol) &&
-          Number(s.price) > 0 &&
-          Number(s.expected_gain_pct) > 0 &&
-          Number(s.momentum_20d_pct ?? 0) > -20
+        (t) =>
+          t.side === 'sell' &&
+          String(t.executed_at || t.created_date || '').slice(0, 10) === todayKey()
       )
-      .sort(
-        (a, b) =>
-          Number(b.expected_gain_pct) - Number(a.expected_gain_pct) ||
-          Number(b.score) - Number(a.score)
+      .reduce((sum, t) => sum + Number(t.realized_pnl || 0), 0);
+    const equityBeforeEntries = totalCash() + investedValue;
+    const dailyBrake =
+      dailyLossLimit > 0 &&
+      realizedToday < 0 &&
+      Math.abs(realizedToday) >= (equityBeforeEntries * dailyLossLimit) / 100;
+
+    // Entries must clear every gate: trend, momentum, RSI band, reward versus
+    // risk, volatility and the news check. Nothing here predicts the future —
+    // it refuses the trades that fail most often, and names why it passed.
+    const candidates = [];
+    const gateRejects = new Map();
+    for (const signal of liveSignals) {
+      const symbol = String(signal.symbol).toUpperCase();
+      if (held.has(symbol) || tradedToday.has(symbol)) continue;
+      if (signal.action !== 'strong_buy' && signal.action !== 'buy') continue;
+      if (!(Number(signal.price) > 0)) continue;
+
+      const gate = entryGate(
+        { ...signal, score: effectiveScore(signal) },
+        { minScore: entryBar, minRewardRisk }
       );
+      if (!gate.pass) {
+        gate.fails.forEach((f) => gateRejects.set(f, (gateRejects.get(f) || 0) + 1));
+        continue;
+      }
+      candidates.push({ ...signal, effective_score: effectiveScore(signal) });
+    }
+
+    candidates.sort(
+      (a, b) =>
+        b.effective_score - a.effective_score ||
+        Number(b.expected_gain_pct) - Number(a.expected_gain_pct)
+    );
 
     const opened = [];
     let openCount = keptPositions.length;
+    // A scan that sprays ten orders is not selective. Two new ideas per run,
+    // one in a weak tape, is enough.
+    const maxNewThisRun = riskOff ? 1 : 2;
 
     for (const candidate of candidates) {
+      if (dailyBrake || opened.length >= maxNewThisRun) break;
       if (openCount >= maxPositions) break;
 
       const venue = venueFor(candidate.asset_class);
@@ -580,8 +712,14 @@ export default async function (req) {
       const spendable = money(cashPots[venue] * (1 - reservePct / 100));
       if (spendable < MIN_ORDER_USD) continue;
 
+      // Conviction sizing: a name barely over the bar gets the smallest slice,
+      // a strong one gets the full allowance. Half size in a risk-off tape.
       const equity = totalCash() + investedValue;
-      const target = money((equity * maxPositionPct) / 100);
+      const conviction = Math.max(
+        0.6,
+        Math.min(1, 0.6 + (candidate.effective_score - entryBar) / 25)
+      );
+      const target = money((equity * maxPositionPct * conviction * (riskOff ? 0.5 : 1)) / 100);
       const notional = money(Math.min(target, orderCap, spendable));
       if (notional < MIN_ORDER_USD) continue;
 
@@ -615,6 +753,7 @@ export default async function (req) {
         quantity,
         avg_cost: price,
         last_price: price,
+        peak_price: price,
         market_value: notional,
         unrealized_pct: 0,
         opened_at: new Date().toISOString(),
@@ -630,8 +769,10 @@ export default async function (req) {
         notional,
         score: candidate.score,
         reason:
-          `Biggest estimated gain on the board: ${Number(candidate.expected_gain_pct).toFixed(1)}% over about ten sessions ` +
-          `(score ${candidate.score}, risk ${Number(candidate.risk_pct).toFixed(1)}%). ${candidate.rationale}`,
+          `Cleared every entry gate: ${Number(candidate.expected_gain_pct).toFixed(1)}% estimated gain over about ten sessions ` +
+          `against ${Number(candidate.risk_pct).toFixed(1)}% risk (reward/risk ${Number(candidate.reward_risk).toFixed(2)}), ` +
+          `score ${candidate.score}${Number(candidate.news_score ?? 0) ? ` ${Number(candidate.news_score) > 0 ? '+' : ''}${Number(candidate.news_score)} news` : ''}. ` +
+          `${candidate.rationale}${candidate.news_note ? ` News: ${candidate.news_note}` : ''}`,
         mode: venue === 'paper' ? 'paper' : 'live',
         venue,
         order_id: orderId,
@@ -677,6 +818,19 @@ export default async function (req) {
       `(${platform.cryptoCount} Kraken pairs, ${platform.stockCount} Alpaca stocks/ETFs)` +
       `. ${liveSignals.length} signals updated. ` +
       `${opened.length} opened, ${closed.length} closed. ` +
+      (researched ? `${researched} buy candidate${researched === 1 ? '' : 's'} news-checked. ` : '') +
+      (riskOff ? 'Weak market breadth — half-size entries only. ' : '') +
+      (dailyBrake
+        ? `Daily loss cap hit (${usd(Math.abs(realizedToday))} down) — no new positions until tomorrow. `
+        : '') +
+      (researchNote ? `${researchNote} ` : '') +
+      (gateRejects.size
+        ? `Passed on ${[...gateRejects.values()].reduce((a, b) => a + b, 0)} setups: ${[...gateRejects.entries()]
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 2)
+            .map(([why, n]) => `${why} (${n})`)
+            .join(', ')}. `
+        : '') +
       (alertCount ? `${alertCount} watchlist alert${alertCount === 1 ? '' : 's'} raised. ` : '') +
       `${liveEnabled ? `Live via ${liveVenues.length ? liveVenues.join(' + ') : 'no reachable broker'}` : 'Paper only'}` +
       ` — equity $${equity.toLocaleString('en-US')} with $${money(totalCash()).toLocaleString('en-US')} cash.` +
@@ -690,6 +844,13 @@ export default async function (req) {
       cash_balance: money(cashPots.paper),
       live_cash: money(cashPots.kraken + cashPots.alpaca),
       learned_entry_score: learned,
+      min_reward_risk: minRewardRisk,
+      trail_stop_pct: trailStop,
+      max_daily_loss_pct: dailyLossLimit,
+      news_research: config.news_research !== false,
+      regime_guard: regimeGuard,
+      regime_note: regimeNote,
+      last_research_at: researched > 0 ? now : config.last_research_at,
       win_rate: winRate,
       closed_trades: closedWindow.length,
       learning_note: learningNote,

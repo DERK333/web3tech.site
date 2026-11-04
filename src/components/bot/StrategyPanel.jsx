@@ -9,7 +9,10 @@ const FIELDS = [
   { key: "max_positions", label: "Max positions", step: "1", min: "1", max: "30" },
   { key: "min_entry_score", label: "Min entry score", step: "1", min: "40", max: "95" },
   { key: "stop_loss_pct", label: "Stop loss %", step: "1", min: "2", max: "40" },
+  { key: "trail_stop_pct", label: "Trail stop %", step: "1", min: "0", max: "40" },
   { key: "take_profit_pct", label: "Take profit %", step: "1", min: "5", max: "200" },
+  { key: "min_reward_risk", label: "Min reward/risk", step: "0.1", min: "0.5", max: "4" },
+  { key: "max_daily_loss_pct", label: "Daily loss cap %", step: "1", min: "0", max: "20" },
 ];
 
 export default function StrategyPanel({ config, onSaved }) {

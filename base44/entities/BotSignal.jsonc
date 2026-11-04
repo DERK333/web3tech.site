@@ -66,6 +66,28 @@
       "type": "number",
       "description": "Annualized 20-day realized volatility"
     },
+    "news_score": {
+      "type": "number",
+      "description": "Points added to (or subtracted from) the score by the latest web research, roughly -15 to +8"
+    },
+    "news_risk": {
+      "type": "string",
+      "enum": [
+        "none",
+        "elevated",
+        "severe"
+      ],
+      "description": "Risk level the news check found; severe blocks new entries outright"
+    },
+    "news_note": {
+      "type": "string",
+      "description": "One-line summary of the catalyst and risk behind the news score"
+    },
+    "news_checked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the web research was last refreshed"
+    },
     "rationale": {
       "type": "string",
       "description": "Plain-English explanation of the score"
@@ -82,12 +104,12 @@
     "action"
   ],
   "rls": {
-    "read": {},
     "create": {
       "user_condition": {
         "role": "admin"
       }
     },
+    "read": {},
     "update": {
       "user_condition": {
         "role": "admin"

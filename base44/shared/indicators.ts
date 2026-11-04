@@ -135,6 +135,47 @@ function buildRationale(parts: {
   return sentences.join(', ').replace(/, and /, ' and ') + '.';
 }
 
+// Everything a trade must clear before money is committed. The score says an
+// asset trends well; this gate refuses the specific situations where trend
+// entries fail most often — late in a stretched move, in a downtrend, in a chop
+// with no reward over risk, or into bad news. Each failure is named so the scan
+// can report why it passed on a name.
+export function entryGate(
+  signal: any,
+  { minScore = 70, minRewardRisk = 1.2 }: { minScore?: number; minRewardRisk?: number } = {}
+) {
+  const fails: string[] = [];
+  const num = (value: any) => (value == null || value === '' ? null : Number(value));
+
+  const score = num(signal?.score) ?? 0;
+  const expected = num(signal?.expected_gain_pct);
+  const risk = num(signal?.risk_pct);
+  const rewardRisk = num(signal?.reward_risk);
+  const rsi = num(signal?.rsi14);
+  const mom20 = num(signal?.momentum_20d_pct);
+  const mom60 = num(signal?.momentum_60d_pct);
+  const gap50 = num(signal?.sma50_gap_pct);
+  const gap200 = num(signal?.sma200_gap_pct);
+  const vol = num(signal?.volatility_pct);
+  const newsScore = num(signal?.news_score);
+  const newsRisk = String(signal?.news_risk || 'none');
+
+  if (score < minScore) fails.push('score below the entry bar');
+  if (!(expected != null && expected >= 1.5)) fails.push('estimated gain too small');
+  if (!(rewardRisk != null && rewardRisk >= minRewardRisk)) fails.push('reward does not cover risk');
+  if (risk != null && risk > 45) fails.push('risk estimate too wide');
+  if (!(rsi != null && rsi >= 38 && rsi <= 72)) fails.push('RSI outside the healthy band');
+  if (!(mom20 != null && mom20 > 0)) fails.push('20-day momentum not positive');
+  if (mom60 != null && mom60 < -8) fails.push('60-day trend still falling');
+  if (!(gap50 != null && gap50 > 0)) fails.push('price below its 50-day average');
+  if (gap200 != null && gap200 < -2) fails.push('price below its 200-day average');
+  if (vol != null && vol > 65) fails.push('volatility too high');
+  if (newsRisk === 'severe') fails.push('serious news risk');
+  if (newsScore != null && newsScore < -6) fails.push('negative news backdrop');
+
+  return { pass: fails.length === 0, fails };
+}
+
 // Daily closes from the free sources are not split- or dividend-adjusted, so a
 // corporate action shows up as a cliff (a 10:1 split reads as -90% overnight).
 // On a broad sweep of thousands of tickers those cliffs look like enormous

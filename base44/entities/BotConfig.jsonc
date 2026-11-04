@@ -74,9 +74,43 @@
       "type": "number",
       "default": 8
     },
+    "trail_stop_pct": {
+      "type": "number",
+      "default": 10,
+      "description": "How far a winner may fall back from its peak before the bot closes it. 0 turns the trailing stop off"
+    },
     "take_profit_pct": {
       "type": "number",
       "default": 30
+    },
+    "min_reward_risk": {
+      "type": "number",
+      "default": 1.2,
+      "description": "Minimum estimated gain divided by estimated risk before a new position may be opened"
+    },
+    "max_daily_loss_pct": {
+      "type": "number",
+      "default": 3,
+      "description": "Stop opening new positions for the rest of the day once realized losses reach this share of equity"
+    },
+    "news_research": {
+      "type": "boolean",
+      "default": true,
+      "description": "Check the last week of news on each buy candidate with a web search before trading it"
+    },
+    "regime_guard": {
+      "type": "boolean",
+      "default": true,
+      "description": "Raise the bar and halve position sizes when most of the scanned market is below its 200-day average"
+    },
+    "last_research_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the web research layer last ran a batch"
+    },
+    "regime_note": {
+      "type": "string",
+      "description": "Plain-English read of market breadth from the last scan"
     },
     "win_rate": {
       "type": "number",
