@@ -121,8 +121,8 @@ export default function TradingBot() {
           <h1 className="font-heading text-3xl sm:text-4xl font-bold text-foreground">Market Bot</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             Scans stocks, ETFs and crypto every hour, scores each one on trend, momentum, RSI and
-            volatility, then routes qualifying orders to Kraken and Alpaca — or keeps them simulated
-            until you switch live trading on.
+            volatility, then buys and sells only from your watchlist — routing qualifying orders to
+            Kraken and Alpaca, or keeping them simulated until you switch live trading on.
           </p>
         </div>
 
