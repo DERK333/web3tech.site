@@ -12,6 +12,7 @@ import AlertFeed from "@/components/bot/AlertFeed";
 import AlertSettings from "@/components/bot/AlertSettings";
 import LiveAccountSummary from "@/components/bot/LiveAccountSummary";
 import SignalBoard from "@/components/bot/SignalBoard";
+import PassedOnPanel from "@/components/bot/PassedOnPanel";
 import PositionsTable from "@/components/bot/PositionsTable";
 import TradeLog from "@/components/bot/TradeLog";
 import WatchlistManager from "@/components/bot/WatchlistManager";
@@ -107,6 +108,12 @@ export default function TradingBot() {
       setRunning(false);
     }
   };
+
+  const latestRun = runs.reduce(
+    (latest, run) =>
+      !latest || new Date(run.started_at || 0) > new Date(latest.started_at || 0) ? run : latest,
+    null
+  );
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
@@ -212,6 +219,13 @@ export default function TradingBot() {
               <section>
                 <h2 className="font-heading text-lg font-semibold text-foreground mb-3">Signals</h2>
                 <SignalBoard signals={signals} />
+              </section>
+
+              <section>
+                <h2 className="font-heading text-lg font-semibold text-foreground mb-3">
+                  Passed on
+                </h2>
+                <PassedOnPanel run={latestRun} />
               </section>
 
               <section>

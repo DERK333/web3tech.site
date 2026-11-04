@@ -671,6 +671,7 @@ export default async function (req) {
     // risk, volatility and the news check. Nothing here predicts the future —
     // it refuses the trades that fail most often, and names why it passed.
     const candidates = [];
+    const passedOn = [];
     const gateRejects = new Map();
     for (const signal of liveSignals) {
       const symbol = String(signal.symbol).toUpperCase();
@@ -684,6 +685,17 @@ export default async function (req) {
       );
       if (!gate.pass) {
         gate.fails.forEach((f) => gateRejects.set(f, (gateRejects.get(f) || 0) + 1));
+        passedOn.push({
+          symbol,
+          asset_class: signal.asset_class,
+          score: Number(signal.score ?? 0),
+          effective_score: effectiveScore(signal),
+          expected_gain_pct: signal.expected_gain_pct ?? null,
+          risk_pct: signal.risk_pct ?? null,
+          reward_risk: signal.reward_risk ?? null,
+          news_risk: signal.news_risk || 'none',
+          reason: gate.fails.join(' · '),
+        });
         continue;
       }
       candidates.push({ ...signal, effective_score: effectiveScore(signal) });
@@ -701,16 +713,18 @@ export default async function (req) {
     // one in a weak tape, is enough.
     const maxNewThisRun = riskOff ? 1 : 2;
 
-    for (const candidate of candidates) {
-      if (dailyBrake || opened.length >= maxNewThisRun) break;
-      if (openCount >= maxPositions) break;
+    // Opening a position is the same set of steps whether the idea cleared the
+    // full gate or came in as the best setup available, so it lives in one
+    // place. Returns true when an order was actually placed.
+    const tryOpen = async (candidate, bestAvailable = false) => {
+      if (openCount >= maxPositions) return false;
 
       const venue = venueFor(candidate.asset_class);
 
       // Only spare cash is deployed: the reserve is never touched, so money
       // already working in a healthy position is never sold to fund a new one.
       const spendable = money(cashPots[venue] * (1 - reservePct / 100));
-      if (spendable < MIN_ORDER_USD) continue;
+      if (spendable < MIN_ORDER_USD) return false;
 
       // Conviction sizing: a name barely over the bar gets the smallest slice,
       // a strong one gets the full allowance. Half size in a risk-off tape.
@@ -719,13 +733,15 @@ export default async function (req) {
         0.6,
         Math.min(1, 0.6 + (candidate.effective_score - entryBar) / 25)
       );
-      const target = money((equity * maxPositionPct * conviction * (riskOff ? 0.5 : 1)) / 100);
+      const target = money(
+        (equity * maxPositionPct * conviction * (riskOff ? 0.5 : 1) * (bestAvailable ? 0.5 : 1)) / 100
+      );
       const notional = money(Math.min(target, orderCap, spendable));
-      if (notional < MIN_ORDER_USD) continue;
+      if (notional < MIN_ORDER_USD) return false;
 
       const price = Number(candidate.price);
       const quantity = units(notional / price);
-      if (quantity <= 0) continue;
+      if (quantity <= 0) return false;
 
       let orderId = null;
       if (venue !== 'paper') {
@@ -737,7 +753,7 @@ export default async function (req) {
           orderId = placed?.orderId || null;
         } catch (error) {
           orderErrors.push(`${candidate.symbol} buy: ${error.message}`);
-          continue;
+          return false;
         }
       }
 
@@ -759,6 +775,12 @@ export default async function (req) {
         opened_at: new Date().toISOString(),
       });
 
+      const detail =
+        `${Number(candidate.expected_gain_pct ?? 0).toFixed(1)}% estimated gain over about ten sessions ` +
+        `against ${Number(candidate.risk_pct ?? 0).toFixed(1)}% risk (reward/risk ${Number(candidate.reward_risk ?? 0).toFixed(2)}), ` +
+        `score ${candidate.score}${Number(candidate.news_score ?? 0) ? ` ${Number(candidate.news_score) > 0 ? '+' : ''}${Number(candidate.news_score)} news` : ''}. ` +
+        `${candidate.rationale || ''}${candidate.news_note ? ` News: ${candidate.news_note}` : ''}`;
+
       trades.push({
         owner_id: ownerId,
         symbol: candidate.symbol,
@@ -768,11 +790,9 @@ export default async function (req) {
         price,
         notional,
         score: candidate.score,
-        reason:
-          `Cleared every entry gate: ${Number(candidate.expected_gain_pct).toFixed(1)}% estimated gain over about ten sessions ` +
-          `against ${Number(candidate.risk_pct).toFixed(1)}% risk (reward/risk ${Number(candidate.reward_risk).toFixed(2)}), ` +
-          `score ${candidate.score}${Number(candidate.news_score ?? 0) ? ` ${Number(candidate.news_score) > 0 ? '+' : ''}${Number(candidate.news_score)} news` : ''}. ` +
-          `${candidate.rationale}${candidate.news_note ? ` News: ${candidate.news_note}` : ''}`,
+        reason: bestAvailable
+          ? `Best available setup — nothing cleared every entry gate this scan, so the highest-ranked idea that still estimates a real gain over its risk was taken at half size. ${detail}`
+          : `Cleared every entry gate: ${detail}`,
         mode: venue === 'paper' ? 'paper' : 'live',
         venue,
         order_id: orderId,
@@ -789,6 +809,39 @@ export default async function (req) {
       held.add(candidate.symbol);
       tradedToday.add(candidate.symbol);
       openCount++;
+      return true;
+    };
+
+    for (const candidate of candidates) {
+      if (dailyBrake || opened.length >= maxNewThisRun) break;
+      await tryOpen(candidate);
+    }
+
+    // The full gate is strict on purpose, and some scans nothing clears it.
+    // Sitting out for weeks is not useful either, so when every setup was
+    // refused the bot takes its single best idea at half size, provided it
+    // still estimates a gain that beats its own risk and carries no severe
+    // news risk. Every other protection — stop, trail, cap, daily brake —
+    // still applies.
+    if (!opened.length && !dailyBrake && openCount < maxPositions) {
+      const bestAvailable = liveSignals
+        .filter((s) => {
+          const symbol = String(s.symbol).toUpperCase();
+          if (held.has(symbol) || tradedToday.has(symbol)) return false;
+          if (s.action !== 'strong_buy' && s.action !== 'buy') return false;
+          if (!(Number(s.price) > 0)) return false;
+          if (String(s.news_risk || '') === 'severe') return false;
+          return (
+            effectiveScore(s) >= Math.max(50, entryBar - 12) &&
+            Number(s.expected_gain_pct ?? 0) >= 1 &&
+            Number(s.reward_risk ?? 0) >= 1
+          );
+        })
+        .sort((a, b) => effectiveScore(b) - effectiveScore(a))[0];
+
+      if (bestAvailable) {
+        await tryOpen({ ...bestAvailable, effective_score: effectiveScore(bestAvailable) }, true);
+      }
     }
 
     if (trades.length) await sr.entities.BotTrade.bulkCreate(trades);
@@ -873,6 +926,7 @@ export default async function (req) {
       cash: totalCash(),
       status: failures.length || orderErrors.length ? 'partial' : 'ok',
       summary,
+      passed_on: passedOn.slice(0, 40),
     });
 
     return Response.json({
@@ -884,6 +938,7 @@ export default async function (req) {
       alerts: alertCount,
       opened,
       closed,
+      passed_on: passedOn.slice(0, 40),
       order_errors: orderErrors,
       broker_notes: brokerNotes,
       live: liveEnabled,

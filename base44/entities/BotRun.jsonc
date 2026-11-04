@@ -40,6 +40,45 @@
         "error"
       ]
     },
+    "passed_on": {
+      "type": "array",
+      "description": "Setups the bot examined and refused during this run, with the reason each one failed",
+      "items": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "asset_class": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "description": "Technical score before the news adjustment"
+          },
+          "effective_score": {
+            "type": "number",
+            "description": "Score after the news adjustment, which is what the entry bar is measured against"
+          },
+          "expected_gain_pct": {
+            "type": "number"
+          },
+          "risk_pct": {
+            "type": "number"
+          },
+          "reward_risk": {
+            "type": "number"
+          },
+          "news_risk": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Plain-English list of the rules this setup failed"
+          }
+        }
+      }
+    },
     "summary": {
       "type": "string",
       "description": "Human-readable outcome of the run"
