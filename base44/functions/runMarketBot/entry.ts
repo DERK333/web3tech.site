@@ -719,7 +719,14 @@ export default async function (req) {
     const tryOpen = async (candidate, bestAvailable = false) => {
       if (openCount >= maxPositions) return false;
 
-      const venue = venueFor(candidate.asset_class);
+      let venue = venueFor(candidate.asset_class);
+
+      // A live broker with no buying power cannot fill anything, and stalling
+      // the whole strategy because one account is empty helps nobody. The order
+      // goes to the simulated book instead, and the trade log names the venue.
+      if (venue !== 'paper' && cashPots[venue] * (1 - reservePct / 100) < MIN_ORDER_USD) {
+        venue = 'paper';
+      }
 
       // Only spare cash is deployed: the reserve is never touched, so money
       // already working in a healthy position is never sold to fund a new one.
@@ -791,7 +798,7 @@ export default async function (req) {
         notional,
         score: candidate.score,
         reason: bestAvailable
-          ? `Best available setup — nothing cleared every entry gate this scan, so the highest-ranked idea that still estimates a real gain over its risk was taken at half size. ${detail}`
+          ? `Best available setup — nothing cleared every entry gate this scan, so the highest-scoring idea that still estimates a gain and carries no severe news risk was taken at half size. ${detail}`
           : `Cleared every entry gate: ${detail}`,
         mode: venue === 'paper' ? 'paper' : 'live',
         venue,
@@ -819,10 +826,10 @@ export default async function (req) {
 
     // The full gate is strict on purpose, and some scans nothing clears it.
     // Sitting out for weeks is not useful either, so when every setup was
-    // refused the bot takes its single best idea at half size, provided it
-    // still estimates a gain that beats its own risk and carries no severe
-    // news risk. Every other protection — stop, trail, cap, daily brake —
-    // still applies.
+    // refused the bot takes its single highest-scoring idea at half size,
+    // provided it is still estimated to gain, clears a slightly lower score
+    // bar and carries no severe news risk. Every other protection — stop,
+    // trail, position cap, daily brake — still applies.
     if (!opened.length && !dailyBrake && openCount < maxPositions) {
       const bestAvailable = liveSignals
         .filter((s) => {
@@ -833,8 +840,7 @@ export default async function (req) {
           if (String(s.news_risk || '') === 'severe') return false;
           return (
             effectiveScore(s) >= Math.max(50, entryBar - 12) &&
-            Number(s.expected_gain_pct ?? 0) >= 1 &&
-            Number(s.reward_risk ?? 0) >= 1
+            Number(s.expected_gain_pct ?? 0) >= 1
           );
         })
         .sort((a, b) => effectiveScore(b) - effectiveScore(a))[0];
