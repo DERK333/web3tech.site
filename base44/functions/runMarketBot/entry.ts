@@ -548,23 +548,11 @@ export default async function (req) {
     // ---- entries ----------------------------------------------------------
     const held = new Set(keptPositions.map((p) => p.symbol.toUpperCase()));
 
-    // Money only goes into the user's own watchlist. The wider scan still scores
-    // the market for signals and alerts, but a rotating universe of thousands of
-    // obscure tickers must never outrank the handful of assets a user actually
-    // added — otherwise the bot trades names they never asked for and never
-    // touches their list.
-    const tradeable = new Set(
-      watchlist.length
-        ? watchlist.map((a) => String(a.symbol || '').toUpperCase())
-        : UNIVERSE.map((a) => a.symbol)
-    );
-
     // Entries are ranked by the largest estimated gain, not by score alone.
     // Assets in a deep downtrend are skipped however strong one week looks.
     const candidates = liveSignals
       .filter(
         (s) =>
-          tradeable.has(s.symbol) &&
           (s.action === 'strong_buy' || s.action === 'buy') &&
           Number(s.score) >= entryScore &&
           !held.has(s.symbol) &&
