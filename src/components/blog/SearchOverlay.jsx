@@ -113,15 +113,15 @@ export default function SearchOverlay({ open, onClose }) {
                               {highlight(post.excerpt, query)}
                             </p>
                             <div className="flex items-center gap-2 flex-wrap">
-                              <Badge className="text-[10px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20 border">
+                              <Badge className="text-[0.625rem] px-1.5 py-0 bg-primary/10 text-primary border-primary/20 border">
                                 {post.category}
                               </Badge>
                               {post.tags.filter(t => t.toLowerCase().includes(query.toLowerCase())).slice(0, 2).map(t => (
-                                <span key={t} className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
+                                <span key={t} className="flex items-center gap-0.5 text-[0.625rem] text-muted-foreground">
                                   <Tag className="w-2.5 h-2.5" />{t}
                                 </span>
                               ))}
-                              <span className="text-[10px] text-muted-foreground ml-auto flex items-center gap-1">
+                              <span className="text-[0.625rem] text-muted-foreground ml-auto flex items-center gap-1">
                                 <Clock className="w-2.5 h-2.5" />{post.readTime}
                               </span>
                             </div>
@@ -134,9 +134,9 @@ export default function SearchOverlay({ open, onClose }) {
               </div>
 
               {/* Footer hint */}
-              <div className="px-4 py-2 border-t border-border/50 flex items-center gap-3 text-[10px] text-muted-foreground">
-                <span><kbd className="px-1 py-0.5 bg-secondary rounded text-[10px]">Esc</kbd> to close</span>
-                <span><kbd className="px-1 py-0.5 bg-secondary rounded text-[10px]">Enter</kbd> to open</span>
+              <div className="px-4 py-2 border-t border-border/50 flex items-center gap-3 text-[0.625rem] text-muted-foreground">
+                <span><kbd className="px-1 py-0.5 bg-secondary rounded text-[0.625rem]">Esc</kbd> to close</span>
+                <span><kbd className="px-1 py-0.5 bg-secondary rounded text-[0.625rem]">Enter</kbd> to open</span>
               </div>
             </div>
           </motion.div>

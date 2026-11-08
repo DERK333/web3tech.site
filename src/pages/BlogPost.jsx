@@ -19,6 +19,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 const categoryColors = {
+  Trading: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
   Blockchain: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   Security: "bg-red-500/10 text-red-400 border-red-500/20",
   Linux: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
@@ -117,7 +118,7 @@ export default function BlogPost() {
           <span>/</span>
           <Link to="/blog" className="hover:text-primary transition-colors">Blog</Link>
           <span>/</span>
-          <span className="text-foreground truncate max-w-[200px]">{post.category}</span>
+          <span className="text-foreground truncate max-w-[60%]">{post.category}</span>
         </nav>
 
         {/* Category + Tags */}

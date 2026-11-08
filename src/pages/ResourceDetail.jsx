@@ -44,7 +44,7 @@ export default function ResourceDetail() {
         <span>/</span>
         <Link to="/resources" className="hover:text-primary transition-colors">Resources</Link>
         <span>/</span>
-        <span className="text-foreground truncate max-w-[220px]">{resource.name}</span>
+        <span className="text-foreground truncate max-w-[60%]">{resource.name}</span>
       </nav>
 
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
@@ -54,7 +54,7 @@ export default function ResourceDetail() {
             {Icon && <Icon className="w-6 h-6 text-primary" />}
           </div>
           <div>
-            <Badge variant="outline" className="text-[10px] text-muted-foreground mb-1.5">{resource.group}</Badge>
+            <Badge variant="outline" className="text-[0.625rem] text-muted-foreground mb-1.5">{resource.group}</Badge>
             <h1 className="font-heading font-bold text-2xl sm:text-3xl text-foreground leading-tight">{resource.name}</h1>
           </div>
         </div>

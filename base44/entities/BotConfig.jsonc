@@ -1,0 +1,221 @@
+{
+  "name": "BotConfig",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "App user this bot configuration belongs to"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "paper",
+        "live"
+      ],
+      "default": "paper",
+      "description": "Whether the last run traded simulated or real money"
+    },
+    "live_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Master switch \u2014 real orders are only sent when this is on"
+    },
+    "starting_cash": {
+      "type": "number",
+      "default": 100000
+    },
+    "cash_balance": {
+      "type": "number",
+      "description": "Simulated cash held by the paper portfolio"
+    },
+    "live_cash": {
+      "type": "number",
+      "description": "Cash held at the brokers after the last scan"
+    },
+    "max_position_pct": {
+      "type": "number",
+      "default": 12,
+      "description": "Largest share of equity a single position may take"
+    },
+    "max_positions": {
+      "type": "number",
+      "default": 8
+    },
+    "min_entry_score": {
+      "type": "number",
+      "default": 66,
+      "description": "Base minimum score required to open a position"
+    },
+    "learned_entry_score": {
+      "type": "number",
+      "description": "Entry bar the bot currently applies after tuning itself from realized results"
+    },
+    "auto_tune": {
+      "type": "boolean",
+      "default": true,
+      "description": "Let the bot raise or lower its own entry bar from its realized win rate"
+    },
+    "max_order_usd": {
+      "type": "number",
+      "default": 100,
+      "description": "Hard cap in dollars on any single order"
+    },
+    "min_cash_reserve_pct": {
+      "type": "number",
+      "default": 20,
+      "description": "Share of a broker's cash the bot never deploys"
+    },
+    "alpaca_paper": {
+      "type": "boolean",
+      "default": true,
+      "description": "Send stock and ETF orders to Alpaca's paper account instead of the live one"
+    },
+    "stop_loss_pct": {
+      "type": "number",
+      "default": 8
+    },
+    "trail_stop_pct": {
+      "type": "number",
+      "default": 10,
+      "description": "How far a winner may fall back from its peak before the bot closes it. 0 turns the trailing stop off"
+    },
+    "take_profit_pct": {
+      "type": "number",
+      "default": 30
+    },
+    "min_reward_risk": {
+      "type": "number",
+      "default": 1.2,
+      "description": "Minimum estimated gain divided by estimated risk before a new position may be opened"
+    },
+    "max_daily_loss_pct": {
+      "type": "number",
+      "default": 3,
+      "description": "Stop opening new positions for the rest of the day once realized losses reach this share of equity"
+    },
+    "news_research": {
+      "type": "boolean",
+      "default": true,
+      "description": "Check the last week of news on each buy candidate with a web search before trading it"
+    },
+    "regime_guard": {
+      "type": "boolean",
+      "default": true,
+      "description": "Raise the bar and halve position sizes when most of the scanned market is below its 200-day average"
+    },
+    "last_research_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the web research layer last ran a batch"
+    },
+    "regime_note": {
+      "type": "string",
+      "description": "Plain-English read of market breadth from the last scan"
+    },
+    "win_rate": {
+      "type": "number",
+      "description": "Percent of closed trades that finished in profit over the recent window"
+    },
+    "closed_trades": {
+      "type": "number",
+      "description": "Number of closed trades the win rate was computed from"
+    },
+    "learning_note": {
+      "type": "string",
+      "description": "Plain-English explanation of the last adjustment the bot made to itself"
+    },
+    "broker_note": {
+      "type": "string",
+      "description": "Broker-side message from the last run (connection or order errors)"
+    },
+    "scan_cursor": {
+      "type": "number",
+      "description": "Position in the full platform universe where the next scan resumes"
+    },
+    "scan_total": {
+      "type": "number",
+      "description": "Size of the full tradable universe on Kraken and Alpaca at the last scan"
+    },
+    "alerts_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Email-style watchlist alerts raised during each scan"
+    },
+    "alert_move_pct": {
+      "type": "number",
+      "default": 8,
+      "description": "Price change since the previous scan that counts as a milestone"
+    },
+    "alert_vol_pct": {
+      "type": "number",
+      "default": 60,
+      "description": "Annualized volatility above which a watchlist asset raises an alert"
+    },
+    "perp_alert_score": {
+      "type": "number",
+      "default": 70,
+      "description": "Conviction a perp setup needs before the scan raises an alert for it"
+    },
+    "last_scan_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_summary": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "mode",
+    "owner_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

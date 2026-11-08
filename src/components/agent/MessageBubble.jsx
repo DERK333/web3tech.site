@@ -47,14 +47,14 @@ function ToolDisplay({ toolCall }) {
         <div className="px-3 py-2 space-y-2 border-t border-border/50">
           {toolCall.arguments_string && (
             <div>
-              <div className="text-[10px] uppercase text-muted-foreground mb-1">Parameters</div>
-              <pre className="font-mono text-[10px] text-foreground/80 whitespace-pre-wrap break-all">{typeof parsedArgs === "string" ? parsedArgs : JSON.stringify(parsedArgs, null, 2)}</pre>
+              <div className="text-[0.625rem] uppercase text-muted-foreground mb-1">Parameters</div>
+              <pre className="font-mono text-[0.625rem] text-foreground/80 whitespace-pre-wrap break-all">{typeof parsedArgs === "string" ? parsedArgs : JSON.stringify(parsedArgs, null, 2)}</pre>
             </div>
           )}
           {parsedResults !== undefined && parsedResults !== null && (
             <div>
-              <div className="text-[10px] uppercase text-muted-foreground mb-1">Result</div>
-              <pre className="font-mono text-[10px] text-foreground/80 whitespace-pre-wrap break-all">{typeof parsedResults === "object" ? JSON.stringify(parsedResults, null, 2) : String(parsedResults)}</pre>
+              <div className="text-[0.625rem] uppercase text-muted-foreground mb-1">Result</div>
+              <pre className="font-mono text-[0.625rem] text-foreground/80 whitespace-pre-wrap break-all">{typeof parsedResults === "object" ? JSON.stringify(parsedResults, null, 2) : String(parsedResults)}</pre>
             </div>
           )}
         </div>

@@ -1,0 +1,124 @@
+{
+  "name": "BotSignal",
+  "type": "object",
+  "properties": {
+    "symbol": {
+      "type": "string",
+      "description": "Ticker the signal was computed for"
+    },
+    "asset_class": {
+      "type": "string",
+      "enum": [
+        "stock",
+        "etf",
+        "crypto"
+      ]
+    },
+    "price": {
+      "type": "number",
+      "description": "Latest close used in the calculation"
+    },
+    "score": {
+      "type": "number",
+      "description": "Composite technical score, 0-100"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "strong_buy",
+        "buy",
+        "hold",
+        "trim",
+        "avoid"
+      ],
+      "description": "What the strategy recommends for this asset"
+    },
+    "expected_gain_pct": {
+      "type": "number",
+      "description": "Estimated gain over roughly ten sessions if the recent pace holds \u2014 an estimate, not a forecast"
+    },
+    "risk_pct": {
+      "type": "number",
+      "description": "Estimated adverse swing over roughly ten sessions, from realized volatility"
+    },
+    "reward_risk": {
+      "type": "number",
+      "description": "Estimated gain divided by estimated risk"
+    },
+    "rsi14": {
+      "type": "number"
+    },
+    "sma50_gap_pct": {
+      "type": "number",
+      "description": "Percent above/below the 50-day average"
+    },
+    "sma200_gap_pct": {
+      "type": "number",
+      "description": "Percent above/below the 200-day average"
+    },
+    "momentum_20d_pct": {
+      "type": "number"
+    },
+    "momentum_60d_pct": {
+      "type": "number"
+    },
+    "volatility_pct": {
+      "type": "number",
+      "description": "Annualized 20-day realized volatility"
+    },
+    "news_score": {
+      "type": "number",
+      "description": "Points added to (or subtracted from) the score by the latest web research, roughly -15 to +8"
+    },
+    "news_risk": {
+      "type": "string",
+      "enum": [
+        "none",
+        "elevated",
+        "severe"
+      ],
+      "description": "Risk level the news check found; severe blocks new entries outright"
+    },
+    "news_note": {
+      "type": "string",
+      "description": "One-line summary of the catalyst and risk behind the news score"
+    },
+    "news_checked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the web research was last refreshed"
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Plain-English explanation of the score"
+    },
+    "scanned_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "symbol",
+    "asset_class",
+    "score",
+    "action"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -37,7 +37,7 @@ export default function ReadingPath({ icon: Icon, title, description, posts, ind
                 <span className="block text-sm font-medium text-foreground group-hover:text-primary transition-colors leading-snug">
                   {post.title}
                 </span>
-                <span className="flex items-center gap-1 text-[11px] text-muted-foreground mt-1">
+                <span className="flex items-center gap-1 text-[0.6875rem] text-muted-foreground mt-1">
                   <Clock className="w-3 h-3" />{post.readTime}
                 </span>
               </span>
@@ -47,7 +47,7 @@ export default function ReadingPath({ icon: Icon, title, description, posts, ind
         ))}
       </ol>
 
-      <p className="mt-3 text-[10px] uppercase tracking-wider text-muted-foreground">Path {index + 1} of 4</p>
+      <p className="mt-3 text-[0.625rem] uppercase tracking-wider text-muted-foreground">Path {index + 1} of 4</p>
     </motion.section>
   );
 }

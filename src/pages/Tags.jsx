@@ -49,7 +49,7 @@ export default function Tags() {
                 key={tag}
                 to={`/blog?tag=${encodeURIComponent(tag)}`}
                 style={{ fontSize: `${getSize(count)}rem` }}
-                className={`px-3.5 py-1.5 rounded-full border font-medium transition-all hover:scale-105 min-h-[36px] flex items-center ${getColor(count)}`}
+                className={`px-3.5 py-1.5 rounded-full border font-medium transition-all hover:scale-105 min-h-9 flex items-center ${getColor(count)}`}
                 title={`${count} article${count > 1 ? "s" : ""}`}
               >
                 #{tag}

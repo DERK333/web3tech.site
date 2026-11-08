@@ -11,6 +11,11 @@ export const ROUTE_META = {
     description:
       "Every article on Web3, blockchain, cybersecurity, Linux, privacy, and software tools — practical guides you can use today.",
   },
+  "/bot-blog": {
+    title: "Market Notes — Trading Strategies & Analysis | TheWeb3Tech",
+    description:
+      "Trading strategies, scan breakdowns and market analysis from the market bot — scored in the open, paper-first, and never investment advice.",
+  },
   "/start": {
     title: "Start Here — Beginner Guides & Reading Paths | TheWeb3Tech",
     description:

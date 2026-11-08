@@ -10,6 +10,8 @@ const NAV_LINKS = [
   { label: "Home", path: "/" },
   { label: "Blog", path: "/blog" },
   { label: "Start here", path: "/start" },
+  { label: "Strategy guide", path: "/strategy-guide" },
+  { label: "Market notes", path: "/bot-blog" },
   { label: "About", path: "/about" },
   { label: "Contact", path: "/contact" },
   { label: "Connect AI", path: "/connect" },
@@ -193,6 +195,45 @@ export default function Navbar() {
                       Reddit drafts
                     </Link>
                   )}
+                  {user?.role === "admin" && (
+                    <Link
+                      to="/trading"
+                      onClick={() => setMobileOpen(false)}
+                      className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                        location.pathname === "/trading"
+                          ? "text-primary bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      Market bot
+                    </Link>
+                  )}
+                  {isAuthenticated && (
+                    <Link
+                      to="/market-insights"
+                      onClick={() => setMobileOpen(false)}
+                      className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                        location.pathname === "/market-insights"
+                          ? "text-primary bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      Market insights
+                    </Link>
+                  )}
+                  {isAuthenticated && (
+                    <Link
+                      to="/connection-status"
+                      onClick={() => setMobileOpen(false)}
+                      className={`block px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                        location.pathname === "/connection-status"
+                          ? "text-primary bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      Brokerage status
+                    </Link>
+                  )}
                   {!isAuthenticated && (
                     <Link
                       to="/login"
@@ -282,7 +323,14 @@ export default function Navbar() {
         {user?.role === "admin" && (
           <>
             <Link to="/analytics" onClick={hideDrawer} className={linkClasses("/analytics")}>Analytics</Link>
+            <Link to="/trading" onClick={hideDrawer} className={linkClasses("/trading")}>Market bot</Link>
             <Link to="/reddit" onClick={hideDrawer} className={linkClasses("/reddit")}>Reddit drafts</Link>
+          </>
+        )}
+        {isAuthenticated && (
+          <>
+            <Link to="/market-insights" onClick={hideDrawer} className={linkClasses("/market-insights")}>Market insights</Link>
+            <Link to="/connection-status" onClick={hideDrawer} className={linkClasses("/connection-status")}>Brokerage status</Link>
           </>
         )}
       </nav>
@@ -295,7 +343,7 @@ export default function Navbar() {
             className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-border/50 bg-secondary/50 text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all text-sm"
           >
             <Search className="w-4 h-4" /> Search
-            <kbd className="text-[10px] px-1.5 py-0.5 bg-background rounded border border-border/50">⌘K</kbd>
+            <kbd className="text-[0.625rem] px-1.5 py-0.5 bg-background rounded border border-border/50">⌘K</kbd>
           </button>
           <button
             onClick={toggle}

@@ -18,8 +18,8 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
       </div>
 
-      {/* Decorative glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary/5 rounded-full blur-3xl animate-glow-pulse" />
+      {/* Decorative glow — sized as a share of the section so it scales with the display */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[72%] aspect-[3/2] bg-primary/5 rounded-full blur-3xl animate-glow-pulse" />
 
       {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">

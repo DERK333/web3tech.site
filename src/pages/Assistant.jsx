@@ -102,9 +102,9 @@ export default function Assistant() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-4 h-[calc(100vh-13rem)] min-h-[420px]">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-[calc(100dvh-13rem)] min-h-[60vh]">
         {/* Conversation list */}
-        <div className="hidden md:flex flex-col border border-border/50 rounded-xl bg-card/50 overflow-hidden">
+        <div className="hidden md:flex md:col-span-1 flex-col border border-border/50 rounded-xl bg-card/50 overflow-hidden min-w-0">
           <button
             onClick={handleNewConversation}
             className="flex items-center gap-2 px-3 py-3 text-sm font-medium border-b border-border/50 hover:bg-secondary/60 transition-colors"
@@ -133,7 +133,7 @@ export default function Assistant() {
         </div>
 
         {/* Chat area */}
-        <div className="flex flex-col border border-border/50 rounded-xl bg-card/50 overflow-hidden">
+        <div className="flex flex-col md:col-span-3 min-w-0 border border-border/50 rounded-xl bg-card/50 overflow-hidden">
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center px-4">

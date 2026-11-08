@@ -1,0 +1,138 @@
+{
+  "name": "BotTrade",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "App user whose bot placed this trade"
+    },
+    "symbol": {
+      "type": "string"
+    },
+    "asset_class": {
+      "type": "string",
+      "enum": [
+        "stock",
+        "etf",
+        "crypto"
+      ]
+    },
+    "side": {
+      "type": "string",
+      "enum": [
+        "buy",
+        "sell"
+      ]
+    },
+    "quantity": {
+      "type": "number"
+    },
+    "price": {
+      "type": "number"
+    },
+    "notional": {
+      "type": "number",
+      "description": "Quantity times price, in dollars"
+    },
+    "score": {
+      "type": "number",
+      "description": "Signal score at execution time"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Why the bot took this trade"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "paper",
+        "live"
+      ],
+      "default": "paper"
+    },
+    "venue": {
+      "type": "string",
+      "enum": [
+        "paper",
+        "kraken",
+        "alpaca"
+      ],
+      "default": "paper",
+      "description": "Where the order was filled"
+    },
+    "order_id": {
+      "type": "string",
+      "description": "Broker order id returned by Kraken or Alpaca"
+    },
+    "realized_pnl": {
+      "type": "number",
+      "description": "Profit or loss booked when the position was closed, in dollars"
+    },
+    "realized_pct": {
+      "type": "number",
+      "description": "Profit or loss booked when the position was closed, in percent"
+    },
+    "executed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "symbol",
+    "side",
+    "quantity",
+    "price",
+    "notional",
+    "owner_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
