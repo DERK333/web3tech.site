@@ -7,8 +7,11 @@ import NewsletterWidget from "@/components/blog/NewsletterWidget";
 import { BLOG_POSTS } from "@/lib/blogData";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import PullToRefreshIndicator from "@/components/blog/PullToRefreshIndicator";
+import LoginBanner from "@/components/home/LoginBanner";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function Home() {
+  const { user, isLoadingAuth } = useAuth();
   const featuredPosts = BLOG_POSTS.filter((p) => p.featured);
   const latestPosts = [...BLOG_POSTS].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 4);
 
@@ -19,6 +22,9 @@ export default function Home() {
     <div>
       <PullToRefreshIndicator pulling={pulling} refreshing={refreshing} />
       <HeroSection />
+
+      {/* Signed-out visitors only — points them at the bot behind the login */}
+      {!isLoadingAuth && !user && <LoginBanner />}
 
       {/* Featured Posts */}
       <section id="posts" className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
