@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 170" width="1440" height="340" role="img" aria-labelledby="speechTitle speechDesc">
+  <title id="speechTitle">From speech to text</title>
+  <desc id="speechDesc">An illustrated microphone, sound wave, and text lines inside a phone.</desc>
+  <rect width="720" height="170" rx="20" fill="#e7effb"/>
+  <circle cx="93" cy="85" r="55" fill="#c5dcff"/>
+  <rect x="81" y="48" width="24" height="54" rx="12" fill="#365fa9"/>
+  <path d="M70 84a23 23 0 0 0 46 0M93 107v15m-13 0h26" fill="none" stroke="#365fa9" stroke-width="6" stroke-linecap="round"/>
+  <path d="M182 85h28m12-15v30m16-46v62m16-82v102m16-68v34m16-20v6m16-27v48m16-34v20m16-10h32" fill="none" stroke="#6b91ce" stroke-width="6" stroke-linecap="round"/>
+  <path d="M385 85h86m-14-14 14 14-14 14" fill="none" stroke="#6b91ce" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="523" y="17" width="107" height="136" rx="20" fill="#1e3968"/>
+  <rect x="532" y="26" width="89" height="118" rx="13" fill="#fff"/>
+  <path d="M548 61h56m-56 15h56m-56 15h42m-42 15h49" stroke="#87a9d8" stroke-width="6" stroke-linecap="round"/>
+</svg>

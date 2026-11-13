@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="960" height="720" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">A phone with an AI chat conversation</title>
+  <desc id="heroDesc">An illustrated smartphone surrounded by connected circles and stars.</desc>
+  <rect x="18" y="30" width="444" height="300" rx="38" fill="#dce9ff"/>
+  <circle cx="350" cy="102" r="58" fill="#bcd2ff"/>
+  <circle cx="114" cy="253" r="48" fill="#c8eedc"/>
+  <path d="M102 112h58m160 144h65M112 112v42m273 102v-42" fill="none" stroke="#80a2d9" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="102" cy="112" r="7" fill="#4275ce"/>
+  <circle cx="385" cy="256" r="7" fill="#4275ce"/>
+  <rect x="158" y="35" width="165" height="290" rx="28" fill="#162d57"/>
+  <rect x="169" y="49" width="143" height="260" rx="19" fill="#f8fbff"/>
+  <rect x="213" y="56" width="55" height="7" rx="3.5" fill="#aabbd5"/>
+  <rect x="185" y="85" width="110" height="74" rx="15" fill="#d6e5ff"/>
+  <circle cx="206" cy="111" r="5" fill="#4275ce"/>
+  <circle cx="225" cy="111" r="5" fill="#4275ce"/>
+  <circle cx="244" cy="111" r="5" fill="#4275ce"/>
+  <path d="M199 133h78M199 145h52" stroke="#8caddf" stroke-width="6" stroke-linecap="round"/>
+  <rect x="202" y="177" width="93" height="48" rx="14" fill="#c8eedc"/>
+  <path d="M216 193h62M216 207h42" stroke="#63a985" stroke-width="6" stroke-linecap="round"/>
+  <rect x="185" y="246" width="110" height="34" rx="17" fill="#ebf0f8"/>
+  <circle cx="277" cy="263" r="10" fill="#4275ce"/>
+  <path d="M340 164l5 12 12 5-12 5-5 12-5-12-12-5 12-5zM120 190l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#4275ce"/>
+</svg>
